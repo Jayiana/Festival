@@ -1,0 +1,87 @@
+﻿.festival-footer {
+    width: 100%;
+    background: linear-gradient(to right, #111, #1b0033, #000);
+    color: white;
+    padding: 3rem 2rem;
+    margin-top: 0;
+    font-family: 'Segoe UI', sans-serif;
+    position: relative;
+    z-index: 2;
+}
+
+.footer-top {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 2rem;
+    border-bottom: 1px solid #444;
+    padding-bottom: 2rem;
+}
+
+    .footer-top h4 {
+        margin-bottom: 1rem;
+        color: #ff2e63;
+        font-weight: 700;
+        font-size: 1.2rem;
+    }
+
+    .footer-top ul {
+        list-style: none;
+        padding: 0;
+    }
+
+        .footer-top ul li a {
+            color: #ccc;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+            .footer-top ul li a:hover {
+                color: #ffe600;
+            }
+
+.social-icons i {
+    font-size: 1.8rem;
+    margin-right: 1rem;
+    cursor: pointer;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+    .social-icons i:hover {
+        color: #ff2e63;
+        transform: scale(1.2);
+    }
+
+.subscribe-btn {
+    margin-top: 0.5rem;
+    background: #ff2e63;
+    border: none;
+    padding: 0.5rem 1rem;
+    color: white;
+    border-radius: 30px;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+    .subscribe-btn:hover {
+        background: #ff0080;
+    }
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    color: #aaa;
+    animation: flicker 2s infinite ease-in-out alternate;
+}
+
+@keyframes flicker {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.8;
+    }
+}

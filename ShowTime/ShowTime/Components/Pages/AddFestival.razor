@@ -1,0 +1,59 @@
+﻿@page "/addfestival"
+@inject IFestivalService FestivalService
+@inject NavigationManager NavManager
+@using ShowTime_BusinessLogic.Abstractions
+@using ShowTime_BusinessLogic.Dtos
+@using ShowTime_BusinessLogic.Dtos.Festival
+
+<div class="add-festival-page">
+    <div class="festival-form-container">
+        <div class="festival-image-preview">
+            @if (!string.IsNullOrEmpty(festival.SplashArt))
+            {
+                <img src="@festival.SplashArt" alt="Preview" />
+            }
+            else
+            {
+                <p>Paste an image link to preview</p>
+            }
+        </div>
+
+        <div class="festival-form-section">
+            <h2>Add New Festival</h2>
+            <EditForm Model="festival" OnValidSubmit="SubmitFestival">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <label>Name:</label>
+                <InputText @bind-Value="festival.Name" class="form-control" />
+
+                <label>Location:</label>
+                <InputText @bind-Value="festival.Location" class="form-control" />
+
+                <label>Start Date:</label>
+                <InputDate @bind-Value="festival.StartDate" class="form-control" />
+
+                <label>End Date:</label>
+                <InputDate @bind-Value="festival.EndDate" class="form-control" />
+
+                <label>Capacity:</label>
+                <InputNumber @bind-Value="festival.Capacity" class="form-control" />
+
+                <label>SplashArt URL:</label>
+                <InputText @bind-Value="festival.SplashArt" class="form-control" />
+
+                <button class="btn-submit">Add Festival</button>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    private FestivalCreateDto festival = new();
+
+    private async Task SubmitFestival()
+    {
+        await FestivalService.AddAsync(festival);
+        NavManager.NavigateTo("/festivals");
+    }
+}

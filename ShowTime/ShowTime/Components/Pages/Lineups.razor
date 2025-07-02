@@ -1,0 +1,44 @@
+﻿@page "/lineups"
+@inject ILineupService LineupService
+@using ShowTime_BusinessLogic.Abstractions
+@using ShowTime_BusinessLogic.Dtos
+
+<h2 class="lineup-title">All Lineups</h2>
+
+<div class="lineup-grid">
+    @foreach (var lineup in PagedLineups)
+    {
+        <div class="lineup-card">
+            <h3>@lineup.ArtistName</h3>
+            <p><strong>Festival:</strong> @lineup.FestivalName</p>
+            <p><strong>Stage:</strong> @lineup.Stage</p>
+            <p><strong>Start Time:</strong> @lineup.StartTime.ToString("g")</p>
+        </div>
+    }
+</div>
+
+<div class="pagination">
+    @for (int i = 1; i <= TotalPages; i++)
+    {
+        <button class="page-btn @(CurrentPage == i ? "active" : "")" @onclick="() => ChangePage(i)">@i</button>
+    }
+</div>
+
+@code {
+    private List<LineupGetDto> AllLineups = new();
+    private List<LineupGetDto> PagedLineups => AllLineups.Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
+
+    private int CurrentPage = 1;
+    private int PageSize = 8;
+    private int TotalPages => (int)Math.Ceiling((double)AllLineups.Count / PageSize);
+
+    protected override async Task OnInitializedAsync()
+    {
+        AllLineups = (await LineupService.GetAllAsync()).ToList();
+    }
+
+    private void ChangePage(int page)
+    {
+        CurrentPage = page;
+    }
+}

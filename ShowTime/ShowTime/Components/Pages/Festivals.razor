@@ -1,0 +1,37 @@
+﻿@page "/festivals"
+@using ShowTime_BusinessLogic.Abstractions
+@using ShowTime_BusinessLogic.Dtos.Festival
+@inject IFestivalService FestivalService
+
+<div class="festivals-page">
+    <h2 class="section-title">Upcoming Festivals</h2>
+
+    @if (festivals.Count == 0)
+    {
+        <p>No festivals registered!</p>
+    }
+    else
+    {
+        <div class="festival-grid">
+            @foreach (var fest in festivals)
+            {
+                <div class="festival-card">
+                    <img src="@fest.SplashArt" alt="@fest.Name" />
+                    <h5>@fest.Name</h5>
+                    <p><strong>@fest.Location</strong></p>
+                    <p>@fest.StartDate.ToShortDateString() - @fest.EndDate.ToShortDateString()</p>
+                    <p>Capacity: @fest.Capacity</p>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private IList<FestivalGetDto> festivals = new List<FestivalGetDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        festivals = await FestivalService.GetAllAsync();
+    }
+}

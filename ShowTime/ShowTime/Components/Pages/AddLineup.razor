@@ -1,0 +1,45 @@
+﻿@page "/addlineup"
+@inject ILineupService LineupService
+@inject NavigationManager NavManager
+@using ShowTime_BusinessLogic.Abstractions
+@using ShowTime_BusinessLogic.Dtos
+
+<div class="add-lineup-page">
+    <div class="lineup-form-container">
+        <div class="lineup-image-preview">
+            <p>Assign an artist to a festival</p>
+        </div>
+
+        <div class="lineup-form-section">
+            <h2>Add Lineup</h2>
+            <EditForm Model="lineup" OnValidSubmit="SubmitLineup">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <label>Festival ID:</label>
+                <InputNumber @bind-Value="lineup.FestivalId" class="form-control" />
+
+                <label>Artist ID:</label>
+                <InputNumber @bind-Value="lineup.ArtistId" class="form-control" />
+
+                <label>Stage:</label>
+                <InputText @bind-Value="lineup.Stage" class="form-control" />
+
+                <label>Start Time:</label>
+                <InputDate @bind-Value="lineup.StartTime" class="form-control" />
+
+                <button class="btn-submit">Add Lineup</button>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    private LineupCreateDto lineup = new();
+
+    private async Task SubmitLineup()
+    {
+        await LineupService.AddAsync(lineup);
+        NavManager.NavigateTo("/lineups");
+    }
+}

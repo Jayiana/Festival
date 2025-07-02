@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using ShowTime.DataAccess.Configurations;
 using ShowTime.DataAccess.Models;
 using System;
@@ -11,16 +12,14 @@ namespace ShowTime.DataAccess
 {
     public class ShowTimeDbContext : DbContext
     {
+        public ShowTimeDbContext(DbContextOptions<ShowTimeDbContext> options) : base(options) { }
+       
         public DbSet<Festival> Festivals { get; set; } = null!;
         public DbSet<Artist> Artists { get; set; } = null!;
         public DbSet<Lineup> Lineups { get; set; } = null!;
         public DbSet<Booking> Bookings { get; set; } = null!;
         public DbSet<User> Users { get; set; } = null!;
 
-        public ShowTimeDbContext()
-        {
-
-        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

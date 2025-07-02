@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ShowTime.DataAccess.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using ShowTime.DataAccess.Models;
 
 namespace ShowTime.DataAccess.GenericRepository
 {
@@ -63,6 +64,52 @@ namespace ShowTime.DataAccess.GenericRepository
                 {
                     throw new InvalidOperationException("Item not found");
                 }
+            }
+
+            public async Task<T> GetByIdsAsync(object key1, object key2)
+            {
+                return await _context.Set<T>().FirstOrDefaultAsync(e =>
+                    EF.Property<object>(e, "FestivalId").Equals(key1) &&
+                    EF.Property<object>(e, "ArtistId").Equals(key2));
+            }
+
+            public async Task DeleteByIdsAsync(object key1, object key2)
+            {
+                var entity = await _context.Set<T>().FirstOrDefaultAsync(e =>
+                    EF.Property<object>(e, "FestivalId").Equals(key1) &&
+                    EF.Property<object>(e, "ArtistId").Equals(key2));
+
+                if (entity != null)
+                {
+                    _context.Set<T>().Remove(entity);
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            public async Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] include)
+            {
+                IQueryable<T> query = _context.Set<T>();
+
+                foreach (var includeProperty in include)
+                {
+                    query = query.Include(includeProperty);
+                }
+
+                return await query.ToListAsync();
+            }
+
+            public async Task<T> GetByIdsAsync(object key1, object key2, params Expression<Func<T, object>>[] include)
+            {
+                IQueryable<T> query = _context.Set<T>();
+
+                foreach (var includeProperty in include)
+                {
+                    query = query.Include(includeProperty);
+                }
+
+                return await query.FirstOrDefaultAsync(e =>
+                    EF.Property<object>(e, "FestivalId").Equals(key1) &&
+                    EF.Property<object>(e, "ArtistId").Equals(key2));
             }
 
 

@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowTime.Client", "ShowTime
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowTime.DataAccess", "ShowTime.DataAccess\ShowTime.DataAccess.csproj", "{0C5BCC82-F1E2-4E3B-BC6A-546B86F664E2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowTime.BusinessLogic", "ShowTime BusinessLogic\ShowTime.BusinessLogic.csproj", "{884FF6DD-26EC-4370-A9B1-0D8106196FF0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{0C5BCC82-F1E2-4E3B-BC6A-546B86F664E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C5BCC82-F1E2-4E3B-BC6A-546B86F664E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C5BCC82-F1E2-4E3B-BC6A-546B86F664E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{884FF6DD-26EC-4370-A9B1-0D8106196FF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{884FF6DD-26EC-4370-A9B1-0D8106196FF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{884FF6DD-26EC-4370-A9B1-0D8106196FF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{884FF6DD-26EC-4370-A9B1-0D8106196FF0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,7 +1,29 @@
 ﻿@page "/"
-
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="image-slider">
+    <img src="images/Untold.jpg" class="slide-image active" />
+    <img src="images/flight.jpg" class="slide-image" />
+    <img src="images/neversea.jpg" class="slide-image" />
+</div>
 
-Welcome to your new app.
+<script>
+       let index = 0;
+    const slides = document.querySelectorAll(".slide-image");
+
+    function showNextSlide() {
+        const total = slides.length;
+        const current = slides[index];
+        current.classList.remove("active");
+
+        index = (index + 1) % total;
+        const next = slides[index];
+        next.classList.add("active");
+    }
+
+    setInterval(showNextSlide, 10000);
+    window.onload = () => {
+        slides[0].classList.add("active");
+    };
+
+</script>

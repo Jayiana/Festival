@@ -1,0 +1,90 @@
+﻿.add-lineup-page {
+    background: linear-gradient(120deg, #1a0026, #00eaff, #ff00cc);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 60px;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.lineup-form-container {
+    display: flex;
+    width: 90%;
+    max-width: 1100px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+    padding: 20px;
+    margin-bottom: 60px;
+}
+
+.lineup-image-preview {
+    flex: 1;
+    background-color: #120024;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 2px solid #00eaff;
+    padding: 20px;
+    color: #888;
+    font-size: 14px;
+    text-align: center;
+    min-height: 350px;
+}
+
+.lineup-form-section {
+    flex: 1;
+    padding: 30px;
+    color: white;
+}
+
+    .lineup-form-section h2 {
+        margin-bottom: 25px;
+        color: #33ffff;
+        text-align: center;
+        font-size: 28px;
+    }
+
+    .lineup-form-section label {
+        display: block;
+        margin-top: 15px;
+        font-weight: bold;
+        color: #66ffff;
+    }
+
+    .lineup-form-section input.form-control {
+        width: 100%;
+        padding: 10px;
+        border-radius: 10px;
+        background-color: #220033;
+        color: white;
+        border: 1px solid #66ffff;
+        margin-top: 5px;
+    }
+
+        .lineup-form-section input.form-control:focus {
+            outline: none;
+            box-shadow: 0 0 5px #00eaff;
+            border-color: #00eaff;
+        }
+
+.btn-submit {
+    margin-top: 25px;
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(to right, #00eaff, #ff00cc);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+    .btn-submit:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px #00eaff;
+    }

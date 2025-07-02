@@ -1,0 +1,100 @@
+﻿.add-festival-page {
+    background: linear-gradient(120deg, #1a0026, #ff00cc, #00eaff);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 60px;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.festival-form-container {
+    display: flex;
+    width: 90%;
+    max-width: 1100px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(255, 0, 255, 0.3);
+    padding: 20px;
+    margin-bottom: 60px;
+}
+
+.festival-image-preview {
+    flex: 1;
+    background-color: #120024;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 2px solid #ff00ff;
+    padding: 20px;
+    color: #888;
+    font-size: 14px;
+    text-align: center;
+    min-height: 350px;
+}
+
+    .festival-image-preview img {
+        max-width: 100%;
+        max-height: 320px;
+        border-radius: 15px;
+        box-shadow: 0 0 15px #ff00ff;
+        transition: 0.3s ease;
+    }
+
+.festival-form-section {
+    flex: 1;
+    padding: 30px;
+    color: white;
+}
+
+    .festival-form-section h2 {
+        margin-bottom: 25px;
+        color: #ff33cc;
+        text-align: center;
+        font-size: 28px;
+    }
+
+    .festival-form-section label {
+        display: block;
+        margin-top: 15px;
+        font-weight: bold;
+        color: #ff66ff;
+    }
+
+    .festival-form-section input.form-control,
+    .festival-form-section input[type="date"] {
+        width: 100%;
+        padding: 10px;
+        border-radius: 10px;
+        background-color: #220033;
+        color: white;
+        border: 1px solid #ff66ff;
+        margin-top: 5px;
+    }
+
+        .festival-form-section input.form-control:focus,
+        .festival-form-section input[type="date"]:focus {
+            outline: none;
+            box-shadow: 0 0 5px #ff00ff;
+            border-color: #ff00ff;
+        }
+
+.btn-submit {
+    margin-top: 25px;
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(to right, #ff0080, #7928ca);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+    .btn-submit:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px #ff00ff;
+    }

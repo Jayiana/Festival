@@ -1,0 +1,45 @@
+﻿@page "/addartist"
+@inject IArtistService ArtistService
+@inject NavigationManager NavManager
+@using ShowTime_BusinessLogic.Abstractions
+@using ShowTime_BusinessLogic.Dtos
+
+<div class="add-artist-page">
+    <div class="artist-form-container">
+        <div class="artist-image-preview">
+                <p>Paste an image link to preview</p>
+        </div>
+
+        <div class="artist-form-section">
+            <h2>Add New Artist</h2>
+            <EditForm Model="artist" OnValidSubmit="SubmitArtist" FormName="AddArtistF">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <label>Name:</label>
+                <InputText @bind-Value="artist.Name" class="form-control" />
+
+                <label>Genre:</label>
+                <InputText @bind-Value="artist.Genre" class="form-control" />
+
+                <label>Image URL:</label>
+                <InputText @bind-Value="artist.Image" class="form-control" />
+
+                <button class="btn-submit">Add Artist</button>
+            </EditForm>
+
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private ArtistCreateDto artist { get; set; } = new();
+
+    private async Task SubmitArtist()
+    {
+        await ArtistService.AddAsync(artist);
+        artist = new();
+        NavManager.NavigateTo("/artists");
+    }
+}
