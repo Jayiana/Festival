@@ -1,0 +1,58 @@
+﻿@page "/edit/artist/{id:int}"
+@using ShowTime_BusinessLogic.Abstractions
+@using ShowTime_BusinessLogic.Dtos
+@inject IArtistService ArtistService
+@inject NavigationManager NavManager
+
+<div class="edit-page">
+    <div class="edit-form-container">
+        <div class="image-preview">
+            @if (!string.IsNullOrEmpty(artist.Image))
+            {
+                <img src="@artist.Image" alt="Preview" />
+            }
+            else
+            {
+                <p>Paste an image link to preview</p>
+            }
+        </div>
+
+        <div class="edit-form-section">
+            <h2>Edit Artist</h2>
+            <EditForm Model="@artist" OnValidSubmit="Submit" FormName="EditArtistForm">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <label>Name:</label>
+                <InputText @bind-Value="artist.Name" class="form-control" />
+
+                <label>Genre:</label>
+                <InputText @bind-Value="artist.Genre" class="form-control" />
+
+                <label>Image URL:</label>
+                <InputText @bind-Value="artist.Image" class="form-control" />
+
+                <button type="submit" class="btn-submit">Save Changes</button>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int id { get; set; }
+    private ArtistUpdateDto artist = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var existing = await ArtistService.GetByIdAsync(id);
+        artist.Name = existing.Name;
+        artist.Genre = existing.Genre;
+        artist.Image = existing.Image;
+    }
+
+    private async Task Submit()
+    {
+        await ArtistService.UpdateAsync(id, artist);
+        NavManager.NavigateTo("/artists");
+    }
+}

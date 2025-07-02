@@ -1,13 +1,12 @@
-﻿@page "/addfestival"
+﻿@page "/edit/festival/{id:int}"
+@using ShowTime_BusinessLogic.Abstractions
+@using ShowTime_BusinessLogic.Dtos.Festival
 @inject IFestivalService FestivalService
 @inject NavigationManager NavManager
-@using ShowTime_BusinessLogic.Abstractions
-@using ShowTime_BusinessLogic.Dtos
-@using ShowTime_BusinessLogic.Dtos.Festival
 
-<div class="add-festival-page">
-    <div class="festival-form-container">
-        <div class="festival-image-preview">
+<div class="edit-page">
+    <div class="edit-form-container">
+        <div class="image-preview">
             @if (!string.IsNullOrEmpty(festival.SplashArt))
             {
                 <img src="@festival.SplashArt" alt="Preview" />
@@ -18,9 +17,9 @@
             }
         </div>
 
-        <div class="festival-form-section">
-            <h2>Add New Festival</h2>
-            <EditForm Model="festival" OnValidSubmit="SubmitFestival" FormName="AddFestivalForm">
+        <div class="edit-form-section">
+            <h2>Edit Festival</h2>
+            <EditForm Model="@festival" OnValidSubmit="SubmitFestival" FormName="EditFestivalForm">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
@@ -42,21 +41,30 @@
                 <label>SplashArt URL:</label>
                 <InputText @bind-Value="festival.SplashArt" class="form-control" />
 
-                <button class="btn-submit">Add Festival</button>
+                <button type="submit" class="btn-submit">Save Changes</button>
             </EditForm>
         </div>
     </div>
 </div>
 
 @code {
+    [Parameter] public int id { get; set; }
+    private FestivalUpdateDto festival = new();
 
-    [SupplyParameterFromForm]
-    private FestivalCreateDto festival { get; set; } = new();
+    protected override async Task OnInitializedAsync()
+    {
+        var existing = await FestivalService.GetByIdAsync(id);
+        festival.Name = existing.Name;
+        festival.Location = existing.Location;
+        festival.StartDate = existing.StartDate;
+        festival.EndDate = existing.EndDate;
+        festival.Capacity = existing.Capacity;
+        festival.SplashArt = existing.SplashArt;
+    }
 
     private async Task SubmitFestival()
     {
-        await FestivalService.AddAsync(festival);
-        festival = new();
+        await FestivalService.UpdateAsync(id, festival);
         NavManager.NavigateTo("/festivals");
     }
 }

@@ -1,0 +1,48 @@
+﻿@page "/edit/lineup/{festivalId:int}/{artistId:int}"
+@using ShowTime_BusinessLogic.Abstractions
+@using ShowTime_BusinessLogic.Dtos
+@inject ILineupService LineupService
+@inject NavigationManager NavManager
+
+<div class="edit-page">
+    <div class="edit-form-container">
+        <div class="image-preview">
+            <p>Editing Lineup for Festival ID @festivalId and Artist ID @artistId</p>
+        </div>
+
+        <div class="edit-form-section">
+            <h2>Edit Lineup</h2>
+            <EditForm Model="@lineup" OnValidSubmit="SubmitLineup" FormName="EditLineupForm">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <label>Stage:</label>
+                <InputText @bind-Value="lineup.Stage" class="form-control" />
+
+                <label>Start Time:</label>
+                <InputDate @bind-Value="lineup.StartTime" class="form-control" />
+
+                <button type="submit" class="btn-submit">Save Changes</button>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int festivalId { get; set; }
+    [Parameter] public int artistId { get; set; }
+    private LineupUpdateDto lineup = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var existing = await LineupService.GetAsync(festivalId, artistId);
+        lineup.Stage = existing.Stage;
+        lineup.StartTime = existing.StartTime;
+    }
+
+    private async Task SubmitLineup()
+    {
+        await LineupService.UpdateAsync(festivalId, artistId, lineup);
+        NavManager.NavigateTo("/lineups");
+    }
+}

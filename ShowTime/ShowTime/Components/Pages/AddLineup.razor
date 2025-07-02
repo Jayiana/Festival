@@ -12,7 +12,7 @@
 
         <div class="lineup-form-section">
             <h2>Add Lineup</h2>
-            <EditForm Model="lineup" OnValidSubmit="SubmitLineup">
+            <EditForm Model="lineup" OnValidSubmit="SubmitLineup" FormName="AddLineupForm">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
@@ -35,11 +35,13 @@
 </div>
 
 @code {
-    private LineupCreateDto lineup = new();
+    [SupplyParameterFromForm]
+    private LineupCreateDto lineup { get; set; } = new();
 
     private async Task SubmitLineup()
     {
         await LineupService.AddAsync(lineup);
+        lineup = new();
         NavManager.NavigateTo("/lineups");
     }
 }

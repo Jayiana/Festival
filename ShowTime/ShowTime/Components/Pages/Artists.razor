@@ -2,6 +2,7 @@
 @using ShowTime.BusinessLogic
 @using ShowTime_BusinessLogic.Abstractions
 @using ShowTime_BusinessLogic.Dtos
+@rendermode InteractiveServer
 @inject IArtistService ArtistService
 @inject NavigationManager NavManager
 @inject IJSRuntime JS
@@ -77,7 +78,7 @@
 
     private void EditArtist(int id)
     {
-        NavManager.NavigateTo($"/EditArtist/{id}");
+        NavManager.NavigateTo($"/edit/artist/{id}");
     }
 
     private async Task DeleteArtist(int id)
