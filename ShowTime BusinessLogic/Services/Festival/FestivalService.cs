@@ -48,6 +48,28 @@ namespace ShowTime_BusinessLogic.Services
 
         public async Task AddAsync(FestivalCreateDto dto)
         {
+
+            if (string.IsNullOrWhiteSpace(dto.Name))
+                throw new ArgumentException("Festival name cannot be empty.");
+
+            var existingFest = await _festivalRepository
+                .GetAllAsync(); 
+
+            if (existingFest.Any(f => f.Name.ToLower() == dto.Name.ToLower()))
+                throw new ArgumentException($"A festival named '{dto.Name}' already exists.");
+
+            if (dto.StartDate.Date < DateTime.Today)
+                throw new ArgumentException("Start date cannot be in the past.");
+ 
+            if (dto.EndDate <= dto.StartDate)
+                throw new ArgumentException("End date must be after start date.");
+
+            if (string.IsNullOrWhiteSpace(dto.Location))
+                throw new ArgumentException("Location cannot be empty.");
+
+            if (dto.Capacity <= 0)
+                throw new ArgumentException("Capacity must be a positive number.");
+
             var fest = new Festival
             {
                 Name = dto.Name,
@@ -57,8 +79,10 @@ namespace ShowTime_BusinessLogic.Services
                 SplashArt = dto.SplashArt,
                 Capacity = dto.Capacity
             };
+
             await _festivalRepository.AddAsync(fest);
         }
+
 
         public async Task UpdateAsync(int id, FestivalUpdateDto dto)
         {

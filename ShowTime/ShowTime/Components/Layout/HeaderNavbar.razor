@@ -2,38 +2,12 @@
     <div class="logo">
         <img src="/images/festival_logo.png" alt="ShowTime" />
     </div>
+
     <div class="nav-links">
         <a href="/" class="nav-link"><i class="fas fa-house"></i> Home</a>
-
-        <div class="dropdown">
-            <a class="nav-link dropdown-toggle"><i class="fas fa-microphone"></i> Artists <i class="fas fa-caret-down"></i></a>
-            <div class="dropdown-content">
-                <a href="/artists">View All Artists</a>
-                <a href="/addartist">Add Artist</a>
-                <a href="/modifyartist">Modify Artist</a>
-                <a href="/deleteartist">Delete Artist</a>
-            </div>
-        </div>
-
-        <div class="dropdown">
-            <a class="nav-link dropdown-toggle"><i class="fas fa-music"></i> Festivals <i class="fas fa-caret-down"></i></a>
-            <div class="dropdown-content">
-                <a href="/festivals">View All Festivals</a>
-                <a href="/addfestival">Add Festival</a>
-                <a href="/modifyfestival">Modify Festival</a>
-                <a href="/deletefestival">Delete Festival</a>
-            </div>
-        </div>
-
-        <div class="dropdown">
-            <a class="nav-link dropdown-toggle"><i class="fas fa-users"></i> Lineup <i class="fas fa-caret-down"></i></a>
-            <div class="dropdown-content">
-                <a href="/lineups">View All Lineups</a>
-                <a href="/addlineup">Add Lineup</a>
-                <a href="/modifylineup">Modify Lineup</a>
-                <a href="/deletelineup">Delete Lineup</a>
-            </div>
-        </div>
+        <a href="/artists" class="nav-link"><i class="fas fa-microphone"></i> Artists</a>
+        <a href="/festivals" class="nav-link"><i class="fas fa-music"></i> Festivals</a>
+        <AuthorizeView Roles="Administrator"><Authorized> <a href="/lineups" class="nav-link"><i class="fas fa-users"></i> Lineups</a></Authorized></AuthorizeView>
 
         <input type="text" placeholder="Search artists/festivals..." class="search-bar" />
     </div>
@@ -42,3 +16,4 @@
         <button class="btn login-btn">Log in</button>
     </div>
 </nav>
+

@@ -1,0 +1,93 @@
+﻿@page "/register"
+
+<div class="auth-box text-center">
+    <div class="titlu">
+        <img src="/SiteImages/OtherPages/titlu.png" alt="ShowTime">
+    </div>
+
+    <div class="box">
+        <EditForm Model="registerModel" OnValidSubmit="HandleRegister" FormName="RegisterForm">
+            <h1>🎤 Join the ShowTime Festival</h1>
+
+            @if (registerFailed)
+            {
+                <p class="error">❌ Passwords don't match or fields are incomplete.</p>
+            }
+
+            <div class="inputBox">
+                <InputText @bind-Value="registerModel.Username" id="usernameField" required />
+                <span>Username</span>
+                <i class="fa fa-user"></i>
+            </div>
+
+            <div class="inputBox">
+                <InputText @bind-Value="registerModel.Email" id="emailField" required />
+                <span>Email</span>
+                <i class="fa fa-envelope"></i>
+            </div>
+
+            <div class="inputBox">
+                <InputText @bind-Value="registerModel.Password" type="password" id="passwordField" required />
+                <span>Password</span>
+                <i class="fa fa-lock"></i>
+            </div>
+
+            <div class="inputBox">
+                <InputText @bind-Value="registerModel.ConfirmPassword" type="password" id="confirmPasswordField" required />
+                <span>Confirm Password</span>
+                <i class="fa fa-lock"></i>
+            </div>
+
+            <div class="links">
+                <p>🎧 Already part of the tribe? <a href="/login">Log In here.</a></p>
+            </div>
+
+            <button type="submit">✨ Register</button>
+
+            <p class="or">Or Sign Up with:</p>
+
+            <div class="social-icons">
+                <div class="social-icon instagram"><a href="#"><i class="fa fa-instagram"></i></a></div>
+                <div class="social-icon facebook"><a href="#"><i class="fa fa-facebook"></i></a></div>
+                <div class="social-icon google"><a href="#"><i class="fa fa-google"></i></a></div>
+                <div class="social-icon linkedin"><a href="#"><i class="fa fa-linkedin"></i></a></div>
+            </div>
+
+            <audio autoplay loop id="audio">
+                <source src="/SiteMedia/BlackPantherLoginTheme.mp3" type="audio/mpeg">
+            </audio>
+
+            <div class="sound-toggle">
+                <label for="mutesound">🔊 Enable Sound</label>
+                <input type="checkbox" id="mutesound" checked onclick="EnableAudio()" />
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private RegisterModel registerModel = new();
+    private bool registerFailed;
+
+    private async Task HandleRegister()
+    {
+        if (registerModel.Password != registerModel.ConfirmPassword ||
+            string.IsNullOrWhiteSpace(registerModel.Email) ||
+            string.IsNullOrWhiteSpace(registerModel.Username))
+        {
+            registerFailed = true;
+            return;
+        }
+
+        registerFailed = false;
+
+    }
+
+    public class RegisterModel
+    {
+        public string Username { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
+}

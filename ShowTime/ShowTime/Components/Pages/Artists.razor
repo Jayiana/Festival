@@ -8,16 +8,29 @@
 @inject IJSRuntime JS
 
 
+<div class="festival-light-strip"></div>
+
 <div class="artists-page">
-    <h2 class="section-title">Browse Artists</h2>
+    <div class="animated-notes">🎤 🎧 🎸 🎶</div>
+
+    <h2 class="section-title festival-glow">🎆 Browse Artists 🎆</h2>
+
+    <div class="festival-banner">
+        <p>Feel the Beat. Discover the Stars. 💫</p>
+    </div>
 
     @if (pagedArtists.Count == 0)
     {
-        <p>No artists registered!</p>
+        <p class="empty-msg">No artists registered yet... 🕶️</p>
     }
     else
     {
         <div class="artist-grid">
+            <div class="artist-card add-new-card" @onclick="NavigateToAddArtist">
+                <div class="add-icon">+</div>
+                <p>Add Artist</p>
+            </div>
+
             @foreach (var artist in pagedArtists)
             {
                 <div class="artist-card">
@@ -92,5 +105,11 @@
             ChangePage(currentPage);
         }
     }
+
+    private void NavigateToAddArtist()
+    {
+        NavManager.NavigateTo("/addartist");
+    }
+
 
 }

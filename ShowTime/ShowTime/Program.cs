@@ -1,4 +1,5 @@
 
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using ShowTime.Client.Pages;
 using ShowTime.Components;
@@ -6,6 +7,7 @@ using ShowTime.DataAccess;
 using ShowTime.DataAccess.GenericRepository;
 using ShowTime.DataAccess.Models;
 using ShowTime_BusinessLogic.Abstractions;
+using ShowTime_BusinessLogic.Dtos;
 using ShowTime_BusinessLogic.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +15,19 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options => {
+        options.Cookie.Name = "auth-token";
+        options.LoginPath = "/login";
+        options.AccessDeniedPath = "/access-denied";
+        options.ExpireTimeSpan = TimeSpan.FromHours(1);
+    }
+    );
+
+builder.Services.AddAuthorization();
+builder.Services.AddCascadingAuthenticationState();
+
 
 var connectionString = builder.Configuration.GetConnectionString("ShowTimeContext");
 builder.Services.AddDbContext<ShowTimeDbContext>(options => options.UseSqlServer(connectionString));
@@ -26,7 +41,8 @@ builder.Services.AddTransient<IFestivalService, FestivalService>();
 builder.Services.AddTransient<IRepository<Lineup>, GenericRepository<Lineup>>();
 builder.Services.AddTransient<ILineupService, LineupService>();
 
-
+builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IRepository<User>, GenericRepository<User>>();
 
 var app = builder.Build();
 
@@ -46,6 +62,8 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()

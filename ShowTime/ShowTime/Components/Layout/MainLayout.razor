@@ -3,13 +3,12 @@
 <HeaderNavbar />
 
 <div class="layout-wrapper">
-    <main class="main-content">
+    <AuthorizeView>
+        <NotAuthorized><a href="/login">Login</a></NotAuthorized>
+    </AuthorizeView>
+    <div class="main-content">
         @Body
-    </main>
-    <footer class="festival-footer">
-      
-    </footer>
+    </div>
 </div>
-
 
 <Footer />

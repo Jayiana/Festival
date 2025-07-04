@@ -2,54 +2,62 @@
 @inject IFestivalService FestivalService
 @inject NavigationManager NavManager
 @using ShowTime_BusinessLogic.Abstractions
-@using ShowTime_BusinessLogic.Dtos
 @using ShowTime_BusinessLogic.Dtos.Festival
 
-<div class="add-festival-page">
-    <div class="festival-form-container">
-        <div class="festival-image-preview">
+<div class="festival-background">
+    <h1 class="festival-title">🎉 Add New Festival 🎉</h1>
+    <p class="festival-subtitle">Register a brand-new event for our electrifying festival season!</p>
+    <div class="festival-decor-icons">
+        <span>🎵</span>
+        <span>🎤</span>
+        <span>🎧</span>
+        <span>🎪</span>
+        <span>🎆</span>
+    </div>
+
+    <div class="festival-form-wrapper">
+        <div class="festival-image-section">
             @if (!string.IsNullOrEmpty(festival.SplashArt))
             {
-                <img src="@festival.SplashArt" alt="Preview" />
+                <img src="@festival.SplashArt" alt="Festival Preview" />
             }
             else
             {
-                <p>Paste an image link to preview</p>
+                <p class="preview-text">Paste an image link to preview</p>
             }
         </div>
 
         <div class="festival-form-section">
-            <h2>Add New Festival</h2>
+            <h2>📅 Festival Details</h2>
             <EditForm Model="festival" OnValidSubmit="SubmitFestival" FormName="AddFestivalForm">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
-                <label>Name:</label>
+                <label>🏷️ Name:</label>
                 <InputText @bind-Value="festival.Name" class="form-control" />
 
-                <label>Location:</label>
+                <label>📍 Location:</label>
                 <InputText @bind-Value="festival.Location" class="form-control" />
 
-                <label>Start Date:</label>
+                <label>🚀 Start Date:</label>
                 <InputDate @bind-Value="festival.StartDate" class="form-control" />
 
-                <label>End Date:</label>
+                <label>🎯 End Date:</label>
                 <InputDate @bind-Value="festival.EndDate" class="form-control" />
 
-                <label>Capacity:</label>
+                <label>👥 Capacity:</label>
                 <InputNumber @bind-Value="festival.Capacity" class="form-control" />
 
-                <label>SplashArt URL:</label>
-                <InputText @bind-Value="festival.SplashArt" class="form-control" />
+                <label>🌄 SplashArt URL:</label>
+                <InputText @bind-Value="festival.SplashArt" class="form-control" @oninput="PreviewImage" />
 
-                <button class="btn-submit">Add Festival</button>
+                <button class="btn-festival-submit">Add Festival</button>
             </EditForm>
         </div>
     </div>
 </div>
 
 @code {
-
     [SupplyParameterFromForm]
     private FestivalCreateDto festival { get; set; } = new();
 
@@ -58,5 +66,12 @@
         await FestivalService.AddAsync(festival);
         festival = new();
         NavManager.NavigateTo("/festivals");
+    }
+
+    private void PreviewImage(ChangeEventArgs e)
+    {
+        var url = festival.SplashArt?.Trim();
+        if (string.IsNullOrWhiteSpace(url))
+            return;
     }
 }

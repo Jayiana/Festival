@@ -127,3 +127,117 @@
     .delete-btn:hover {
         background: #ff2e63;
     }
+
+
+    /*+*/
+.add-new-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px dashed #ff00cc;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #ff00cc;
+    font-size: 2.5rem;
+    font-weight: bold;
+    box-shadow: 0 0 10px #ff00cc;
+}
+
+    .add-new-card:hover {
+        background: rgba(255, 0, 204, 0.1);
+        transform: scale(1.05);
+    }
+
+    .add-new-card p {
+        font-size: 1rem;
+        color: #ffccff;
+        margin-top: 8px;
+    }
+
+.add-icon {
+    font-size: 3rem;
+    line-height: 1;
+}
+
+/*glow effect*/
+.festival-glow {
+    text-shadow: 0 0 12px #ffe600, 0 0 24px #ff00cc;
+    animation: glowText 2s infinite alternate;
+}
+
+@keyframes glowText {
+    from {
+        text-shadow: 0 0 10px #ffe600;
+    }
+
+    to {
+        text-shadow: 0 0 20px #ff33ff;
+    }
+}
+
+.animated-notes {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    animation: floatNotes 3s infinite ease-in-out;
+}
+
+@keyframes floatNotes {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+.festival-banner {
+    background: linear-gradient(to right, #ff00cc, #ff9900);
+    padding: 1rem;
+    text-align: center;
+    border-radius: 12px;
+    margin: 1rem auto 2rem;
+    width: 80%;
+    font-weight: bold;
+    color: white;
+    box-shadow: 0 0 12px #ff33cc;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.festival-light-strip {
+    height: 6px;
+    background: repeating-linear-gradient( to right, #ff00cc, #ff00cc 10px, #000 10px, #000 20px );
+    animation: blinkLine 2s infinite linear;
+}
+
+@keyframes blinkLine {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.empty-msg {
+    text-align: center;
+    font-size: 1.4rem;
+    color: #ffcccc;
+    margin-top: 2rem;
+}
+
+
+

@@ -5,30 +5,46 @@
 @using ShowTime_BusinessLogic.Dtos
 
 <div class="add-lineup-page">
-    <div class="lineup-form-container">
-        <div class="lineup-image-preview">
-            <p>Assign an artist to a festival</p>
+    <h1 class="lineup-title">🎶 Add Artist to Festival Lineup 🎶</h1>
+    <p class="lineup-subtitle">Schedule performances and manage stage time like a true showrunner!</p>
+    <div class="lineup-decor-icons">
+        <span>🎤</span>
+        <span>🌟</span>
+        <span>🎧</span>
+        <span>⏱️</span>
+        <span>🎵</span>
+    </div>
+
+    <div class="lineup-form-wrapper">
+        <div class="lineup-image-box">
+            <p class="preview-text">Assign an artist to a festival</p>
         </div>
 
         <div class="lineup-form-section">
-            <h2>Add Lineup</h2>
+            <h2>📋 Lineup Form</h2>
             <EditForm Model="lineup" OnValidSubmit="SubmitLineup" FormName="AddLineupForm">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
-                <label>Festival ID:</label>
+                <label>🏟️ Festival ID:</label>
                 <InputNumber @bind-Value="lineup.FestivalId" class="form-control" />
 
-                <label>Artist ID:</label>
+                <label>🎤 Artist ID:</label>
                 <InputNumber @bind-Value="lineup.ArtistId" class="form-control" />
 
-                <label>Stage:</label>
+                <label>🎪 Stage:</label>
                 <InputText @bind-Value="lineup.Stage" class="form-control" />
 
-                <label>Start Time:</label>
+                <label>⏰ Start Time:</label>
                 <InputDate @bind-Value="lineup.StartTime" class="form-control" />
 
-                <button class="btn-submit">Add Lineup</button>
+                <div class="lineup-tags">
+                    <span class="tag-badge">🔥 Headline</span>
+                    <span class="tag-badge">🎧 DJ Set</span>
+                    <span class="tag-badge">🎸 Live Band</span>
+                </div>
+
+                <button class="btn-lineup-submit">Add Lineup</button>
             </EditForm>
         </div>
     </div>

@@ -90,55 +90,6 @@
     }
 
 
-/*dropdown*/
-
-.festival-navbar .dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.festival-navbar .dropdown-content {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: linear-gradient(to right, #3a0073, #a100d4);
-    border-radius: 10px;
-    padding: 0.8rem;
-    z-index: 999;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
-    animation: fadeIn 0.3s ease-in-out;
-}
-
-.festival-navbar .dropdown:hover .dropdown-content {
-    display: block;
-}
-
-.festival-navbar .dropdown-content a {
-    display: block;
-    padding: 0.4rem 1rem;
-    color: white;
-    text-decoration: none;
-    font-weight: 600;
-    transition: background 0.3s ease;
-}
-
-    .festival-navbar .dropdown-content a:hover {
-        background-color: rgba(255, 255, 255, 0.15);
-        border-radius: 5px;
-    }
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 
 
 

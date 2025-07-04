@@ -19,6 +19,14 @@
     <Routes />
     <script src="_framework/blazor.web.js"></script>
     <script src="https://kit.fontawesome.com/00c1842099.js"></script>
+    <script>
+        function playAddSound() {
+            const audio = document.getElementById("add-sound");
+            if (audio) {
+                audio.play();
+            }
+        }
+    </script>
 </body>
 
 </html>

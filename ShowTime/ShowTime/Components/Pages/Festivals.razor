@@ -1,7 +1,10 @@
 ﻿@page "/festivals"
 @using ShowTime_BusinessLogic.Abstractions
 @using ShowTime_BusinessLogic.Dtos.Festival
+@rendermode InteractiveServer
 @inject IFestivalService FestivalService
+@inject NavigationManager NavManager
+@inject IJSRuntime JS
 
 <div class="festivals-page">
     <h2 class="section-title">Upcoming Festivals</h2>
@@ -13,9 +16,23 @@
     else
     {
         <div class="festival-grid">
+            <div class="festival-card add-new-card" @onclick="@(() => NavManager.NavigateTo("/addfestival"))">
+                <div class="add-icon">+</div>
+                <p>Add Festival</p>
+            </div>
+
             @foreach (var fest in festivals)
             {
                 <div class="festival-card">
+                    <div class="festival-actions">
+                        <button class="edit-btn" @onclick="() => EditFestival(fest.Id)">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <button class="delete-btn" @onclick="() => DeleteFestival(fest.Id)">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+
                     <img src="@fest.SplashArt" alt="@fest.Name" />
                     <h5>@fest.Name</h5>
                     <p><strong>@fest.Location</strong></p>
@@ -24,6 +41,7 @@
                 </div>
             }
         </div>
+
     }
 </div>
 
@@ -34,4 +52,20 @@
     {
         festivals = await FestivalService.GetAllAsync();
     }
+
+    private void EditFestival(int id)
+    {
+        NavManager.NavigateTo($"/edit/festival/{id}");
+    }
+
+    private async Task DeleteFestival(int id)
+    {
+        bool confirmed = await JS.InvokeAsync<bool>("confirm", $"Are you sure you want to delete this festival?");
+        if (confirmed)
+        {
+            await FestivalService.DeleteAsync(id);
+            festivals = await FestivalService.GetAllAsync();
+        }
+    }
 }
+

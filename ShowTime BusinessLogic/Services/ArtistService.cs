@@ -65,6 +65,31 @@ namespace ShowTime_BusinessLogic.Services
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(obj.Name))
+                    throw new ArgumentException("Artist name is required.");
+
+                if (obj.Name.All(char.IsDigit))
+                    throw new ArgumentException("Artist name cannot be only numbers.");
+
+                if (obj.Name.Length < 2)
+                    throw new ArgumentException("Artist name must be at least 2 characters.");
+
+                if (string.IsNullOrWhiteSpace(obj.Genre))
+                    throw new ArgumentException("Genre is required.");
+
+                if (obj.Genre.Length < 2)
+                    throw new ArgumentException("Genre must be at least 2 characters.");
+
+                if (!obj.Genre.All(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c) || "-&".Contains(c)))
+                    throw new ArgumentException("Genre contains invalid characters.");
+
+                if (string.IsNullOrWhiteSpace(obj.Image) || !Uri.TryCreate(obj.Image, UriKind.Absolute, out var _))
+                    throw new ArgumentException("Image must be a valid URL.");
+
+                var allArtists = await _artistRepository.GetAllAsync();
+                if (allArtists.Any(a => a.Name.ToLower() == obj.Name.ToLower()))
+                    throw new InvalidOperationException("An artist with this name already exists.");
+
                 var artist = new Artist
                 {
                     Name = obj.Name,
@@ -74,11 +99,12 @@ namespace ShowTime_BusinessLogic.Services
 
                 await _artistRepository.AddAsync(artist);
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
-                    throw new Exception("An error occured while adding the artist", ex);
+                throw new Exception("An error occurred while adding the artist", ex);
             }
         }
+
 
         public async Task UpdateAsync(int id, ArtistUpdateDto obj)
         {
