@@ -1,22 +1,30 @@
 ﻿using ShowTime.DataAccess.GenericRepository;
+using ShowTime.DataAccess.Models.ArtistInfo;
+using ShowTime.DataAccess.Models.FestivalInfo;
+using ShowTime.DataAccess.Models.LineupInfo;
 using ShowTime_BusinessLogic.Abstractions;
 using ShowTime_BusinessLogic.Dtos;
-using ShowTime.DataAccess.Models.LineupInfo;
 
 namespace ShowTime_BusinessLogic.Services
 {
     public class LineupService : ILineupService
     {
         private readonly IRepository<Lineup> _lineupRepository;
+        private readonly IRepository<Festival> _festivalRepository;
+        private readonly IRepository<Artist> _artistRepository;
 
-        public LineupService(IRepository<Lineup> lineupRepository)
+        public LineupService(IRepository<Lineup> lineupRepository,
+                     IRepository<Festival> festivalRepository,
+                     IRepository<Artist> artistRepository)
         {
             _lineupRepository = lineupRepository;
+            _festivalRepository = festivalRepository;
+            _artistRepository = artistRepository;
         }
 
         public async Task<IList<LineupGetDto>> GetAllAsync()
         {
-            var lineups = await _lineupRepository.GetAllAsync(x => x.Festival, x => x.Artist);
+            var lineups = await _lineupRepository.GetAllAsync(x => x.Festival, y => y.Artist);
             return lineups.Select(l => new LineupGetDto
             {
                 FestivalId = l.FestivalId,
@@ -32,9 +40,11 @@ namespace ShowTime_BusinessLogic.Services
             }).ToList();
         }
 
-        public async Task<LineupGetDto> GetAsync(int festivalId, int artistId)
+        public async Task<LineupGetDto?> GetAsync(int festivalId, int artistId)
         {
-            var lineup = await _lineupRepository.GetByIdsAsync(festivalId, artistId, x => x.Festival, x => x.Artist);
+            var lineup = await _lineupRepository.GetByIdsAsync(festivalId, artistId, x => x.Festival, y => y.Artist);
+            if (lineup == null) return null;
+
             return new LineupGetDto
             {
                 FestivalId = lineup.FestivalId,
@@ -58,16 +68,12 @@ namespace ShowTime_BusinessLogic.Services
             if (dto.ArtistId <= 0)
                 throw new ArgumentException("Artist ID must be a positive integer.");
 
-            var allFestivals = await _lineupRepository.GetAllAsync(x => x.Festival);
-            var allArtists = await _lineupRepository.GetAllAsync(x => x.Artist);
-
-            bool festivalExists = allFestivals.Any(l => l.FestivalId == dto.FestivalId);
-            bool artistExists = allArtists.Any(l => l.ArtistId == dto.ArtistId);
-
-            if (!festivalExists)
+            var festival = await _festivalRepository.GetByIdAsync(dto.FestivalId);
+            if (festival == null)
                 throw new ArgumentException("Festival ID does not exist.");
 
-            if (!artistExists)
+            var artist = await _artistRepository.GetByIdAsync(dto.ArtistId);
+            if (artist == null)
                 throw new ArgumentException("Artist ID does not exist.");
 
             if (dto.StartTime < DateTime.Now)
@@ -95,9 +101,14 @@ namespace ShowTime_BusinessLogic.Services
             await _lineupRepository.AddAsync(entity);
         }
 
+
         public async Task UpdateAsync(int festivalId, int artistId, LineupUpdateDto dto)
         {
-            var entity = await _lineupRepository.GetByIdsAsync(festivalId, artistId);
+            var entity = await _lineupRepository.GetByIdsAsync(artistId, festivalId);
+
+            if (entity == null)
+                throw new InvalidOperationException("The lineup to update was not found.");
+
             entity.Stage = dto.Stage;
             entity.StartTime = dto.StartTime;
             entity.IsMainStage = dto.IsMainStage;
@@ -107,6 +118,7 @@ namespace ShowTime_BusinessLogic.Services
 
             await _lineupRepository.UpdateAsync(entity);
         }
+
 
         public async Task DeleteAsync(int festivalId, int artistId)
         {

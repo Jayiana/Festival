@@ -70,6 +70,13 @@
                     <span class="tag">🎉 Event</span>
                     <span class="tag">🎶 Music</span>
                 </div>
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="error-message">
+                        <span class="error-icon">⚠️</span>
+                        @errorMessage
+                    </div>
+                }
                 <button type="submit" class="btn-submit festival-btn">Save Changes</button>
             </EditForm>
         </div>
@@ -82,28 +89,55 @@
 @code {
     [Parameter] public int id { get; set; }
     private FestivalUpdateDto festival = new();
+    private string? errorMessage;
 
     protected override async Task OnInitializedAsync()
     {
-        var existing = await FestivalService.GetByIdAsync(id);
-        festival.Name = existing.Name;
-        festival.Location = existing.Location;
-        festival.StartDate = existing.StartDate;
-        festival.EndDate = existing.EndDate;
-        festival.Capacity = existing.Capacity;
-        festival.SplashArt = existing.SplashArt;
-        festival.Theme = existing.Theme;
-        festival.IsIndoor = existing.IsIndoor;
-        festival.HasCamping = existing.HasCamping;
-        festival.HasFoodCourt = existing.HasFoodCourt;
-        festival.HasAfterParty = existing.HasAfterParty;
-        festival.Rating = existing.Rating;
-        festival.Description = existing.Description;
+        try
+        {
+            Console.WriteLine($"[EditFestival] Loading festival with ID: {id}");
+            var existing = await FestivalService.GetByIdAsync(id);
+            Console.WriteLine($"[EditFestival] Loaded festival: {existing.Name}");
+            
+            festival.Name = existing.Name;
+            festival.Location = existing.Location;
+            festival.StartDate = existing.StartDate;
+            festival.EndDate = existing.EndDate;
+            festival.Capacity = existing.Capacity;
+            festival.SplashArt = existing.SplashArt;
+            festival.Theme = existing.Theme;
+            festival.IsIndoor = existing.IsIndoor;
+            festival.HasCamping = existing.HasCamping;
+            festival.HasFoodCourt = existing.HasFoodCourt;
+            festival.HasAfterParty = existing.HasAfterParty;
+            festival.Rating = existing.Rating;
+            festival.Description = existing.Description;
+            
+            Console.WriteLine($"[EditFestival] Festival data loaded successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[EditFestival ERROR] Failed to load festival: {ex.Message}");
+            errorMessage = $"Failed to load festival: {ex.Message}";
+        }
     }
 
     private async Task SubmitFestival()
     {
-        await FestivalService.UpdateAsync(id, festival);
-        NavManager.NavigateTo("/festivals");
+        try
+        {
+            Console.WriteLine($"[EditFestival] Submitting festival with ID: {id}");
+            Console.WriteLine($"[EditFestival] Festival data: Name={festival.Name}, Location={festival.Location}");
+            
+            await FestivalService.UpdateAsync(id, festival);
+            Console.WriteLine($"[EditFestival] Update successful, navigating to /festivals");
+            NavManager.NavigateTo("/festivals");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[EditFestival ERROR] {ex.Message}");
+            errorMessage = ex.Message;
+            StateHasChanged();
+        }
     }
 }

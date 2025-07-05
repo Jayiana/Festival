@@ -56,27 +56,66 @@
     }
 
     .edit-form-section label {
-        display: block;
-        margin-top: 15px;
-        font-weight: bold;
-        color: #ff66ff;
-    }
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+    color: #ff66ff;
+}
 
-    .edit-form-section input.form-control,
-    .edit-form-section select.form-control {
-        width: 100%;
-        padding: 10px;
-        border-radius: 10px;
-        background-color: #220033;
-        color: white;
-        border: 1px solid #ff66ff;
-        margin-top: 5px;
-    }
+.label-icon {
+    margin-right: 8px;
+    font-size: 1.1em;
+    vertical-align: middle;
+}
+
+            .edit-form-section input.form-control,
+        .edit-form-section select.form-control {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #220033;
+            color: white;
+            border: 1px solid #ff66ff;
+            margin-top: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .edit-form-section input.form-control:hover,
+        .edit-form-section select.form-control:hover {
+            border-color: #ff00ff;
+            box-shadow: 0 0 8px rgba(255, 0, 255, 0.3);
+        }
 
         .edit-form-section input.form-control:focus,
-        .edit-form-section select.form-control:focus {
+        .edit-form-section select.form-control:focus,
+        .edit-form-section textarea.form-control:focus {
             outline: none;
             box-shadow: 0 0 5px #ff00ff;
+            border-color: #ff00ff;
+        }
+
+        .edit-form-section textarea.form-control {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #220033;
+            color: white;
+            border: 1px solid #ff66ff;
+            margin-top: 5px;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .edit-form-section input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+            accent-color: #ff00ff;
+            cursor: pointer;
+        }
+
+        .edit-form-section input[type="checkbox"]:checked {
+            background-color: #ff00ff;
             border-color: #ff00ff;
         }
 
@@ -190,4 +229,21 @@
   font-size: 2rem;
   color: #ff00cc;
   opacity: 0.7;
+}
+
+.error-message {
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid #ff0000;
+  color: #ff6666;
+  padding: 10px;
+  border-radius: 8px;
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.error-icon {
+  font-size: 16px;
 }

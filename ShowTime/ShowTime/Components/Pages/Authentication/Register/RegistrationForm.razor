@@ -1,4 +1,10 @@
 ﻿@page "/register"
+@using ShowTime_BusinessLogic.Dtos.Authentication.Register
+@using ShowTime_BusinessLogic.Services
+@inject IUserService UserService
+@inject NavigationManager Navigation
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
 
 <div class="auth-container">
     <!-- Enhanced Animated Background Elements -->
@@ -120,7 +126,7 @@
                 </div>
             </div>
 
-            <EditForm Model="registerModel" OnValidSubmit="HandleRegister" FormName="RegisterForm">
+            <EditForm Model="registerDto" OnValidSubmit="HandleRegister" FormName="RegisterForm">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
@@ -134,28 +140,21 @@
 
                 <div class="form-group">
                     <div class="inputBox">
-                        <InputText @bind-Value="registerModel.Username" id="usernameField" required />
-                        <i class="fa fa-user"></i>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="inputBox">
-                        <InputText @bind-Value="registerModel.Email" id="emailField" required />
+                        <InputText @bind-Value="registerDto.Email" id="emailField" required />
                         <i class="fa fa-envelope"></i>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="inputBox">
-                        <InputText @bind-Value="registerModel.Password" type="password" id="passwordField" required />
+                        <InputText @bind-Value="registerDto.Password" type="password" id="passwordField" required />
                         <i class="fa fa-lock"></i>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="inputBox">
-                        <InputText @bind-Value="registerModel.ConfirmPassword" type="password" id="confirmPasswordField" required />
+                        <InputText @bind-Value="registerDto.ConfirmPassword" type="password" id="confirmPasswordField" required />
                         <i class="fa fa-lock"></i>
                     </div>
                 </div>
@@ -223,27 +222,44 @@
 </div>
 
 @code {
-    private RegisterModel registerModel = new();
+    private RegisterDto registerDto = new();
     private bool registerFailed;
+    private string? registerMessage;
 
     private async Task HandleRegister()
     {
-        if (registerModel.Password != registerModel.ConfirmPassword ||
-            string.IsNullOrWhiteSpace(registerModel.Email) ||
-            string.IsNullOrWhiteSpace(registerModel.Username))
+        registerFailed = false;
+        registerMessage = null;
+
+        if (registerDto.Password != registerDto.ConfirmPassword ||
+            string.IsNullOrWhiteSpace(registerDto.Email))
         {
             registerFailed = true;
+            registerMessage = "Passwords don't match or fields are incomplete.";
             return;
         }
 
-        registerFailed = false;
-    }
+        try
+        {
+            var response = await UserService.RegisterAsync(registerDto);
 
-    public class RegisterModel
-    {
-        public string Username { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-        public string ConfirmPassword { get; set; } = string.Empty;
+            if (response.Success)
+            {
+                registerMessage = "Account created! Redirecting to login...";
+                await Task.Delay(2000);
+                Navigation.NavigateTo("/login");
+            }
+            else
+            {
+                registerFailed = true;
+                registerMessage = $"Registration failed: {response.Message}";
+            }
+        }
+        catch (Exception ex)
+        {
+            registerFailed = true;
+            registerMessage = $"Registration error: {ex.Message}";
+        }
     }
 }
+

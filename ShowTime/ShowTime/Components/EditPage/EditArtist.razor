@@ -70,6 +70,13 @@
                     <span class="tag">🎵 Music</span>
                     <span class="tag">🎭 Performance</span>
                 </div>
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="error-message">
+                        <span class="error-icon">⚠️</span>
+                        @errorMessage
+                    </div>
+                }
                 <button type="submit" class="btn-submit festival-btn">Save Changes</button>
             </EditForm>
         </div>
@@ -82,28 +89,55 @@
 @code {
     [Parameter] public int id { get; set; }
     private ArtistUpdateDto artist = new();
+    private string? errorMessage;
 
     protected override async Task OnInitializedAsync()
     {
-        var existing = await ArtistService.GetByIdAsync(id);
-        artist.Name = existing.Name;
-        artist.Genre = existing.Genre;
-        artist.Image = existing.Image;
-        artist.Rating = existing.Rating;
-        artist.IsTrending = existing.IsTrending;
-        artist.TrendingReason = existing.TrendingReason;
-        artist.Origin = existing.Origin;
-        artist.Description = existing.Description;
-        artist.Instagram = existing.Instagram;
-        artist.YouTube = existing.YouTube;
-        artist.FansCount = existing.FansCount;
-        artist.DebutYear = existing.DebutYear;
-        artist.Category = existing.Category;
+        try
+        {
+            Console.WriteLine($"[EditArtist] Loading artist with ID: {id}");
+            var existing = await ArtistService.GetByIdAsync(id);
+            Console.WriteLine($"[EditArtist] Loaded artist: {existing.Name}");
+            
+            artist.Name = existing.Name;
+            artist.Genre = existing.Genre;
+            artist.Image = existing.Image;
+            artist.Rating = existing.Rating;
+            artist.IsTrending = existing.IsTrending;
+            artist.TrendingReason = existing.TrendingReason;
+            artist.Origin = existing.Origin;
+            artist.Description = existing.Description;
+            artist.Instagram = existing.Instagram;
+            artist.YouTube = existing.YouTube;
+            artist.FansCount = existing.FansCount;
+            artist.DebutYear = existing.DebutYear;
+            artist.Category = existing.Category;
+            
+            Console.WriteLine($"[EditArtist] Artist data loaded successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[EditArtist ERROR] Failed to load artist: {ex.Message}");
+            errorMessage = $"Failed to load artist: {ex.Message}";
+        }
     }
 
     private async Task Submit()
     {
-        await ArtistService.UpdateAsync(id, artist);
-        NavManager.NavigateTo("/artists");
+        try
+        {
+            Console.WriteLine($"[EditArtist] Submitting artist with ID: {id}");
+            Console.WriteLine($"[EditArtist] Artist data: Name={artist.Name}, Genre={artist.Genre}, Image={artist.Image}");
+            
+            await ArtistService.UpdateAsync(id, artist);
+            Console.WriteLine($"[EditArtist] Update successful, navigating to /artists");
+            NavManager.NavigateTo("/artists");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[EditArtist ERROR] {ex.Message}");
+            errorMessage = ex.Message;
+            StateHasChanged();
+        }
     }
 }

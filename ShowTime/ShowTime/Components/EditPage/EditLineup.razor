@@ -16,7 +16,48 @@
     </div>
     <div class="edit-form-container">
         <div class="image-preview">
-            <p>Editing Lineup for Festival ID @festivalId and Artist ID @artistId</p>
+            <div class="lineup-preview">
+                <div class="preview-header">
+                    <h3>🎪 Lineup Preview</h3>
+                    <div class="preview-badges">
+                        <span class="preview-badge">🎤 @lineup.Stage</span>
+                        <span class="preview-badge">⏰ @lineup.StartTime.ToString("HH:mm")</span>
+                    </div>
+                </div>
+                <div class="preview-details">
+                    <div class="preview-item">
+                        <span class="preview-icon">🎪</span>
+                        <span class="preview-label">Stage:</span>
+                        <span class="preview-value">@lineup.Stage</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-icon">⏰</span>
+                        <span class="preview-label">Time:</span>
+                        <span class="preview-value">@lineup.StartTime.ToString("MMM dd, yyyy HH:mm")</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-icon">🔥</span>
+                        <span class="preview-label">Main Stage:</span>
+                        <span class="preview-value">@(lineup.IsMainStage ? "Yes" : "No")</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-icon">🎸</span>
+                        <span class="preview-label">Live Performance:</span>
+                        <span class="preview-value">@(lineup.IsLivePerformance ? "Yes" : "No")</span>
+                    </div>
+                    @if (!string.IsNullOrEmpty(lineup.StageTheme))
+                    {
+                        <div class="preview-item">
+                            <span class="preview-icon">🎨</span>
+                            <span class="preview-label">Theme:</span>
+                            <span class="preview-value">@lineup.StageTheme</span>
+                        </div>
+                    }
+                </div>
+                <div class="preview-footer">
+                    <span>🎵</span><span>🎤</span><span>🎸</span>
+                </div>
+            </div>
         </div>
         <div class="edit-form-section">
             <div class="form-header">
@@ -41,6 +82,13 @@
                     <span class="tag">🎸 Lineup</span>
                     <span class="tag">🎶 Performance</span>
                 </div>
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="error-message">
+                        <span class="error-icon">⚠️</span>
+                        @errorMessage
+                    </div>
+                }
                 <button type="submit" class="btn-submit festival-btn">Save Changes</button>
             </EditForm>
         </div>
@@ -53,22 +101,53 @@
 @code {
     [Parameter] public int festivalId { get; set; }
     [Parameter] public int artistId { get; set; }
+
     private LineupUpdateDto lineup = new();
+    private bool notFound = false;
+    private string? errorMessage;
 
     protected override async Task OnInitializedAsync()
     {
-        var existing = await LineupService.GetAsync(festivalId, artistId);
-        lineup.Stage = existing.Stage;
-        lineup.StartTime = existing.StartTime;
-        lineup.IsMainStage = existing.IsMainStage;
-        lineup.IsLivePerformance = existing.IsLivePerformance;
-        lineup.Description = existing.Description;
-        lineup.StageTheme = existing.StageTheme;
+        try
+        {
+            var existing = await LineupService.GetAsync(festivalId, artistId);
+            if (existing == null)
+            {
+                notFound = true;
+                return;
+            }
+
+            lineup.Stage = existing.Stage;
+            lineup.StartTime = existing.StartTime;
+            lineup.IsMainStage = existing.IsMainStage;
+            lineup.IsLivePerformance = existing.IsLivePerformance;
+            lineup.Description = existing.Description;
+            lineup.StageTheme = existing.StageTheme;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[EditLineup ERROR] {ex.Message}");
+            notFound = true;
+        }
     }
 
     private async Task SubmitLineup()
     {
-        await LineupService.UpdateAsync(festivalId, artistId, lineup);
-        NavManager.NavigateTo("/lineups");
+        try
+        {
+            Console.WriteLine($"[EditLineup] Submitting lineup for Festival ID: {festivalId}, Artist ID: {artistId}");
+            Console.WriteLine($"[EditLineup] Lineup data: Stage={lineup.Stage}, StartTime={lineup.StartTime}");
+            
+            await LineupService.UpdateAsync(festivalId, artistId, lineup);
+            Console.WriteLine($"[EditLineup] Update successful, navigating to /lineups");
+            NavManager.NavigateTo("/lineups");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[EditLineup ERROR] {ex.Message}");
+            errorMessage = ex.Message;
+            StateHasChanged();
+        }
     }
 }
+

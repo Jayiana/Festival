@@ -44,7 +44,6 @@ namespace ShowTime_BusinessLogic.Dtos
             {
                 Email = registerDto.Email,
                 Password = HashPassword(registerDto.Password),
-                FullName = registerDto.FullName,
                 Role = 0 
             };
 
