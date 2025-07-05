@@ -1,0 +1,249 @@
+﻿@page "/register"
+
+<div class="auth-container">
+    <!-- Enhanced Animated Background Elements -->
+    <div class="floating-elements">
+        <div class="floating-star">⭐</div>
+        <div class="floating-music">🎵</div>
+        <div class="floating-heart">💖</div>
+        <div class="floating-star">🌟</div>
+        <div class="floating-music">🎶</div>
+        <div class="floating-heart">💝</div>
+        <div class="floating-star">✨</div>
+        <div class="floating-music">🎤</div>
+        <div class="floating-star">💫</div>
+        <div class="floating-music">🎧</div>
+        <div class="floating-heart">💕</div>
+        <div class="floating-star">⭐</div>
+        <div class="floating-music">🎪</div>
+        <div class="floating-heart">💗</div>
+        <div class="floating-star">🌟</div>
+    </div>
+
+    <!-- Enhanced Geometric Background Shapes -->
+    <div class="geometric-shapes">
+        <div class="shape circle"></div>
+        <div class="shape square"></div>
+        <div class="shape triangle"></div>
+        <div class="shape circle"></div>
+        <div class="shape square"></div>
+        <div class="shape diamond"></div>
+        <div class="shape hexagon"></div>
+        <div class="shape star-shape"></div>
+        <div class="shape circle"></div>
+        <div class="shape square"></div>
+    </div>
+
+    <!-- Enhanced Animated Lines -->
+    <div class="animated-lines">
+        <div class="line line-1"></div>
+        <div class="line line-2"></div>
+        <div class="line line-3"></div>
+        <div class="line line-4"></div>
+        <div class="line line-5"></div>
+        <div class="line line-6"></div>
+    </div>
+
+    <!-- Particle System -->
+    <div class="particle-system">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <!-- Glow Effects -->
+    <div class="glow-effects">
+        <div class="glow glow-1"></div>
+        <div class="glow glow-2"></div>
+        <div class="glow glow-3"></div>
+        <div class="glow glow-4"></div>
+    </div>
+
+    <!-- Sparkle Effects -->
+    <div class="sparkle-effects">
+        <div class="sparkle sparkle-1">✨</div>
+        <div class="sparkle sparkle-2">💫</div>
+        <div class="sparkle sparkle-3">⭐</div>
+        <div class="sparkle sparkle-4">🌟</div>
+        <div class="sparkle sparkle-5">✨</div>
+        <div class="sparkle sparkle-6">💫</div>
+        <div class="sparkle sparkle-7">⭐</div>
+        <div class="sparkle sparkle-8">🌟</div>
+    </div>
+
+    <!-- Floating Hearts -->
+    <div class="floating-hearts">
+        <div class="heart heart-1">💖</div>
+        <div class="heart heart-2">💝</div>
+        <div class="heart heart-3">💕</div>
+        <div class="heart heart-4">💗</div>
+        <div class="heart heart-5">💖</div>
+    </div>
+
+    <!-- Music Notes -->
+    <div class="music-notes">
+        <div class="note note-1">🎵</div>
+        <div class="note note-2">🎶</div>
+        <div class="note note-3">🎤</div>
+        <div class="note note-4">🎧</div>
+        <div class="note note-5">🎪</div>
+        <div class="note note-6">🎆</div>
+    </div>
+
+    <div class="auth-box text-center">
+        <div class="titlu">
+            <img src="/SiteImages/OtherPages/titlu.png" alt="ShowTime">
+        </div>
+
+        <div class="box">
+            <div class="register-header">
+                <h1 class="register-title">
+                    <span class="title-sparkle">✨</span>
+                    <span class="title-icon">🎤</span>
+                    Join the ShowTime Festival
+                    <span class="title-icon">🎤</span>
+                    <span class="title-sparkle">✨</span>
+                </h1>
+                <div class="register-decoration">
+                    <span>🎪</span>
+                    <span>🎤</span>
+                    <span>🎵</span>
+                    <span>🎧</span>
+                    <span>🎪</span>
+                </div>
+            </div>
+
+            <EditForm Model="registerModel" OnValidSubmit="HandleRegister" FormName="RegisterForm">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                @if (registerFailed)
+                {
+                    <div class="error-message">
+                        <span class="error-icon">❌</span>
+                        Passwords don't match or fields are incomplete.
+                    </div>
+                }
+
+                <div class="form-group">
+                    <div class="inputBox">
+                        <InputText @bind-Value="registerModel.Username" id="usernameField" required />
+                        <i class="fa fa-user"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="inputBox">
+                        <InputText @bind-Value="registerModel.Email" id="emailField" required />
+                        <i class="fa fa-envelope"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="inputBox">
+                        <InputText @bind-Value="registerModel.Password" type="password" id="passwordField" required />
+                        <i class="fa fa-lock"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="inputBox">
+                        <InputText @bind-Value="registerModel.ConfirmPassword" type="password" id="confirmPasswordField" required />
+                        <i class="fa fa-lock"></i>
+                    </div>
+                </div>
+
+                <div class="links">
+                    <p class="link-item">
+                        <span class="link-icon">🎧</span>
+                        Already part of the tribe? <a href="/login">Log In here.</a>
+                    </p>
+                </div>
+
+                <button type="submit" class="register-btn">
+                    <span class="btn-icon">✨</span>
+                    Register
+                    <span class="btn-icon">✨</span>
+                </button>
+
+                <p class="or">Or Sign Up with:</p>
+
+                <div class="social-icons">
+                    <div class="social-icon instagram">
+                        <a href="#"><i class="fa fa-instagram"></i></a>
+                    </div>
+                    <div class="social-icon facebook">
+                        <a href="#"><i class="fa fa-facebook"></i></a>
+                    </div>
+                    <div class="social-icon google">
+                        <a href="#"><i class="fa fa-google"></i></a>
+                    </div>
+                    <div class="social-icon linkedin">
+                        <a href="#"><i class="fa fa-linkedin"></i></a>
+                    </div>
+                </div>
+
+                <audio autoplay loop id="audio">
+                    <source src="/SiteMedia/BlackPantherLoginTheme.mp3" type="audio/mpeg">
+                </audio>
+
+                <div class="sound-toggle">
+                    <label for="mutesound">
+                        <span class="sound-icon">🔊</span>
+                        Enable Sound
+                    </label>
+                    <input type="checkbox" id="mutesound" checked onclick="EnableAudio()" />
+                </div>
+            </EditForm>
+        </div>
+    </div>
+
+    <!-- Enhanced Bottom Decoration -->
+    <div class="bottom-decoration">
+        <div class="decoration-line"></div>
+        <div class="decoration-icons">
+            <span>🎤</span>
+            <span>🎵</span>
+            <span>🎧</span>
+            <span>🎪</span>
+            <span>🎊</span>
+            <span>🎉</span>
+            <span>🎭</span>
+            <span>🎨</span>
+        </div>
+        <div class="decoration-line"></div>
+    </div>
+</div>
+
+@code {
+    private RegisterModel registerModel = new();
+    private bool registerFailed;
+
+    private async Task HandleRegister()
+    {
+        if (registerModel.Password != registerModel.ConfirmPassword ||
+            string.IsNullOrWhiteSpace(registerModel.Email) ||
+            string.IsNullOrWhiteSpace(registerModel.Username))
+        {
+            registerFailed = true;
+            return;
+        }
+
+        registerFailed = false;
+    }
+
+    public class RegisterModel
+    {
+        public string Username { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
+}

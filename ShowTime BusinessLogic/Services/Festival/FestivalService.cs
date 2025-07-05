@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ShowTime.DataAccess.GenericRepository;
-using ShowTime.DataAccess.Models;
+using ShowTime.DataAccess.Models.FestivalInfo;
 using ShowTime_BusinessLogic.Abstractions;
-using ShowTime_BusinessLogic.Dtos;
 using ShowTime_BusinessLogic.Dtos.Festival;
 
 namespace ShowTime_BusinessLogic.Services
@@ -27,7 +26,14 @@ namespace ShowTime_BusinessLogic.Services
                 StartDate = fest.StartDate,
                 EndDate = fest.EndDate,
                 SplashArt = fest.SplashArt,
-                Capacity = fest.Capacity
+                Capacity = fest.Capacity,
+                Theme = fest.Theme,
+                IsIndoor = fest.IsIndoor,
+                HasCamping = fest.HasCamping,
+                HasFoodCourt = fest.HasFoodCourt,
+                HasAfterParty = fest.HasAfterParty,
+                Rating = fest.Rating,
+                Description = fest.Description
             };
         }
 
@@ -42,25 +48,29 @@ namespace ShowTime_BusinessLogic.Services
                 StartDate = fest.StartDate,
                 EndDate = fest.EndDate,
                 SplashArt = fest.SplashArt,
-                Capacity = fest.Capacity
+                Capacity = fest.Capacity,
+                Theme = fest.Theme,
+                IsIndoor = fest.IsIndoor,
+                HasCamping = fest.HasCamping,
+                HasFoodCourt = fest.HasFoodCourt,
+                HasAfterParty = fest.HasAfterParty,
+                Rating = fest.Rating,
+                Description = fest.Description
             }).ToList();
         }
 
         public async Task AddAsync(FestivalCreateDto dto)
         {
-
             if (string.IsNullOrWhiteSpace(dto.Name))
                 throw new ArgumentException("Festival name cannot be empty.");
 
-            var existingFest = await _festivalRepository
-                .GetAllAsync(); 
-
+            var existingFest = await _festivalRepository.GetAllAsync();
             if (existingFest.Any(f => f.Name.ToLower() == dto.Name.ToLower()))
                 throw new ArgumentException($"A festival named '{dto.Name}' already exists.");
 
             if (dto.StartDate.Date < DateTime.Today)
                 throw new ArgumentException("Start date cannot be in the past.");
- 
+
             if (dto.EndDate <= dto.StartDate)
                 throw new ArgumentException("End date must be after start date.");
 
@@ -77,12 +87,18 @@ namespace ShowTime_BusinessLogic.Services
                 StartDate = dto.StartDate,
                 EndDate = dto.EndDate,
                 SplashArt = dto.SplashArt,
-                Capacity = dto.Capacity
+                Capacity = dto.Capacity,
+                Theme = dto.Theme,
+                IsIndoor = dto.IsIndoor,
+                HasCamping = dto.HasCamping,
+                HasFoodCourt = dto.HasFoodCourt,
+                HasAfterParty = dto.HasAfterParty,
+                Rating = dto.Rating,
+                Description = dto.Description
             };
 
             await _festivalRepository.AddAsync(fest);
         }
-
 
         public async Task UpdateAsync(int id, FestivalUpdateDto dto)
         {
@@ -96,6 +112,13 @@ namespace ShowTime_BusinessLogic.Services
             fest.EndDate = dto.EndDate;
             fest.SplashArt = dto.SplashArt;
             fest.Capacity = dto.Capacity;
+            fest.Theme = dto.Theme;
+            fest.IsIndoor = dto.IsIndoor;
+            fest.HasCamping = dto.HasCamping;
+            fest.HasFoodCourt = dto.HasFoodCourt;
+            fest.HasAfterParty = dto.HasAfterParty;
+            fest.Rating = dto.Rating;
+            fest.Description = dto.Description;
 
             await _festivalRepository.UpdateAsync(fest);
         }

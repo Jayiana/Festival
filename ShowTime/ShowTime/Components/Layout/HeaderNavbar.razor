@@ -1,19 +1,99 @@
-﻿<nav class="festival-navbar">
+﻿@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@inject NavigationManager NavManager
+@inject IAuthenticationService AuthenticationService
+@inject IHttpContextAccessor HttpContextAccessor
+@rendermode InteractiveServer
+
+<nav class="festival-navbar">
     <div class="logo">
-        <img src="/images/festival_logo.png" alt="ShowTime" />
+        <img src="/images/Showtime-logo.png" alt="ShowTime" />
     </div>
 
     <div class="nav-links">
         <a href="/" class="nav-link"><i class="fas fa-house"></i> Home</a>
         <a href="/artists" class="nav-link"><i class="fas fa-microphone"></i> Artists</a>
         <a href="/festivals" class="nav-link"><i class="fas fa-music"></i> Festivals</a>
-        <AuthorizeView Roles="Administrator"><Authorized> <a href="/lineups" class="nav-link"><i class="fas fa-users"></i> Lineups</a></Authorized></AuthorizeView>
+        <a href="/lineups" class="nav-link"><i class="fas fa-users"></i> Lineups</a>
+        <a href="/booking" class="nav-link"><i class="fas fa-calendar-check"></i> Booking</a>
+        <a href="/accommodation" class="nav-link"><i class="fas fa-bed"></i> Accommodation</a>
 
         <input type="text" placeholder="Search artists/festivals..." class="search-bar" />
     </div>
 
-    <div class="auth-buttons">
-        <button class="btn login-btn">Log in</button>
+    <div class="user-profile">
+        <div class="profile-circle" @onclick="HandleProfileClick" data-tooltip="@(isAuthenticated ? "User Profile" : "Click to Login")">
+            <img src="/images/default-profile.png" alt="User Profile" class="profile-image" />
+            <div class="profile-overlay">
+                <i class="fas fa-user"></i>
+            </div>
+            @if (!isAuthenticated)
+            {
+                <div class="login-indicator">
+                    <i class="fas fa-sign-in-alt"></i>
+                </div>
+            }
+        </div>
+    </div>
+    
+    <!-- Navbar Decorations -->
+    <div class="navbar-decoration">
+        <div class="nav-sparkle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="nav-sparkle" style="right: 15%; animation-delay: 2s;"></div>
+        <div class="nav-sparkle" style="left: 50%; animation-delay: 4s;"></div>
     </div>
 </nav>
+
+@code {
+    private bool isAuthenticated = false;
+    private string? userEmail;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CheckAuthenticationState();
+    }
+
+    private async Task CheckAuthenticationState()
+    {
+        try
+        {
+            var context = HttpContextAccessor.HttpContext;
+
+            if (context == null)
+            {
+                isAuthenticated = false;
+                return;
+            }
+
+            var authResult = await AuthenticationService.AuthenticateAsync(context, CookieAuthenticationDefaults.AuthenticationScheme);
+            isAuthenticated = authResult.Succeeded;
+
+            if (isAuthenticated)
+            {
+                var user = authResult.Principal;
+                userEmail = user?.FindFirst(ClaimTypes.Email)?.Value;
+            }
+        }
+        catch
+        {
+            isAuthenticated = false;
+        }
+    }
+
+    private void HandleProfileClick()
+    {
+        if (!isAuthenticated)
+        {
+            NavManager.NavigateTo("/login");
+        }
+        else
+        {
+            // TODO: Add user profile dropdown or logout functionality
+            // For now, just show a simple message
+            // You can expand this to show user menu, logout, etc.
+        }
+    }
+}
 

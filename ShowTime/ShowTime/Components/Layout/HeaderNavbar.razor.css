@@ -3,15 +3,33 @@
     justify-content: space-between;
     align-items: center;
     padding: 1.2rem 2rem;
-    background: linear-gradient(90deg, #ff0066, #8000ff, #000000);
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
     background-size: 300% 300%;
-    animation: gradientShift 10s ease infinite;
+    animation: subtleGradient 15s ease infinite;
     color: white;
     position: fixed;
     top: 0;
     width: 100%;
     z-index: 999;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.festival-navbar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 0, 128, 0.03) 25%, 
+        rgba(0, 234, 255, 0.03) 50%, 
+        rgba(128, 0, 255, 0.03) 75%, 
+        rgba(255, 128, 0, 0.03) 100%);
+    pointer-events: none;
 }
 
 @keyframes gradientShift {
@@ -30,12 +48,24 @@
 
 .festival-navbar .logo img {
     height: 50px;
+    filter: drop-shadow(0 0 10px rgba(255, 0, 128, 0.8));
+    transition: all 0.3s ease;
+}
+
+.festival-navbar .logo img:hover {
+    filter: drop-shadow(0 0 15px rgba(255, 0, 128, 1));
+    transform: scale(1.05);
 }
 
 .festival-navbar .nav-links {
     display: flex;
     align-items: center;
-    gap: 2rem;
+    justify-content: center;
+    gap: 1.5rem;
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    margin: 0 2rem;
 }
 
     .festival-navbar .nav-links a {
@@ -44,50 +74,259 @@
         font-weight: 700;
         letter-spacing: 0.5px;
         transition: all 0.3s ease;
-        font-size: 1.1rem;
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        position: relative;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    .festival-navbar .nav-links a::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
     }
 
         .festival-navbar .nav-links a:hover {
-            color: #ffe600;
-            text-shadow: 0 0 8px #ffe600;
-            transform: scale(1.1);
+            color: #00eaff;
+            text-shadow: 0 0 15px #00eaff;
+            transform: scale(1.05);
+            background: linear-gradient(45deg, rgba(255, 0, 128, 0.3), rgba(0, 234, 255, 0.3));
+            box-shadow: 0 0 20px rgba(0, 234, 255, 0.4);
+        }
+
+        .festival-navbar .nav-links a:hover::before {
+            left: 100%;
         }
 
 .festival-navbar .search-bar {
     padding: 0.5rem 1rem;
     border-radius: 20px;
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     background-color: rgba(255, 255, 255, 0.1);
     color: white;
     transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 2;
+    margin-left: 1rem;
+    min-width: 200px;
 }
 
     .festival-navbar .search-bar::placeholder {
-        color: #ccc;
+        color: rgba(255, 255, 255, 0.6);
     }
 
     .festival-navbar .search-bar:focus {
         outline: none;
         background-color: rgba(255, 255, 255, 0.15);
-        box-shadow: 0 0 10px #ffe600;
+        border-color: rgba(0, 234, 255, 0.5);
+        box-shadow: 0 0 15px rgba(0, 234, 255, 0.4);
     }
 
-.festival-navbar .auth-buttons .login-btn {
-    background: #ff2e63;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 30px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    box-shadow: 0 0 10px rgba(255, 46, 99, 0.6);
+/* User Profile Circle */
+.festival-navbar .user-profile {
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 2;
 }
 
-    .festival-navbar .auth-buttons .login-btn:hover {
-        background: #ff0080;
-        transform: scale(1.05);
-        box-shadow: 0 0 15px #ff2e63;
+.festival-navbar .profile-circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #ff0080, #00eaff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(255, 0, 128, 0.6);
+}
+
+.festival-navbar .profile-circle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(255, 0, 128, 0.8);
+}
+
+.festival-navbar .profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.festival-navbar .profile-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(255, 0, 128, 0.8), rgba(0, 234, 255, 0.8));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.festival-navbar .profile-circle:hover .profile-overlay {
+    opacity: 1;
+}
+
+.festival-navbar .profile-circle:hover .profile-image {
+    opacity: 0.3;
+}
+
+/* Login Indicator */
+.festival-navbar .login-indicator {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(45deg, #ff6600, #ffcc00);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.8rem;
+    animation: pulse 2s ease-in-out infinite;
+    box-shadow: 0 0 10px rgba(255, 102, 0, 0.6);
+    z-index: 3;
+}
+
+@keyframes pulse {
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 0 10px rgba(255, 102, 0, 0.6);
     }
+    50% { 
+        transform: scale(1.2); 
+        box-shadow: 0 0 15px rgba(255, 102, 0, 0.8);
+    }
+}
+
+/* Enhanced profile circle for non-authenticated state */
+.festival-navbar .profile-circle:not(:has(.login-indicator)) {
+    background: linear-gradient(45deg, #00eaff, #ff0080);
+}
+
+.festival-navbar .profile-circle:has(.login-indicator) {
+    background: linear-gradient(45deg, #ff6600, #ffcc00);
+    box-shadow: 0 0 15px rgba(255, 102, 0, 0.6);
+}
+
+.festival-navbar .profile-circle:has(.login-indicator):hover {
+    box-shadow: 0 0 20px rgba(255, 102, 0, 0.8);
+    transform: scale(1.1);
+}
+
+/* Tooltip for login state */
+.festival-navbar .profile-circle::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+}
+
+.festival-navbar .profile-circle:hover::after {
+    opacity: 1;
+}
+
+/* Navbar Decorations */
+.navbar-decoration {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    top: 0;
+    left: 0;
+}
+
+.nav-sparkle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    animation: navSparkle 4s ease-in-out infinite;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+@keyframes navSparkle {
+    0%, 100% { opacity: 0.2; transform: translateY(-50%) scale(1); }
+    50% { opacity: 0.8; transform: translateY(-50%) scale(1.5); }
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .festival-navbar .nav-links {
+        gap: 1rem;
+        margin: 0 1rem;
+    }
+    
+    .festival-navbar .nav-links a {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .festival-navbar .search-bar {
+        min-width: 150px;
+    }
+}
+
+@media (max-width: 768px) {
+    .festival-navbar {
+        padding: 1rem;
+    }
+    
+    .festival-navbar .nav-links {
+        gap: 0.5rem;
+        margin: 0 0.5rem;
+    }
+    
+    .festival-navbar .nav-links a {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.6rem;
+    }
+    
+    .festival-navbar .search-bar {
+        min-width: 120px;
+        margin-left: 0.5rem;
+    }
+    
+    .festival-navbar .profile-circle {
+        width: 40px;
+        height: 40px;
+    }
+}
 
 
 

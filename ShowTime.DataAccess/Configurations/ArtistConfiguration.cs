@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ShowTime.DataAccess.Models;
+using ShowTime.DataAccess.Models.ArtistInfo;
+using ShowTime.DataAccess.Models.LineupInfo;
 using System;
 using System.Collections.Generic;
 using System.Linq;

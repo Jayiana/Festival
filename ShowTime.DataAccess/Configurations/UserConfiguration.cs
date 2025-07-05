@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ShowTime.DataAccess.Models;
+using ShowTime.DataAccess.Models.UserInfo;
 using System;
 using System.Collections.Generic;
 using System.Linq;

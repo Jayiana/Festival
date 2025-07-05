@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
@@ -18,21 +19,42 @@ namespace ShowTime_BusinessLogic.Dtos
         public string Stage { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "StartTime is required.")]
-        public DateTime StartTime { get; set; }
+        public DateTime StartTime { get; set; } = DateTime.Now;
+
+        [Required(ErrorMessage = "IsMainStage is required.")]
+        public bool IsMainStage { get; set; }
+
+        [Required(ErrorMessage = "IsLivePerformance is required.")]
+        public bool IsLivePerformance { get; set; }
+
+        [StringLength(500, ErrorMessage = "Description can't exceed 500 characters.")]
+        public string? Description { get; set; }
+
+        [StringLength(100, ErrorMessage = "Stage theme can't exceed 100 characters.")]
+        public string? StageTheme { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (StartTime.Date < DateTime.Now.Date)
+            var now = DateTime.Now;
+
+            if (StartTime.Date < now.Date)
             {
                 yield return new ValidationResult(
                     "Start Time cannot be in the past.",
                     new[] { nameof(StartTime) });
             }
 
-            if (StartTime.Date == DateTime.Now.Date && StartTime.TimeOfDay < DateTime.Now.TimeOfDay)
+            if (StartTime.Date == now.Date && StartTime.TimeOfDay < now.TimeOfDay)
             {
                 yield return new ValidationResult(
-                    "Start Time cannot be in the past for today.",
+                    "Start Time cannot be earlier than current time today.",
+                    new[] { nameof(StartTime) });
+            }
+
+            if (StartTime.Year < now.Year)
+            {
+                yield return new ValidationResult(
+                    $"Start Time must be in the current year ({now.Year}) or later.",
                     new[] { nameof(StartTime) });
             }
         }

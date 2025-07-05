@@ -1,0 +1,325 @@
+﻿@page "/addartist"
+@inject IArtistService ArtistService
+@inject NavigationManager NavManager
+@using ShowTime.DataAccess.Models.ArtistInfo
+@using ShowTime_BusinessLogic.Abstractions
+@using ShowTime_BusinessLogic.Dtos
+@using ShowTime_BusinessLogic.Dtos.Artist
+@rendermode InteractiveServer
+
+<div class="add-artist-page">
+    <!-- Enhanced Animated Background Elements -->
+    <div class="floating-elements">
+        <div class="floating-star">⭐</div>
+        <div class="floating-music">🎵</div>
+        <div class="floating-heart">💖</div>
+        <div class="floating-star">🌟</div>
+        <div class="floating-music">🎶</div>
+        <div class="floating-heart">💝</div>
+        <div class="floating-star">✨</div>
+        <div class="floating-music">🎤</div>
+        <div class="floating-star">💫</div>
+        <div class="floating-music">🎧</div>
+        <div class="floating-heart">💕</div>
+        <div class="floating-star">⭐</div>
+        <div class="floating-music">🎪</div>
+        <div class="floating-heart">💗</div>
+        <div class="floating-star">🌟</div>
+    </div>
+
+    <!-- Enhanced Geometric Background Shapes -->
+    <div class="geometric-shapes">
+        <div class="shape circle"></div>
+        <div class="shape square"></div>
+        <div class="shape triangle"></div>
+        <div class="shape circle"></div>
+        <div class="shape square"></div>
+        <div class="shape diamond"></div>
+        <div class="shape hexagon"></div>
+        <div class="shape star-shape"></div>
+        <div class="shape circle"></div>
+        <div class="shape square"></div>
+    </div>
+
+    <!-- Enhanced Animated Lines -->
+    <div class="animated-lines">
+        <div class="line line-1"></div>
+        <div class="line line-2"></div>
+        <div class="line line-3"></div>
+        <div class="line line-4"></div>
+        <div class="line line-5"></div>
+        <div class="line line-6"></div>
+    </div>
+
+    <!-- Particle System -->
+    <div class="particle-system">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <!-- Glow Effects -->
+    <div class="glow-effects">
+        <div class="glow glow-1"></div>
+        <div class="glow glow-2"></div>
+        <div class="glow glow-3"></div>
+        <div class="glow glow-4"></div>
+    </div>
+
+    <!-- Sparkle Effects -->
+    <div class="sparkle-effects">
+        <div class="sparkle sparkle-1">✨</div>
+        <div class="sparkle sparkle-2">💫</div>
+        <div class="sparkle sparkle-3">⭐</div>
+        <div class="sparkle sparkle-4">🌟</div>
+        <div class="sparkle sparkle-5">✨</div>
+        <div class="sparkle sparkle-6">💫</div>
+        <div class="sparkle sparkle-7">⭐</div>
+        <div class="sparkle sparkle-8">🌟</div>
+    </div>
+
+    <!-- Floating Hearts -->
+    <div class="floating-hearts">
+        <div class="heart heart-1">💖</div>
+        <div class="heart heart-2">💝</div>
+        <div class="heart heart-3">💕</div>
+        <div class="heart heart-4">💗</div>
+        <div class="heart heart-5">💖</div>
+    </div>
+
+    <!-- Music Notes -->
+    <div class="music-notes">
+        <div class="note note-1">🎵</div>
+        <div class="note note-2">🎶</div>
+        <div class="note note-3">🎤</div>
+        <div class="note note-4">🎧</div>
+        <div class="note note-5">🎪</div>
+        <div class="note note-6">🎆</div>
+    </div>
+
+    <div class="background-visual"></div>
+
+    <div class="add-artist-intro">
+        <h1 class="artist-title">
+            <span class="title-sparkle">✨</span>
+            <span class="title-icon">🎤</span>
+            Add Artist to the Festival!
+            <span class="title-icon">🎤</span>
+            <span class="title-sparkle">✨</span>
+        </h1>
+        <p class="artist-subtitle">Complete the form below to register a new artist in the ShowTime lineup.</p>
+        <div class="artist-decor-icons">
+            <span class="decor-icon">🎤</span>
+            <span class="decor-icon">🎵</span>
+            <span class="decor-icon">🎧</span>
+            <span class="decor-icon">🎪</span>
+            <span class="decor-icon">🎆</span>
+            <span class="decor-icon">🎊</span>
+            <span class="decor-icon">🎉</span>
+            <span class="decor-icon">🎭</span>
+            <span class="decor-icon">🎨</span>
+            <span class="decor-icon">🎪</span>
+            <span class="decor-icon">🎤</span>
+            <span class="decor-icon">🎧</span>
+        </div>
+    </div>
+
+    <div class="festival-badge">
+        <span class="badge-content">
+            <i class="fas fa-star"></i> 
+            Official Festival Entry Form
+        </span>
+    </div>
+
+    <div class="artist-form-wrapper">
+        <div class="artist-pass-card">
+            <div class="card-header">
+                <h2 class="card-title">🎤 Artist Pass</h2>
+            </div>
+
+            <EditForm Model="artist" OnValidSubmit="SubmitArtist" FormName="AddArtistForm">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group">
+                    <label>Artist Name:</label>
+                    <InputText @bind-Value="artist.Name" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label>Genre:</label>
+                    <InputSelect @bind-Value="artist.Genre" class="form-control" required>
+                        <option disabled value="">-- Choose Genre --</option>
+                        <option value="Pop">🎵 Pop</option>
+                        <option value="Rock">🎸 Rock</option>
+                        <option value="Hip-Hop">🎤 Hip-Hop</option>
+                        <option value="Rap">🎧 Rap</option>
+                        <option value="Kpop">🌟 Kpop</option>
+                        <option value="Jazz">🎷 Jazz</option>
+                        <option value="Alternative Rock">🎸 Alternative Rock</option>
+                        <option value="Electronic">🎛️ Electronic</option>
+                        <option value="Classical">🎼 Classical</option>
+                        <option value="R&B">🎵 R&B</option>
+                        <option value="Indie">🎤 Indie</option>
+                        <option value="Metal">🤘 Metal</option>
+                        <option value="Reggae">🎵 Reggae</option>
+                        <option value="Funk">🎷 Funk</option>
+                        <option value="Blues">🎸 Blues</option>
+                        <option value="Country">🎸 Country</option>
+                        <option value="Folk">🎵 Folk</option>
+                        <option value="Disco">💃 Disco</option>
+                        <option value="Techno">🎛️ Techno</option>
+                    </InputSelect>
+                </div>
+
+                <div class="form-group">
+                    <label>Rating:</label>
+                    <InputNumber @bind-Value="artist.Rating" class="form-control" step="0.1" />
+                </div>
+
+                <div class="form-group">
+                    <label>Is Trending:</label>
+                    <InputCheckbox @bind-Value="artist.IsTrending" />
+                </div>
+
+                <div class="form-group">
+                    <label>Trending Reason:</label>
+                    <InputText @bind-Value="artist.TrendingReason" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label>Origin:</label>
+                    <InputText @bind-Value="artist.Origin" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label>Description:</label>
+                    <InputTextArea @bind-Value="artist.Description" class="form-control" rows="4" />
+                </div>
+
+                <div class="form-group">
+                    <label>Instagram URL:</label>
+                    <InputText @bind-Value="artist.Instagram" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label>YouTube URL:</label>
+                    <InputText @bind-Value="artist.YouTube" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label>Fans Count:</label>
+                    <InputNumber @bind-Value="artist.FansCount" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label>Debut Year:</label>
+                    <InputNumber @bind-Value="artist.DebutYear" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label>Category:</label>
+                    <InputSelect @bind-Value="artist.Category" class="form-control">
+                        @foreach (var value in Enum.GetValues<ArtistCategory>())
+                        {
+                            <option value="@value">@value</option>
+                        }
+                    </InputSelect>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-icon-label">
+                        <i class="fas fa-image"></i>
+                        <label>Image URL:</label>
+                    </div>
+                    <InputText @bind-Value="artist.Image" class="form-control" @oninput="PreviewImage" placeholder="Enter image URL..." />
+                </div>
+
+                <div class="image-preview-section">
+                    <h3 class="preview-title">🎨 Artist Preview</h3>
+                    <div class="image-preview-box">
+                        @if (!string.IsNullOrEmpty(artist.Image))
+                        {
+                            <div class="preview-container">
+                                <img src="@artist.Image" alt="Preview" class="preview-image" />
+                                <div class="preview-overlay">
+                                    <span class="overlay-text">🎤 Artist Image</span>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="preview-placeholder">
+                                <div class="placeholder-icon">🎨</div>
+                                <p class="placeholder-text">Add image URL to preview</p>
+                                <div class="placeholder-decoration">
+                                    <span>✨</span>
+                                    <span>🎤</span>
+                                    <span>🎵</span>
+                                    <span>🎧</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <button class="btn-submit" type="submit">Add Artist</button>
+            </EditForm>
+        </div>
+    </div>
+
+
+    <!-- Enhanced Bottom Decoration -->
+    <div class="bottom-decoration">
+        <div class="decoration-line"></div>
+        <div class="decoration-icons">
+            <span>🎤</span>
+            <span>🎵</span>
+            <span>🎧</span>
+            <span>🎪</span>
+            <span>🎊</span>
+            <span>🎉</span>
+            <span>🎭</span>
+            <span>🎨</span>
+        </div>
+        <div class="decoration-line"></div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private ArtistCreateDto artist { get; set; } = new();
+    private string SpotifyEmbedUrl;
+    private string genre { get; set; }
+
+    private async Task SubmitArtist()
+    {
+        if (string.IsNullOrWhiteSpace(artist.Name) ||
+            string.IsNullOrWhiteSpace(artist.Genre) ||
+            string.IsNullOrWhiteSpace(artist.Image))
+        {
+            return; 
+        }
+
+        await ArtistService.AddAsync(artist);
+        artist = new();
+        NavManager.NavigateTo("/artists");
+    }
+
+    private void PreviewImage(ChangeEventArgs e)
+    {
+        var url = artist.Image?.Trim();
+
+        SpotifyEmbedUrl = null;
+
+        if (string.IsNullOrWhiteSpace(url))
+            return;
+    }
+}

@@ -1,7 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using ShowTime.DataAccess.Configurations;
-using ShowTime.DataAccess.Models;
+using ShowTime.DataAccess.Models.ArtistInfo;
+using ShowTime.DataAccess.Models.BookingInfo;
+using ShowTime.DataAccess.Models.FestivalInfo;
+using ShowTime.DataAccess.Models.LineupInfo;
+using ShowTime.DataAccess.Models.UserInfo;
 using System;
 using System.Collections.Generic;
 using System.Linq;

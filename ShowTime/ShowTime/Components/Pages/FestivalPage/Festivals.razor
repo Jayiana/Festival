@@ -1,0 +1,225 @@
+﻿@page "/festivals"
+@using ShowTime_BusinessLogic.Abstractions
+@using ShowTime_BusinessLogic.Dtos.Festival
+@rendermode InteractiveServer
+@inject IFestivalService FestivalService
+@inject NavigationManager NavManager
+@inject IJSRuntime JS
+
+<PageTitle>ShowTime - Festivals</PageTitle>
+
+<div class="festivals-page">
+    <!-- Enhanced Festival Decorations -->
+    <div class="festival-decoration">
+        @for (int i = 0; i < 30; i++)
+        {
+            <div class="sparkle" style="left: @(Random.Shared.Next(0, 100))%; top: @(Random.Shared.Next(0, 100))%; animation-delay: @(Random.Shared.Next(0, 4000))ms;"></div>
+        }
+        
+        @for (int i = 0; i < 15; i++)
+        {
+            <div class="floating-element star" style="left: @(Random.Shared.Next(5, 95))%; animation-delay: @(Random.Shared.Next(0, 15000))ms;">★</div>
+        }
+        
+        @for (int i = 0; i < 10; i++)
+        {
+            <div class="soft-glow" style="left: @(Random.Shared.Next(10, 90))%; top: @(Random.Shared.Next(20, 80))%; animation-delay: @(Random.Shared.Next(0, 8000))ms;"></div>
+        }
+        
+        @for (int i = 0; i < 8; i++)
+        {
+            <div class="geometric-shape triangle" style="left: @(Random.Shared.Next(5, 95))%; top: @(Random.Shared.Next(10, 90))%; animation-delay: @(Random.Shared.Next(0, 8000))ms;"></div>
+        }
+        
+        @for (int i = 0; i < 12; i++)
+        {
+            <div class="geometric-shape circle" style="left: @(Random.Shared.Next(5, 95))%; top: @(Random.Shared.Next(10, 90))%; animation-delay: @(Random.Shared.Next(0, 6000))ms;"></div>
+        }
+        
+        @for (int i = 0; i < 6; i++)
+        {
+            <div class="floating-element heart" style="left: @(Random.Shared.Next(5, 95))%; animation-delay: @(Random.Shared.Next(0, 18000))ms;">♥</div>
+        }
+        
+        @for (int i = 0; i < 4; i++)
+        {
+            <div class="animated-line" style="top: @(Random.Shared.Next(20, 80))%; width: @(Random.Shared.Next(100, 300))px; animation-delay: @(Random.Shared.Next(0, 6000))ms;"></div>
+        }
+        
+        @for (int i = 0; i < 7; i++)
+        {
+            <div class="floating-element music-note" style="left: @(Random.Shared.Next(5, 95))%; animation-delay: @(Random.Shared.Next(0, 12000))ms;">♪</div>
+        }
+    </div>
+
+    <!-- Animated Background Elements -->
+    <div class="background-elements">
+        <div class="bg-circle bg-circle-1"></div>
+        <div class="bg-circle bg-circle-2"></div>
+        <div class="bg-circle bg-circle-3"></div>
+        <div class="bg-square bg-square-1"></div>
+        <div class="bg-square bg-square-2"></div>
+        <div class="bg-triangle bg-triangle-1"></div>
+    </div>
+
+    <div class="page-header">
+        <div class="title-decoration">
+            <div class="title-sparkle">✨</div>
+            <h1 class="page-title neon-text">🎪 Festival Collection 🎪</h1>
+            <div class="title-sparkle">✨</div>
+        </div>
+        <p class="page-subtitle">Experience the Magic of Live Music</p>
+        
+        <div class="animated-icons">
+            <span>🎆</span> <span>🎇</span> <span>🎉</span> <span>🎊</span> <span>🎋</span> <span>🎍</span> <span>🎎</span>
+        </div>
+        
+        <div class="header-decoration">
+            <div class="decoration-line"></div>
+            <div class="decoration-dot"></div>
+            <div class="decoration-line"></div>
+        </div>
+    </div>
+
+    @if (festivals.Count == 0)
+    {
+        <div class="empty-state">
+            <div class="empty-icon">🎪</div>
+            <h3>No Festivals Yet</h3>
+            <p>Create the first amazing festival experience!</p>
+            <div class="empty-decoration">
+                <span>🎭</span> <span>🎪</span> <span>🎆</span> <span>🎇</span>
+            </div>
+        </div>
+    }
+
+    <div class="festivals-container">
+        <div class="add-festival-card" @onclick="@(() => NavManager.NavigateTo("/addfestival"))">
+            <div class="add-icon">+</div>
+            <h3>Create New Festival</h3>
+            <p>Bring music to life</p>
+            <div class="add-decoration">
+                <span>🎪</span> <span>✨</span> <span>🎆</span>
+            </div>
+        </div>
+
+        @if (festivals.Count > 0)
+        {
+            @foreach (var fest in festivals)
+            {
+                <div class="festival-card">
+                    <div class="festival-actions">
+                        <button class="action-btn edit-btn" @onclick="() => EditFestival(fest.Id)" title="Edit Festival">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <button class="action-btn delete-btn" @onclick="() => DeleteFestival(fest.Id)" title="Delete Festival">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+
+                    <div class="festival-image">
+                        <img src="@fest.SplashArt" alt="@fest.Name" />
+                        <div class="image-overlay"></div>
+                        <div class="festival-badge">🎪</div>
+                        <div class="image-decoration">
+                            <span>✨</span> <span>🎆</span>
+                        </div>
+                    </div>
+                    
+                    <div class="festival-info">
+                        <h3 class="festival-name">@fest.Name</h3>
+                        <p class="festival-location">📍 @fest.Location</p>
+                        <div class="festival-dates">
+                            <span class="date-badge">📅 @fest.StartDate.ToShortDateString() - @fest.EndDate.ToShortDateString()</span>
+                        </div>
+                        
+                        <!-- Enhanced Festival Stats -->
+                        <div class="festival-stats">
+                            <span class="stat capacity-stat">
+                                <i class="fas fa-users"></i> @fest.Capacity.ToString("N0") people
+                            </span>
+                            @if (fest.Rating > 0)
+                            {
+                                <span class="stat rating-stat">
+                                    <i class="fas fa-star"></i> @fest.Rating/100
+                                </span>
+                            }
+                            <span class="stat theme-stat">
+                                <i class="fas fa-palette"></i> @fest.Theme
+                            </span>
+                        </div>
+
+                        <!-- Festival Features -->
+                        <div class="festival-features">
+                            @if (fest.IsIndoor)
+                            {
+                                <span class="feature-badge indoor">
+                                    <i class="fas fa-home"></i> Indoor
+                                </span>
+                            }
+                            @if (fest.HasCamping)
+                            {
+                                <span class="feature-badge camping">
+                                    <i class="fas fa-campground"></i> Camping
+                                </span>
+                            }
+                            @if (fest.HasFoodCourt)
+                            {
+                                <span class="feature-badge food">
+                                    <i class="fas fa-utensils"></i> Food Court
+                                </span>
+                            }
+                            @if (fest.HasAfterParty)
+                            {
+                                <span class="feature-badge party">
+                                    <i class="fas fa-glass-cheers"></i> After Party
+                                </span>
+                            }
+                        </div>
+
+                        <!-- Festival Description -->
+                        @if (!string.IsNullOrEmpty(fest.Description))
+                        {
+                            <div class="festival-description">
+                                <div class="description-header">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>About this Festival</span>
+                                </div>
+                                <p class="description-text">@fest.Description</p>
+                            </div>
+                        }
+
+                        <div class="festival-decoration">
+                            <span>🎭</span> <span>🎪</span> <span>🎆</span> <span>🎇</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    private IList<FestivalGetDto> festivals = new List<FestivalGetDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        festivals = await FestivalService.GetAllAsync();
+    }
+
+    private void EditFestival(int id)
+    {
+        NavManager.NavigateTo($"/edit/festival/{id}");
+    }
+
+    private async Task DeleteFestival(int id)
+    {
+        bool confirmed = await JS.InvokeAsync<bool>("confirm", $"Are you sure you want to delete this festival?");
+        if (confirmed)
+        {
+            await FestivalService.DeleteAsync(id);
+            festivals = await FestivalService.GetAllAsync();
+        }
+    }
+}
+

@@ -1,6 +1,5 @@
-﻿using ShowTime.BusinessLogic;
-using ShowTime.DataAccess.Models;
-using ShowTime_BusinessLogic.Dtos;
+﻿using ShowTime.DataAccess.Models;
+using ShowTime_BusinessLogic.Dtos.Artist;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ShowTime.DataAccess.Models;
+using ShowTime.DataAccess.Models.FestivalInfo;
+using ShowTime.DataAccess.Models.LineupInfo;
 using System;
 using System.Collections.Generic;
 using System.Linq;

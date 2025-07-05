@@ -3,28 +3,50 @@
 @using ShowTime_BusinessLogic.Dtos
 @inject ILineupService LineupService
 @inject NavigationManager NavManager
+@rendermode InteractiveServer
 
-<div class="edit-page">
+<div class="edit-page festival-edit-bg">
+    <div class="festival-decoration">
+        <div class="sparkle"></div>
+        <div class="music-note">🎸</div>
+        <div class="star">★</div>
+        <div class="heart">💜</div>
+        <div class="triangle"></div>
+        <div class="circle"></div>
+    </div>
     <div class="edit-form-container">
         <div class="image-preview">
             <p>Editing Lineup for Festival ID @festivalId and Artist ID @artistId</p>
         </div>
-
         <div class="edit-form-section">
-            <h2>Edit Lineup</h2>
+            <div class="form-header">
+                <h2><span class="icon">🎸</span> Edit Lineup <span class="icon">🎶</span></h2>
+            </div>
             <EditForm Model="@lineup" OnValidSubmit="SubmitLineup" FormName="EditLineupForm">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
-
-                <label>Stage:</label>
+                <label><span class="label-icon">🎤</span> Stage:</label>
                 <InputText @bind-Value="lineup.Stage" class="form-control" />
-
-                <label>Start Time:</label>
+                <label><span class="label-icon">⏰</span> Start Time:</label>
                 <InputDate @bind-Value="lineup.StartTime" class="form-control" />
-
-                <button type="submit" class="btn-submit">Save Changes</button>
+                <label><span class="label-icon">🔥</span> Is Main Stage:</label>
+                <InputCheckbox @bind-Value="lineup.IsMainStage" />
+                <label><span class="label-icon">🎸</span> Is Live Performance:</label>
+                <InputCheckbox @bind-Value="lineup.IsLivePerformance" />
+                <label><span class="label-icon">📝</span> Description:</label>
+                <InputTextArea @bind-Value="lineup.Description" class="form-control" rows="4" />
+                <label><span class="label-icon">🎨</span> Stage Theme:</label>
+                <InputText @bind-Value="lineup.StageTheme" class="form-control" />
+                <div class="form-tags">
+                    <span class="tag">🎸 Lineup</span>
+                    <span class="tag">🎶 Performance</span>
+                </div>
+                <button type="submit" class="btn-submit festival-btn">Save Changes</button>
             </EditForm>
         </div>
+    </div>
+    <div class="bottom-decoration">
+        <span>🎵</span><span>🎤</span><span>🎸</span>
     </div>
 </div>
 
@@ -38,6 +60,10 @@
         var existing = await LineupService.GetAsync(festivalId, artistId);
         lineup.Stage = existing.Stage;
         lineup.StartTime = existing.StartTime;
+        lineup.IsMainStage = existing.IsMainStage;
+        lineup.IsLivePerformance = existing.IsLivePerformance;
+        lineup.Description = existing.Description;
+        lineup.StageTheme = existing.StageTheme;
     }
 
     private async Task SubmitLineup()

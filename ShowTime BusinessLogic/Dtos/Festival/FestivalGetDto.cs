@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShowTime_BusinessLogic.Dtos.Festival
 {
@@ -15,5 +11,12 @@ namespace ShowTime_BusinessLogic.Dtos.Festival
         public string Location { get; set; } = string.Empty;
         public string SplashArt { get; set; } = string.Empty;
         public int Capacity { get; set; }
+        public string Theme { get; set; } = string.Empty;
+        public bool IsIndoor { get; set; }
+        public bool HasCamping { get; set; }
+        public bool HasFoodCourt { get; set; }
+        public bool HasAfterParty { get; set; }
+        public int Rating { get; set; }
+        public string Description { get; set; } = string.Empty;
     }
 }

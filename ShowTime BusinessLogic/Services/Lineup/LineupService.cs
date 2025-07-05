@@ -1,7 +1,7 @@
-﻿using ShowTime.DataAccess.Models;
-using ShowTime.DataAccess.GenericRepository;
+﻿using ShowTime.DataAccess.GenericRepository;
 using ShowTime_BusinessLogic.Abstractions;
 using ShowTime_BusinessLogic.Dtos;
+using ShowTime.DataAccess.Models.LineupInfo;
 
 namespace ShowTime_BusinessLogic.Services
 {
@@ -24,7 +24,11 @@ namespace ShowTime_BusinessLogic.Services
                 Stage = l.Stage,
                 StartTime = l.StartTime,
                 FestivalName = l.Festival.Name,
-                ArtistName = l.Artist.Name
+                ArtistName = l.Artist.Name,
+                IsMainStage = l.IsMainStage,
+                IsLivePerformance = l.IsLivePerformance,
+                Description = l.Description,
+                StageTheme = l.StageTheme
             }).ToList();
         }
 
@@ -38,7 +42,11 @@ namespace ShowTime_BusinessLogic.Services
                 Stage = lineup.Stage,
                 StartTime = lineup.StartTime,
                 FestivalName = lineup.Festival.Name,
-                ArtistName = lineup.Artist.Name
+                ArtistName = lineup.Artist.Name,
+                IsMainStage = lineup.IsMainStage,
+                IsLivePerformance = lineup.IsLivePerformance,
+                Description = lineup.Description,
+                StageTheme = lineup.StageTheme
             };
         }
 
@@ -77,18 +85,26 @@ namespace ShowTime_BusinessLogic.Services
                 FestivalId = dto.FestivalId,
                 ArtistId = dto.ArtistId,
                 Stage = dto.Stage,
-                StartTime = dto.StartTime
+                StartTime = dto.StartTime,
+                IsMainStage = dto.IsMainStage,
+                IsLivePerformance = dto.IsLivePerformance,
+                Description = dto.Description,
+                StageTheme = dto.StageTheme
             };
 
             await _lineupRepository.AddAsync(entity);
         }
-
 
         public async Task UpdateAsync(int festivalId, int artistId, LineupUpdateDto dto)
         {
             var entity = await _lineupRepository.GetByIdsAsync(festivalId, artistId);
             entity.Stage = dto.Stage;
             entity.StartTime = dto.StartTime;
+            entity.IsMainStage = dto.IsMainStage;
+            entity.IsLivePerformance = dto.IsLivePerformance;
+            entity.Description = dto.Description;
+            entity.StageTheme = dto.StageTheme;
+
             await _lineupRepository.UpdateAsync(entity);
         }
 

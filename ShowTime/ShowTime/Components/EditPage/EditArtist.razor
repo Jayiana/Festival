@@ -1,10 +1,21 @@
 ﻿@page "/edit/artist/{id:int}"
+@using ShowTime.DataAccess.Models.ArtistInfo
 @using ShowTime_BusinessLogic.Abstractions
 @using ShowTime_BusinessLogic.Dtos
+@using ShowTime_BusinessLogic.Dtos.Artist
 @inject IArtistService ArtistService
 @inject NavigationManager NavManager
+@rendermode InteractiveServer
 
-<div class="edit-page">
+<div class="edit-page festival-edit-bg">
+    <div class="festival-decoration">
+        <div class="sparkle"></div>
+        <div class="music-note">🎵</div>
+        <div class="star">★</div>
+        <div class="heart">♥</div>
+        <div class="triangle"></div>
+        <div class="circle"></div>
+    </div>
     <div class="edit-form-container">
         <div class="image-preview">
             @if (!string.IsNullOrEmpty(artist.Image))
@@ -16,25 +27,55 @@
                 <p>Paste an image link to preview</p>
             }
         </div>
-
         <div class="edit-form-section">
-            <h2>Edit Artist</h2>
+            <div class="form-header">
+                <h2><span class="icon">🎤</span> Edit Artist <span class="icon">🎨</span></h2>
+            </div>
             <EditForm Model="@artist" OnValidSubmit="Submit" FormName="EditArtistForm">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
-
-                <label>Name:</label>
+                <label><span class="label-icon">🏷️</span> Name:</label>
                 <InputText @bind-Value="artist.Name" class="form-control" />
-
-                <label>Genre:</label>
+                <label><span class="label-icon">🎵</span> Genre:</label>
                 <InputText @bind-Value="artist.Genre" class="form-control" />
-
-                <label>Image URL:</label>
+                <label><span class="label-icon">⭐</span> Rating:</label>
+                <InputNumber @bind-Value="artist.Rating" class="form-control" step="0.1" min="0" max="5" />
+                <label><span class="label-icon">🔥</span> Is Trending:</label>
+                <InputCheckbox @bind-Value="artist.IsTrending" />
+                <label><span class="label-icon">🔥</span> Trending Reason:</label>
+                <InputText @bind-Value="artist.TrendingReason" class="form-control" />
+                <label><span class="label-icon">🌍</span> Origin:</label>
+                <InputText @bind-Value="artist.Origin" class="form-control" />
+                <label><span class="label-icon">📝</span> Description:</label>
+                <InputTextArea @bind-Value="artist.Description" class="form-control" rows="4" />
+                <label><span class="label-icon">📸</span> Instagram URL:</label>
+                <InputText @bind-Value="artist.Instagram" class="form-control" />
+                <label><span class="label-icon">📺</span> YouTube URL:</label>
+                <InputText @bind-Value="artist.YouTube" class="form-control" />
+                <label><span class="label-icon">💖</span> Fans Count:</label>
+                <InputNumber @bind-Value="artist.FansCount" class="form-control" min="0" />
+                <label><span class="label-icon">📅</span> Debut Year:</label>
+                <InputNumber @bind-Value="artist.DebutYear" class="form-control" min="1900" max="2100" />
+                <label><span class="label-icon">🎭</span> Category:</label>
+                <InputSelect @bind-Value="artist.Category" class="form-control">
+                    @foreach (var value in Enum.GetValues<ArtistCategory>())
+                    {
+                        <option value="@value">@value</option>
+                    }
+                </InputSelect>
+                <label><span class="label-icon">🖼️</span> Image URL:</label>
                 <InputText @bind-Value="artist.Image" class="form-control" />
-
-                <button type="submit" class="btn-submit">Save Changes</button>
+                <div class="form-tags">
+                    <span class="tag">🎤 Artist</span>
+                    <span class="tag">🎵 Music</span>
+                    <span class="tag">🎭 Performance</span>
+                </div>
+                <button type="submit" class="btn-submit festival-btn">Save Changes</button>
             </EditForm>
         </div>
+    </div>
+    <div class="bottom-decoration">
+        <span>🎉</span><span>🎊</span><span>🎶</span>
     </div>
 </div>
 
@@ -48,6 +89,16 @@
         artist.Name = existing.Name;
         artist.Genre = existing.Genre;
         artist.Image = existing.Image;
+        artist.Rating = existing.Rating;
+        artist.IsTrending = existing.IsTrending;
+        artist.TrendingReason = existing.TrendingReason;
+        artist.Origin = existing.Origin;
+        artist.Description = existing.Description;
+        artist.Instagram = existing.Instagram;
+        artist.YouTube = existing.YouTube;
+        artist.FansCount = existing.FansCount;
+        artist.DebutYear = existing.DebutYear;
+        artist.Category = existing.Category;
     }
 
     private async Task Submit()

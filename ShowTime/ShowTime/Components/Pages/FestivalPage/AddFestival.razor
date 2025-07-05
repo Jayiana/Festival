@@ -1,0 +1,316 @@
+﻿@page "/addfestival"
+@inject IFestivalService FestivalService
+@inject NavigationManager NavManager
+@using ShowTime_BusinessLogic.Abstractions
+@using ShowTime_BusinessLogic.Dtos.Festival
+@rendermode InteractiveServer
+
+<div class="festival-background">
+    <!-- Enhanced Animated Background Elements -->
+    <div class="floating-elements">
+        <div class="floating-star">⭐</div>
+        <div class="floating-music">🎵</div>
+        <div class="floating-heart">💖</div>
+        <div class="floating-star">🌟</div>
+        <div class="floating-music">🎶</div>
+        <div class="floating-heart">💝</div>
+        <div class="floating-star">✨</div>
+        <div class="floating-music">🎤</div>
+        <div class="floating-star">💫</div>
+        <div class="floating-music">🎧</div>
+        <div class="floating-heart">💕</div>
+        <div class="floating-star">⭐</div>
+        <div class="floating-music">🎪</div>
+        <div class="floating-heart">💗</div>
+        <div class="floating-star">🌟</div>
+    </div>
+
+    <!-- Enhanced Geometric Background Shapes -->
+    <div class="geometric-shapes">
+        <div class="shape circle"></div>
+        <div class="shape square"></div>
+        <div class="shape triangle"></div>
+        <div class="shape circle"></div>
+        <div class="shape square"></div>
+        <div class="shape diamond"></div>
+        <div class="shape hexagon"></div>
+        <div class="shape star-shape"></div>
+        <div class="shape circle"></div>
+        <div class="shape square"></div>
+    </div>
+
+    <!-- Enhanced Animated Lines -->
+    <div class="animated-lines">
+        <div class="line line-1"></div>
+        <div class="line line-2"></div>
+        <div class="line line-3"></div>
+        <div class="line line-4"></div>
+        <div class="line line-5"></div>
+        <div class="line line-6"></div>
+    </div>
+
+    <!-- Particle System -->
+    <div class="particle-system">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <!-- Glow Effects -->
+    <div class="glow-effects">
+        <div class="glow glow-1"></div>
+        <div class="glow glow-2"></div>
+        <div class="glow glow-3"></div>
+        <div class="glow glow-4"></div>
+    </div>
+
+    <!-- Sparkle Effects -->
+    <div class="sparkle-effects">
+        <div class="sparkle sparkle-1">✨</div>
+        <div class="sparkle sparkle-2">💫</div>
+        <div class="sparkle sparkle-3">⭐</div>
+        <div class="sparkle sparkle-4">🌟</div>
+        <div class="sparkle sparkle-5">✨</div>
+        <div class="sparkle sparkle-6">💫</div>
+        <div class="sparkle sparkle-7">⭐</div>
+        <div class="sparkle sparkle-8">🌟</div>
+    </div>
+
+    <!-- Floating Hearts -->
+    <div class="floating-hearts">
+        <div class="heart heart-1">💖</div>
+        <div class="heart heart-2">💝</div>
+        <div class="heart heart-3">💕</div>
+        <div class="heart heart-4">💗</div>
+        <div class="heart heart-5">💖</div>
+    </div>
+
+    <!-- Music Notes -->
+    <div class="music-notes">
+        <div class="note note-1">🎵</div>
+        <div class="note note-2">🎶</div>
+        <div class="note note-3">🎤</div>
+        <div class="note note-4">🎧</div>
+        <div class="note note-5">🎪</div>
+        <div class="note note-6">🎆</div>
+    </div>
+
+    <div class="festival-header">
+        <h1 class="festival-title">
+            <span class="title-sparkle">✨</span>
+            <span class="title-icon">🎉</span>
+            Add New Festival
+            <span class="title-icon">🎉</span>
+            <span class="title-sparkle">✨</span>
+        </h1>
+        <p class="festival-subtitle">Register a brand-new event for our electrifying festival season!</p>
+        <div class="festival-decor-icons">
+            <span class="decor-icon">🎵</span>
+            <span class="decor-icon">🎤</span>
+            <span class="decor-icon">🎧</span>
+            <span class="decor-icon">🎪</span>
+            <span class="decor-icon">🎆</span>
+            <span class="decor-icon">🎊</span>
+            <span class="decor-icon">🎉</span>
+            <span class="decor-icon">🎭</span>
+            <span class="decor-icon">🎨</span>
+            <span class="decor-icon">🎪</span>
+            <span class="decor-icon">🎤</span>
+            <span class="decor-icon">🎧</span>
+        </div>
+    </div>
+
+    <div class="festival-form-wrapper">
+        <div class="festival-image-section">
+            <div class="image-header">
+                <h3>🎨 Festival Preview</h3>
+                <div class="image-badges">
+                    <span class="badge">🎪 Main Stage</span>
+                    <span class="badge">🎤 Live Music</span>
+                    <span class="badge">🎆 Spectacular</span>
+                    <span class="badge">🎊 Celebration</span>
+                </div>
+            </div>
+            @if (!string.IsNullOrEmpty(festival.SplashArt))
+            {
+                <div class="image-container">
+                    <img src="@festival.SplashArt" alt="Festival Preview" />
+                    <div class="image-overlay">
+                        <span class="overlay-text">🎪 Festival Image</span>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="preview-placeholder">
+                    <div class="placeholder-icon">🎨</div>
+                    <p class="preview-text">Paste an image link to preview</p>
+                    <div class="placeholder-decoration">
+                        <span>✨</span>
+                        <span>🎪</span>
+                        <span>🎆</span>
+                        <span>🎊</span>
+                        <span>🎉</span>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="festival-form-section">
+            <div class="form-header">
+                <h2>📅 Festival Details</h2>
+                <div class="form-decoration">
+                    <span>🎊</span>
+                    <span>🎉</span>
+                    <span>🎊</span>
+                    <span>🎉</span>
+                    <span>🎊</span>
+                </div>
+            </div>
+            
+            <EditForm Model="festival" OnValidSubmit="SubmitFestival" FormName="AddFestivalForm">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="label-icon">🏷️</span>
+                        Festival Name:
+                    </label>
+                    <InputText @bind-Value="festival.Name" class="form-control" placeholder="Enter festival name..." />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="label-icon">📍</span>
+                        Location:
+                    </label>
+                    <InputText @bind-Value="festival.Location" class="form-control" placeholder="Enter festival location..." />
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="label-icon">🚀</span>
+                            Start Date:
+                        </label>
+                        <InputDate @bind-Value="festival.StartDate" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="label-icon">🎯</span>
+                            End Date:
+                        </label>
+                        <InputDate @bind-Value="festival.EndDate" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="label-icon">👥</span>
+                        Capacity:
+                    </label>
+                    <InputNumber @bind-Value="festival.Capacity" class="form-control" placeholder="Enter capacity..." />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="label-icon">🌄</span>
+                        SplashArt URL:
+                    </label>
+                    <InputText @bind-Value="festival.SplashArt" class="form-control" @oninput="PreviewImage" placeholder="Enter image URL..." />
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label><InputCheckbox @bind-Value="festival.IsIndoor" /> Is Indoor</label>
+                    <label><InputCheckbox @bind-Value="festival.HasCamping" /> Camping Available</label>
+                    <label><InputCheckbox @bind-Value="festival.HasFoodCourt" /> Food Court</label>
+                    <label><InputCheckbox @bind-Value="festival.HasAfterParty" /> After Party</label>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label"><span class="label-icon">⭐</span> Rating:</label>
+                    <InputNumber @bind-Value="festival.Rating" class="form-control" placeholder="Enter rating (0-100)" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="label-icon">🎨</span>
+                        Festival Theme:
+                    </label>
+                    <InputSelect @bind-Value="festival.Theme" class="form-control">
+                        <option value="">-- Select Theme --</option>
+                        <option value="Neon Dreams">Neon Dreams</option>
+                        <option value="Mystic Forest">Mystic Forest</option>
+                        <option value="Cosmic Beats">Cosmic Beats</option>
+                        <option value="Tropical Vibes">Tropical Vibes</option>
+                        <option value="Cyber Carnival">Cyber Carnival</option>
+                    </InputSelect>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label"><span class="label-icon">📝</span> Description:</label>
+                    <InputTextArea @bind-Value="festival.Description" class="form-control" placeholder="Enter festival description..." />
+                </div>
+
+                <div class="form-tags">
+                    <span class="tag">🎪 Main Event</span>
+                    <span class="tag">🎤 Live Performance</span>
+                    <span class="tag">🎆 Spectacular Show</span>
+                    <span class="tag">🎊 Celebration</span>
+                    <span class="tag">🎭 Entertainment</span>
+                    <span class="tag">🎨 Creative</span>
+                </div>
+
+                <button class="btn-festival-submit">
+                    <span class="btn-icon">✨</span>
+                    Add Festival
+                    <span class="btn-icon">✨</span>
+                </button>
+            </EditForm>
+        </div>
+    </div>
+
+    <!-- Enhanced Bottom Decoration -->
+    <div class="bottom-decoration">
+        <div class="decoration-line"></div>
+        <div class="decoration-icons">
+            <span>🎪</span>
+            <span>🎤</span>
+            <span>🎧</span>
+            <span>🎆</span>
+            <span>🎊</span>
+            <span>🎉</span>
+            <span>🎭</span>
+            <span>🎨</span>
+        </div>
+        <div class="decoration-line"></div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private FestivalCreateDto festival { get; set; } = new();
+
+    private async Task SubmitFestival()
+    {
+        await FestivalService.AddAsync(festival);
+        festival = new();
+        NavManager.NavigateTo("/festivals");
+    }
+
+    private void PreviewImage(ChangeEventArgs e)
+    {
+        var url = festival.SplashArt?.Trim();
+        if (string.IsNullOrWhiteSpace(url))
+            return;
+    }
+}

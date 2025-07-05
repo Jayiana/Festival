@@ -1,0 +1,153 @@
+﻿@page "/login"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authentication.Cookies
+@using ShowTime.DataAccess.Models
+@using ShowTime.DataAccess.Models.UserInfo
+@using ShowTime_BusinessLogic.Dtos
+@using ShowTime_BusinessLogic.Dtos.Authentication.Login
+@using ShowTime_BusinessLogic.Services
+@inject IUserService UserService
+@inject NavigationManager navigationManager
+@using Microsoft.AspNetCore.Authentication
+
+
+<div class="auth-container">
+    <!-- Removed floating decorative elements for a cleaner look -->
+
+    <div class="auth-box text-center">
+        <div class="titlu">
+            <img src="/SiteImages/OtherPages/titlu.png" alt="ShowTime">
+        </div>
+
+        <div class="box">
+            <div class="login-header">
+                <h1 class="login-title">
+                    <span class="title-sparkle">✨</span>
+                    <span class="title-icon">🎤</span>
+                    Artist Portal
+                    <span class="title-icon">🎤</span>
+                    <span class="title-sparkle">✨</span>
+                </h1>
+                <div class="login-decoration">
+                    <span>🎪</span>
+                    <span>🎤</span>
+                    <span>🎵</span>
+                    <span>🎧</span>
+                    <span>🎪</span>
+                </div>
+            </div>
+
+            <EditForm Model="loginModel" OnValidSubmit="Authenticate" FormName="LoginForm">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group">
+                    <div class="inputBox">
+                        <InputText @bind-Value="loginModel.Email" id="userField" required />
+                        <i class="fa fa-envelope"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="inputBox">
+                        <InputText @bind-Value="loginModel.Password" type="password" id="passwordField" required />
+                        <i class="fa fa-lock"></i>
+                    </div>
+                </div>
+
+                <div class="links">
+                    <p class="link-item">
+                        <span class="link-icon">🎧</span>
+                        Forgot Password? <a href="/resetpassword">Reset it here.</a>
+                    </p>
+                    <p class="link-item">
+                        <span class="link-icon">🕺</span>
+                        New to the festival? <a href="/register">Join us now.</a>
+                    </p>
+                </div>
+
+                <button type="submit" class="login-btn">
+                    <span class="btn-icon">🚀</span>
+                    Enter Festival
+                    <span class="btn-icon">🚀</span>
+                </button>
+
+                <p class="or">Or Log In using the socials below</p>
+
+                <div class="social-icons">
+                    <div class="social-icon instagram">
+                        <a href="#"><i class="fa fa-instagram"></i></a>
+                    </div>
+                    <div class="social-icon facebook">
+                        <a href="#"><i class="fa fa-facebook"></i></a>
+                    </div>
+                    <div class="social-icon google">
+                        <a href="#"><i class="fa fa-google"></i></a>
+                    </div>
+                    <div class="social-icon linkedin">
+                        <a href="#"><i class="fa fa-linkedin"></i></a>
+                    </div>
+                </div>
+
+                <audio autoplay loop id="audio">
+                    <source src="/SiteMedia/BlackPantherLoginTheme.mp3" type="audio/mpeg">
+                </audio>
+
+                <div class="sound-toggle">
+                    <label for="mutesound">
+                        <span class="sound-icon">🔊</span>
+                        Enable Sound
+                    </label>
+                    <input type="checkbox" id="mutesound" checked onclick="EnableAudio()" />
+                </div>
+            </EditForm>
+        </div>
+    </div>
+
+    <!-- Enhanced Bottom Decoration -->
+    <div class="bottom-decoration">
+        <div class="decoration-line"></div>
+        <div class="decoration-icons">
+            <span>🎤</span>
+            <span>🎵</span>
+            <span>🎧</span>
+            <span>🎪</span>
+            <span>🎊</span>
+            <span>🎉</span>
+            <span>🎭</span>
+            <span>🎨</span>
+        </div>
+        <div class="decoration-line"></div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private LoginDto loginModel { get; set; } = new();
+
+    [CascadingParameter]
+    private HttpContext httpContext { get; set; } = null;
+
+    private async Task Authenticate()
+    {
+        try
+        {
+            var response = await UserService.LoginAsync(loginModel);
+            var claims = new List<Claim>
+                {
+                    new (ClaimTypes.Email, loginModel.Email),
+                    new (ClaimTypes.Role, Enum.GetName(typeof(Role), response.Role)?? nameof(Role.User))
+                };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
+            await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
+            navigationManager.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Login failed: {ex.Message}");
+        }
+    }
+}

@@ -1,5 +1,5 @@
 ﻿using ShowTime.DataAccess.GenericRepository;
-using ShowTime_BusinessLogic.Dtos.Login;
+using ShowTime_BusinessLogic.Dtos.Authentication.Login;
 using System;
 using System.Collections.Generic;
 using System.Linq;

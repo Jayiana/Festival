@@ -5,7 +5,10 @@ using ShowTime.Client.Pages;
 using ShowTime.Components;
 using ShowTime.DataAccess;
 using ShowTime.DataAccess.GenericRepository;
-using ShowTime.DataAccess.Models;
+using ShowTime.DataAccess.Models.ArtistInfo;
+using ShowTime.DataAccess.Models.FestivalInfo;
+using ShowTime.DataAccess.Models.LineupInfo;
+using ShowTime.DataAccess.Models.UserInfo;
 using ShowTime_BusinessLogic.Abstractions;
 using ShowTime_BusinessLogic.Dtos;
 using ShowTime_BusinessLogic.Services;
@@ -27,6 +30,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddHttpContextAccessor();
 
 
 var connectionString = builder.Configuration.GetConnectionString("ShowTimeContext");

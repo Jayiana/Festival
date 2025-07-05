@@ -1,14 +1,554 @@
 ﻿@page "/"
-<PageTitle>Home</PageTitle>
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
 
-<div class="image-slider">
-    <img src="images/Untold.jpg" class="slide-image active" />
-    <img src="images/flight.jpg" class="slide-image" />
-    <img src="images/neversea.jpg" class="slide-image" />
+<PageTitle>ShowTime - Festival App</PageTitle>
+
+@if (showLogoPopup)
+{
+    <div class="logo-popup @(logoClicked ? "clicked" : "") @(logoTransitioning ? "logo-transition" : "")" @onclick="HandleLogoClick">
+        <img src="images/Showtime-logo.png" alt="ShowTime" width="200" height="80" />
+    </div>
+}
+
+<div class="home-container">
+    <!-- Hero Section -->
+    <section class="festival-hero festival-section">
+            <div class="festival-decoration">
+        @for (int i = 0; i < 15; i++)
+        {
+            <div class="sparkle" style="left: @(Random.Shared.Next(0, 100))%; top: @(Random.Shared.Next(0, 100))%; animation-delay: @(Random.Shared.Next(0, 4000))ms;"></div>
+        }
+    </div>
+    
+    <div class="particle-system">
+        @for (int i = 0; i < 12; i++)
+        {
+            <div class="particle" style="left: @(Random.Shared.Next(0, 100))%; animation-delay: @(Random.Shared.Next(0, 15000))ms;"></div>
+        }
+    </div>
+    
+    <!-- Geometric Shapes -->
+    @for (int i = 0; i < 6; i++)
+    {
+        <div class="geometric-shape triangle" style="left: @(Random.Shared.Next(5, 95))%; top: @(Random.Shared.Next(10, 90))%; animation-delay: @(Random.Shared.Next(0, 8000))ms;"></div>
+    }
+    
+    @for (int i = 0; i < 8; i++)
+    {
+        <div class="geometric-shape circle" style="left: @(Random.Shared.Next(5, 95))%; top: @(Random.Shared.Next(10, 90))%; animation-delay: @(Random.Shared.Next(0, 6000))ms;"></div>
+    }
+    
+    @for (int i = 0; i < 5; i++)
+    {
+        <div class="geometric-shape square" style="left: @(Random.Shared.Next(5, 95))%; top: @(Random.Shared.Next(10, 90))%; animation-delay: @(Random.Shared.Next(0, 10000))ms;"></div>
+    }
+    
+    <!-- Floating Elements -->
+    @for (int i = 0; i < 6; i++)
+    {
+        <div class="floating-element music-note" style="left: @(Random.Shared.Next(5, 95))%; animation-delay: @(Random.Shared.Next(0, 12000))ms;">♪</div>
+    }
+    
+    @for (int i = 0; i < 4; i++)
+    {
+        <div class="floating-element heart" style="left: @(Random.Shared.Next(5, 95))%; animation-delay: @(Random.Shared.Next(0, 18000))ms;">♥</div>
+    }
+    
+    @for (int i = 0; i < 3; i++)
+    {
+        <div class="floating-element star" style="left: @(Random.Shared.Next(5, 95))%; animation-delay: @(Random.Shared.Next(0, 20000))ms;">★</div>
+    }
+    
+    <!-- Soft Glow Effects -->
+    @for (int i = 0; i < 4; i++)
+    {
+        <div class="soft-glow" style="left: @(Random.Shared.Next(10, 90))%; top: @(Random.Shared.Next(20, 80))%; animation-delay: @(Random.Shared.Next(0, 8000))ms;"></div>
+    }
+    
+    @for (int i = 0; i < 3; i++)
+    {
+        <div class="soft-glow glow-blue" style="left: @(Random.Shared.Next(10, 90))%; top: @(Random.Shared.Next(20, 80))%; animation-delay: @(Random.Shared.Next(0, 10000))ms;"></div>
+    }
+    
+    @for (int i = 0; i < 2; i++)
+    {
+        <div class="soft-glow glow-purple" style="left: @(Random.Shared.Next(10, 90))%; top: @(Random.Shared.Next(20, 80))%; animation-delay: @(Random.Shared.Next(0, 12000))ms;"></div>
+    }
+    
+    <!-- Animated Lines -->
+    @for (int i = 0; i < 3; i++)
+    {
+        <div class="animated-line" style="top: @(Random.Shared.Next(20, 80))%; width: @(Random.Shared.Next(100, 300))px; animation-delay: @(Random.Shared.Next(0, 6000))ms;"></div>
+    }
+        
+        <div class="festival-content">
+            <h1 class="festival-title neon-text">Welcome to ShowTime</h1>
+            <p class="festival-subtitle">Your Ultimate Festival Experience</p>
+            <a href="/festivals" class="festival-cta">Explore Festivals</a>
+        </div>
+    </section>
+
+    <!-- Countdown Section -->
+    <section class="countdown-section festival-section">
+        <div class="section-header">
+            <h2 class="section-title neon-text">Next Big Event</h2>
+            <p class="section-subtitle">Untold Festival 2024</p>
+        </div>
+        
+        <div class="countdown-container">
+            <div class="countdown-item">
+                <div class="countdown-number">@daysLeft</div>
+                <div class="countdown-label">Days</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number">@hoursLeft</div>
+                <div class="countdown-label">Hours</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number">@minutesLeft</div>
+                <div class="countdown-label">Minutes</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number">@secondsLeft</div>
+                <div class="countdown-label">Seconds</div>
+            </div>
+        </div>
+        
+        <div class="countdown-cta">
+            <a href="/festivals" class="countdown-button">Get Tickets Now</a>
+        </div>
+        
+        <!-- Section Decorations -->
+        <div class="section-decoration">
+            @for (int i = 0; i < 10; i++)
+            {
+                <div class="sparkle" style="left: @(Random.Shared.Next(0, 100))%; top: @(Random.Shared.Next(0, 100))%; animation-delay: @(Random.Shared.Next(0, 4000))ms;"></div>
+            }
+            
+            @for (int i = 0; i < 4; i++)
+            {
+                <div class="floating-element star" style="left: @(Random.Shared.Next(5, 95))%; animation-delay: @(Random.Shared.Next(0, 15000))ms;">★</div>
+            }
+        </div>
+    </section>
+
+    <!-- Featured Festivals Section -->
+    <section class="featured-festivals festival-section">
+        <div class="section-header">
+            <h2 class="section-title neon-text">Featured Festivals</h2>
+            <p class="section-subtitle">Discover the hottest events around the world</p>
+        </div>
+        
+        <div class="image-slider">
+            <img src="images/Untold.jpg" class="slide-image active" />
+            <img src="images/flight.jpg" class="slide-image" />
+            <img src="images/neversea.jpg" class="slide-image" />
+        </div>
+        
+        <!-- Section Decorations -->
+        <div class="section-decoration">
+            @for (int i = 0; i < 8; i++)
+            {
+                <div class="sparkle" style="left: @(Random.Shared.Next(0, 100))%; top: @(Random.Shared.Next(0, 100))%; animation-delay: @(Random.Shared.Next(0, 4000))ms;"></div>
+            }
+            
+            @for (int i = 0; i < 3; i++)
+            {
+                <div class="geometric-shape circle" style="left: @(Random.Shared.Next(5, 95))%; top: @(Random.Shared.Next(10, 90))%; animation-delay: @(Random.Shared.Next(0, 6000))ms;"></div>
+            }
+        </div>
+    </section>
+
+    <!-- Trending Artists Section -->
+    <section class="trending-artists festival-section">
+        <div class="section-header">
+            <h2 class="section-title neon-text">Trending Artists</h2>
+            <p class="section-subtitle">The most popular performers this season</p>
+        </div>
+        
+        <div class="artists-grid">
+            <div class="artist-card">
+                <div class="artist-avatar">🎤</div>
+                <h3>David Guetta</h3>
+                <p>Electronic Dance Music</p>
+                <div class="artist-stats">
+                    <span>🔥 Trending</span>
+                    <span>⭐ 4.9/5</span>
+                </div>
+            </div>
+            
+            <div class="artist-card">
+                <div class="artist-avatar">🎸</div>
+                <h3>Martin Garrix</h3>
+                <p>Progressive House</p>
+                <div class="artist-stats">
+                    <span>🔥 Trending</span>
+                    <span>⭐ 4.8/5</span>
+                </div>
+            </div>
+            
+            <div class="artist-card">
+                <div class="artist-avatar">🎹</div>
+                <h3>Calvin Harris</h3>
+                <p>Pop Dance</p>
+                <div class="artist-stats">
+                    <span>🔥 Trending</span>
+                    <span>⭐ 4.7/5</span>
+                </div>
+            </div>
+            
+            <div class="artist-card">
+                <div class="artist-avatar">🎧</div>
+                <h3>Skrillex</h3>
+                <p>Dubstep</p>
+                <div class="artist-stats">
+                    <span>🔥 Trending</span>
+                    <span>⭐ 4.9/5</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="artists-cta">
+            <a href="/artists" class="artists-button">View All Artists</a>
+        </div>
+        
+        <!-- Section Decorations -->
+        <div class="section-decoration">
+            @for (int i = 0; i < 6; i++)
+            {
+                <div class="sparkle" style="left: @(Random.Shared.Next(0, 100))%; top: @(Random.Shared.Next(0, 100))%; animation-delay: @(Random.Shared.Next(0, 4000))ms;"></div>
+            }
+            
+            @for (int i = 0; i < 3; i++)
+            {
+                <div class="floating-element music-note" style="left: @(Random.Shared.Next(5, 95))%; animation-delay: @(Random.Shared.Next(0, 12000))ms;">♪</div>
+            }
+        </div>
+    </section>
+
+    <!-- Festival Categories Section -->
+    <section class="festival-categories festival-section">
+        <div class="section-header">
+            <h2 class="section-title neon-text">Festival Categories</h2>
+            <p class="section-subtitle">Find your perfect festival vibe</p>
+        </div>
+        
+        <div class="categories-grid">
+            <div class="category-card">
+                <div class="category-icon">🎵</div>
+                <h3>Electronic</h3>
+                <p>EDM, House, Techno</p>
+                <span class="category-count">24 Events</span>
+            </div>
+            
+            <div class="category-card">
+                <div class="category-icon">🎸</div>
+                <h3>Rock</h3>
+                <p>Alternative, Indie, Metal</p>
+                <span class="category-count">18 Events</span>
+            </div>
+            
+            <div class="category-card">
+                <div class="category-icon">🎹</div>
+                <h3>Pop</h3>
+                <p>Mainstream, Contemporary</p>
+                <span class="category-count">32 Events</span>
+            </div>
+            
+            <div class="category-card">
+                <div class="category-icon">🎺</div>
+                <h3>Jazz</h3>
+                <p>Smooth, Fusion, Traditional</p>
+                <span class="category-count">12 Events</span>
+            </div>
+            
+            <div class="category-card">
+                <div class="category-icon">🎻</div>
+                <h3>Classical</h3>
+                <p>Orchestra, Chamber, Opera</p>
+                <span class="category-count">8 Events</span>
+            </div>
+            
+            <div class="category-card">
+                <div class="category-icon">🌍</div>
+                <h3>World Music</h3>
+                <p>Cultural, Traditional, Fusion</p>
+                <span class="category-count">15 Events</span>
+            </div>
+        </div>
+        
+        <!-- Section Decorations -->
+        <div class="section-decoration">
+            @for (int i = 0; i < 8; i++)
+            {
+                <div class="sparkle" style="left: @(Random.Shared.Next(0, 100))%; top: @(Random.Shared.Next(0, 100))%; animation-delay: @(Random.Shared.Next(0, 4000))ms;"></div>
+            }
+            
+            @for (int i = 0; i < 4; i++)
+            {
+                <div class="geometric-shape triangle" style="left: @(Random.Shared.Next(5, 95))%; top: @(Random.Shared.Next(10, 90))%; animation-delay: @(Random.Shared.Next(0, 8000))ms;"></div>
+            }
+        </div>
+    </section>
+
+    <!-- Quick Actions Section -->
+    <section class="quick-actions festival-section">
+        <div class="action-cards">
+            <div class="action-card">
+                <div class="card-icon">🎵</div>
+                <h3>Browse Artists</h3>
+                <p>Discover amazing performers</p>
+                <a href="/artists" class="card-link">Explore Artists</a>
+            </div>
+            
+            <div class="action-card">
+                <div class="card-icon">🎪</div>
+                <h3>Find Festivals</h3>
+                <p>Search for upcoming events</p>
+                <a href="/festivals" class="card-link">View Festivals</a>
+            </div>
+            
+            <div class="action-card">
+                <div class="card-icon">🎭</div>
+                <h3>Lineups</h3>
+                <p>Check out the schedules</p>
+                <a href="/lineups" class="card-link">See Lineups</a>
+            </div>
+        </div>
+        
+        <!-- Section Decorations -->
+        <div class="section-decoration">
+            @for (int i = 0; i < 6; i++)
+            {
+                <div class="sparkle" style="left: @(Random.Shared.Next(0, 100))%; top: @(Random.Shared.Next(0, 100))%; animation-delay: @(Random.Shared.Next(0, 4000))ms;"></div>
+            }
+            
+            @for (int i = 0; i < 2; i++)
+            {
+                <div class="floating-element music-note" style="left: @(Random.Shared.Next(5, 95))%; animation-delay: @(Random.Shared.Next(0, 12000))ms;">♪</div>
+            }
+            
+            @for (int i = 0; i < 2; i++)
+            {
+                <div class="soft-glow" style="left: @(Random.Shared.Next(10, 90))%; top: @(Random.Shared.Next(20, 80))%; animation-delay: @(Random.Shared.Next(0, 8000))ms;"></div>
+            }
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section festival-section">
+        <div class="section-header">
+            <h2 class="section-title neon-text">What People Say</h2>
+            <p class="section-subtitle">Real experiences from festival-goers</p>
+        </div>
+        
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"ShowTime made finding the perfect festival so easy! The lineup information was spot-on."</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">👤</div>
+                    <div class="author-info">
+                        <h4>Sarah Johnson</h4>
+                        <span>Festival Enthusiast</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"Amazing app! I discovered artists I never knew existed. The recommendations are perfect."</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">👤</div>
+                    <div class="author-info">
+                        <h4>Mike Chen</h4>
+                        <span>Music Lover</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"The countdown feature got me so excited! ShowTime is my go-to for all festival planning."</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">👤</div>
+                    <div class="author-info">
+                        <h4>Emma Davis</h4>
+                        <span>Concert Goer</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section Decorations -->
+        <div class="section-decoration">
+            @for (int i = 0; i < 5; i++)
+            {
+                <div class="sparkle" style="left: @(Random.Shared.Next(0, 100))%; top: @(Random.Shared.Next(0, 100))%; animation-delay: @(Random.Shared.Next(0, 4000))ms;"></div>
+            }
+            
+            @for (int i = 0; i < 2; i++)
+            {
+                <div class="floating-element heart" style="left: @(Random.Shared.Next(5, 95))%; animation-delay: @(Random.Shared.Next(0, 18000))ms;">♥</div>
+            }
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section festival-section">
+        <div class="newsletter-content">
+            <h2 class="newsletter-title neon-text">Stay in the Loop</h2>
+            <p class="newsletter-subtitle">Get the latest festival updates, artist announcements, and exclusive offers delivered to your inbox.</p>
+            
+            <div class="newsletter-form">
+                <input type="email" placeholder="Enter your email address" class="newsletter-input" />
+                <button class="newsletter-button">Subscribe</button>
+            </div>
+            
+            <p class="newsletter-note">Join 50,000+ festival enthusiasts who never miss a beat!</p>
+        </div>
+        
+        <!-- Section Decorations -->
+        <div class="section-decoration">
+            @for (int i = 0; i < 6; i++)
+            {
+                <div class="sparkle" style="left: @(Random.Shared.Next(0, 100))%; top: @(Random.Shared.Next(0, 100))%; animation-delay: @(Random.Shared.Next(0, 4000))ms;"></div>
+            }
+            
+            @for (int i = 0; i < 3; i++)
+            {
+                <div class="floating-element star" style="left: @(Random.Shared.Next(5, 95))%; animation-delay: @(Random.Shared.Next(0, 20000))ms;">★</div>
+            }
+        </div>
+    </section>
 </div>
 
+@code {
+    private bool showLogoPopup = true;
+    private bool logoClicked = false;
+    private bool logoTransitioning = false;
+    
+    // Countdown variables
+    private int daysLeft = 45;
+    private int hoursLeft = 12;
+    private int minutesLeft = 30;
+    private int secondsLeft = 15;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Check if this is the first visit
+            var hasVisited = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "hasVisitedShowTime");
+            if (hasVisited != "true")
+            {
+                showLogoPopup = true;
+                StateHasChanged();
+            }
+            else
+            {
+                showLogoPopup = false;
+                StateHasChanged();
+            }
+            
+            // Start countdown timer
+            StartCountdown();
+        }
+    }
+
+    private async Task HandleLogoClick()
+    {
+        if (!logoClicked)
+        {
+            logoClicked = true;
+            StateHasChanged();
+
+            // Play sound effect
+            await JSRuntime.InvokeVoidAsync("playLogoSound");
+
+            // Wait for click animation
+            await Task.Delay(500);
+
+            // Start transition animation
+            logoTransitioning = true;
+            StateHasChanged();
+
+            // Wait for transition to complete
+            await Task.Delay(1200);
+
+            // Hide logo and mark as visited
+            showLogoPopup = false;
+            await JSRuntime.InvokeVoidAsync("localStorage.setItem", "hasVisitedShowTime", "true");
+            StateHasChanged();
+        }
+    }
+    
+    private async void StartCountdown()
+    {
+        while (true)
+        {
+            await Task.Delay(1000);
+            if (secondsLeft > 0)
+            {
+                secondsLeft--;
+            }
+            else
+            {
+                secondsLeft = 59;
+                if (minutesLeft > 0)
+                {
+                    minutesLeft--;
+                }
+                else
+                {
+                    minutesLeft = 59;
+                    if (hoursLeft > 0)
+                    {
+                        hoursLeft--;
+                    }
+                    else
+                    {
+                        hoursLeft = 23;
+                        if (daysLeft > 0)
+                        {
+                            daysLeft--;
+                        }
+                    }
+                }
+            }
+            StateHasChanged();
+        }
+    }
+}
+
 <script>
-       let index = 0;
+    // Logo sound effect
+    function playLogoSound() {
+        // Create audio context for generating sound
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.1);
+        
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.2);
+    }
+
+    // Image slider functionality
+    let index = 0;
     const slides = document.querySelectorAll(".slide-image");
 
     function showNextSlide() {
@@ -25,5 +565,4 @@
     window.onload = () => {
         slides[0].classList.add("active");
     };
-
 </script>

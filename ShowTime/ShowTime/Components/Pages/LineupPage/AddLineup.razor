@@ -1,0 +1,284 @@
+﻿@page "/addlineup"
+@inject ILineupService LineupService
+@inject NavigationManager NavManager
+@using ShowTime_BusinessLogic.Abstractions
+@using ShowTime_BusinessLogic.Dtos
+
+<div class="add-lineup-page">
+    <!-- Enhanced Animated Background Elements -->
+    <div class="floating-elements">
+        <div class="floating-star">⭐</div>
+        <div class="floating-music">🎵</div>
+        <div class="floating-heart">💖</div>
+        <div class="floating-star">🌟</div>
+        <div class="floating-music">🎶</div>
+        <div class="floating-heart">💝</div>
+        <div class="floating-star">✨</div>
+        <div class="floating-music">🎤</div>
+        <div class="floating-star">💫</div>
+        <div class="floating-music">🎧</div>
+        <div class="floating-heart">💕</div>
+        <div class="floating-star">⭐</div>
+        <div class="floating-music">🎪</div>
+        <div class="floating-heart">💗</div>
+        <div class="floating-star">🌟</div>
+    </div>
+
+    <!-- Enhanced Geometric Background Shapes -->
+    <div class="geometric-shapes">
+        <div class="shape circle"></div>
+        <div class="shape square"></div>
+        <div class="shape triangle"></div>
+        <div class="shape circle"></div>
+        <div class="shape square"></div>
+        <div class="shape diamond"></div>
+        <div class="shape hexagon"></div>
+        <div class="shape star-shape"></div>
+        <div class="shape circle"></div>
+        <div class="shape square"></div>
+    </div>
+
+    <!-- Enhanced Animated Lines -->
+    <div class="animated-lines">
+        <div class="line line-1"></div>
+        <div class="line line-2"></div>
+        <div class="line line-3"></div>
+        <div class="line line-4"></div>
+        <div class="line line-5"></div>
+        <div class="line line-6"></div>
+    </div>
+
+    <!-- Particle System -->
+    <div class="particle-system">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <!-- Glow Effects -->
+    <div class="glow-effects">
+        <div class="glow glow-1"></div>
+        <div class="glow glow-2"></div>
+        <div class="glow glow-3"></div>
+        <div class="glow glow-4"></div>
+    </div>
+
+    <!-- Sparkle Effects -->
+    <div class="sparkle-effects">
+        <div class="sparkle sparkle-1">✨</div>
+        <div class="sparkle sparkle-2">💫</div>
+        <div class="sparkle sparkle-3">⭐</div>
+        <div class="sparkle sparkle-4">🌟</div>
+        <div class="sparkle sparkle-5">✨</div>
+        <div class="sparkle sparkle-6">💫</div>
+        <div class="sparkle sparkle-7">⭐</div>
+        <div class="sparkle sparkle-8">🌟</div>
+    </div>
+
+    <!-- Floating Hearts -->
+    <div class="floating-hearts">
+        <div class="heart heart-1">💖</div>
+        <div class="heart heart-2">💝</div>
+        <div class="heart heart-3">💕</div>
+        <div class="heart heart-4">💗</div>
+        <div class="heart heart-5">💖</div>
+    </div>
+
+    <!-- Music Notes -->
+    <div class="music-notes">
+        <div class="note note-1">🎵</div>
+        <div class="note note-2">🎶</div>
+        <div class="note note-3">🎤</div>
+        <div class="note note-4">🎧</div>
+        <div class="note note-5">🎪</div>
+        <div class="note note-6">🎆</div>
+    </div>
+
+    <div class="lineup-header">
+        <h1 class="lineup-title">
+            <span class="title-sparkle">✨</span>
+            <span class="title-icon">🎶</span>
+            Add Artist to Festival Lineup
+            <span class="title-icon">🎶</span>
+            <span class="title-sparkle">✨</span>
+        </h1>
+        <p class="lineup-subtitle">Schedule performances and manage stage time like a true showrunner!</p>
+        <div class="lineup-decor-icons">
+            <span class="decor-icon">🎤</span>
+            <span class="decor-icon">🌟</span>
+            <span class="decor-icon">🎧</span>
+            <span class="decor-icon">⏱️</span>
+            <span class="decor-icon">🎵</span>
+            <span class="decor-icon">🎪</span>
+            <span class="decor-icon">🎆</span>
+            <span class="decor-icon">🎊</span>
+            <span class="decor-icon">🎭</span>
+            <span class="decor-icon">🎨</span>
+            <span class="decor-icon">🎪</span>
+            <span class="decor-icon">🎤</span>
+        </div>
+    </div>
+
+    <div class="lineup-form-wrapper">
+        <div class="lineup-image-box">
+            <div class="image-header">
+                <h3>🎪 Lineup Assignment</h3>
+                <div class="image-badges">
+                    <span class="badge">🎤 Performance</span>
+                    <span class="badge">🎪 Stage Setup</span>
+                    <span class="badge">⏰ Time Slot</span>
+                    <span class="badge">🎭 Show</span>
+                </div>
+            </div>
+            <div class="preview-placeholder">
+                <div class="placeholder-icon">🎪</div>
+                <p class="preview-text">Assign an artist to a festival</p>
+                <div class="placeholder-decoration">
+                    <span>✨</span>
+                    <span>🎤</span>
+                    <span>🎵</span>
+                    <span>🎧</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="lineup-form-section">
+            <div class="form-header">
+                <h2>📋 Lineup Form</h2>
+                <div class="form-decoration">
+                    <span>🎊</span>
+                    <span>🎉</span>
+                    <span>🎊</span>
+                    <span>🎉</span>
+                    <span>🎊</span>
+                </div>
+            </div>
+            
+            <EditForm Model="lineup" OnValidSubmit="SubmitLineup" FormName="AddLineupForm">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="label-icon">🏟️</span>
+                        Festival ID:
+                    </label>
+                    <InputNumber @bind-Value="lineup.FestivalId" class="form-control" placeholder="Enter festival ID..." />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="label-icon">🎤</span>
+                        Artist ID:
+                    </label>
+                    <InputNumber @bind-Value="lineup.ArtistId" class="form-control" placeholder="Enter artist ID..." />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="label-icon">🎪</span>
+                        Stage:
+                    </label>
+                    <InputText @bind-Value="lineup.Stage" class="form-control" placeholder="Enter stage name..." />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="label-icon">⏰</span>
+                        Start Time:
+                    </label>
+                    <InputDate @bind-Value="lineup.StartTime" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="label-icon">🔥</span>
+                        Is Main Stage:
+                    </label>
+                    <InputCheckbox @bind-Value="lineup.IsMainStage" class="form-check-input" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="label-icon">🎸</span>
+                        Live Performance:
+                    </label>
+                    <InputCheckbox @bind-Value="lineup.IsLivePerformance" class="form-check-input" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="label-icon">📝</span>
+                        Description:
+                    </label>
+                    <InputTextArea @bind-Value="lineup.Description" class="form-control" placeholder="Write a short note..." />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="label-icon">🎨</span>
+                        Stage Theme:
+                    </label>
+                    <InputText @bind-Value="lineup.StageTheme" class="form-control" placeholder="Enter stage theme..." />
+                </div>
+
+
+
+                <div class="lineup-tags">
+                    <h3 class="tags-title">🎭 Performance Types</h3>
+                    <div class="tags-container">
+                        <span class="tag-badge">🔥 Headline</span>
+                        <span class="tag-badge">🎧 DJ Set</span>
+                        <span class="tag-badge">🎸 Live Band</span>
+                        <span class="tag-badge">🎤 Solo Act</span>
+                        <span class="tag-badge">🎪 Opening Act</span>
+                        <span class="tag-badge">🎆 Closing Show</span>
+                        <span class="tag-badge">🎭 Performance</span>
+                        <span class="tag-badge">🎨 Creative</span>
+                    </div>
+                </div>
+
+                <button class="btn-lineup-submit">
+                    <span class="btn-icon">✨</span>
+                    Add Lineup
+                    <span class="btn-icon">✨</span>
+                </button>
+            </EditForm>
+        </div>
+    </div>
+
+    <!-- Enhanced Bottom Decoration -->
+    <div class="bottom-decoration">
+        <div class="decoration-line"></div>
+        <div class="decoration-icons">
+            <span>🎤</span>
+            <span>🎵</span>
+            <span>🎧</span>
+            <span>🎪</span>
+            <span>🎊</span>
+            <span>🎉</span>
+            <span>🎭</span>
+            <span>🎨</span>
+        </div>
+        <div class="decoration-line"></div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private LineupCreateDto lineup { get; set; } = new();
+
+    private async Task SubmitLineup()
+    {
+        await LineupService.AddAsync(lineup);
+        lineup = new();
+        NavManager.NavigateTo("/lineups");
+    }
+}

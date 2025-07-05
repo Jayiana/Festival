@@ -3,8 +3,17 @@
 @using ShowTime_BusinessLogic.Dtos.Festival
 @inject IFestivalService FestivalService
 @inject NavigationManager NavManager
+@rendermode InteractiveServer
 
-<div class="edit-page">
+<div class="edit-page festival-edit-bg">
+    <div class="festival-decoration">
+        <div class="sparkle"></div>
+        <div class="music-note">🎶</div>
+        <div class="star">★</div>
+        <div class="heart">💖</div>
+        <div class="triangle"></div>
+        <div class="circle"></div>
+    </div>
     <div class="edit-form-container">
         <div class="image-preview">
             @if (!string.IsNullOrEmpty(festival.SplashArt))
@@ -16,34 +25,57 @@
                 <p>Paste an image link to preview</p>
             }
         </div>
-
         <div class="edit-form-section">
-            <h2>Edit Festival</h2>
+            <div class="form-header">
+                <h2><span class="icon">🎪</span> Edit Festival <span class="icon">🎉</span></h2>
+            </div>
             <EditForm Model="@festival" OnValidSubmit="SubmitFestival" FormName="EditFestivalForm">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
-
-                <label>Name:</label>
+                <label><span class="label-icon">🏷️</span> Name:</label>
                 <InputText @bind-Value="festival.Name" class="form-control" />
-
-                <label>Location:</label>
+                <label><span class="label-icon">📍</span> Location:</label>
                 <InputText @bind-Value="festival.Location" class="form-control" />
-
-                <label>Start Date:</label>
+                <label><span class="label-icon">📅</span> Start Date:</label>
                 <InputDate @bind-Value="festival.StartDate" class="form-control" />
-
-                <label>End Date:</label>
+                <label><span class="label-icon">📅</span> End Date:</label>
                 <InputDate @bind-Value="festival.EndDate" class="form-control" />
-
-                <label>Capacity:</label>
+                <label><span class="label-icon">👥</span> Capacity:</label>
                 <InputNumber @bind-Value="festival.Capacity" class="form-control" />
-
-                <label>SplashArt URL:</label>
+                <label><span class="label-icon">🎨</span> Theme:</label>
+                <InputSelect @bind-Value="festival.Theme" class="form-control">
+                    <option value="">-- Select Theme --</option>
+                    <option value="Neon Dreams">Neon Dreams</option>
+                    <option value="Mystic Forest">Mystic Forest</option>
+                    <option value="Cosmic Beats">Cosmic Beats</option>
+                    <option value="Tropical Vibes">Tropical Vibes</option>
+                    <option value="Cyber Carnival">Cyber Carnival</option>
+                </InputSelect>
+                <label><span class="label-icon">🏠</span> Is Indoor:</label>
+                <InputCheckbox @bind-Value="festival.IsIndoor" />
+                <label><span class="label-icon">⛺</span> Has Camping:</label>
+                <InputCheckbox @bind-Value="festival.HasCamping" />
+                <label><span class="label-icon">🍔</span> Has Food Court:</label>
+                <InputCheckbox @bind-Value="festival.HasFoodCourt" />
+                <label><span class="label-icon">🎉</span> Has After Party:</label>
+                <InputCheckbox @bind-Value="festival.HasAfterParty" />
+                <label><span class="label-icon">⭐</span> Rating:</label>
+                <InputNumber @bind-Value="festival.Rating" class="form-control" min="0" max="100" />
+                <label><span class="label-icon">📝</span> Description:</label>
+                <InputTextArea @bind-Value="festival.Description" class="form-control" rows="4" />
+                <label><span class="label-icon">🖼️</span> SplashArt URL:</label>
                 <InputText @bind-Value="festival.SplashArt" class="form-control" />
-
-                <button type="submit" class="btn-submit">Save Changes</button>
+                <div class="form-tags">
+                    <span class="tag">🎪 Festival</span>
+                    <span class="tag">🎉 Event</span>
+                    <span class="tag">🎶 Music</span>
+                </div>
+                <button type="submit" class="btn-submit festival-btn">Save Changes</button>
             </EditForm>
         </div>
+    </div>
+    <div class="bottom-decoration">
+        <span>🎊</span><span>🎵</span><span>🎆</span>
     </div>
 </div>
 
@@ -60,6 +92,13 @@
         festival.EndDate = existing.EndDate;
         festival.Capacity = existing.Capacity;
         festival.SplashArt = existing.SplashArt;
+        festival.Theme = existing.Theme;
+        festival.IsIndoor = existing.IsIndoor;
+        festival.HasCamping = existing.HasCamping;
+        festival.HasFoodCourt = existing.HasFoodCourt;
+        festival.HasAfterParty = existing.HasAfterParty;
+        festival.Rating = existing.Rating;
+        festival.Description = existing.Description;
     }
 
     private async Task SubmitFestival()
