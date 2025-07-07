@@ -1,4 +1,5 @@
 ﻿@page "/edit/artist/{id:int}"
+@using Microsoft.AspNetCore.Authorization
 @using ShowTime.DataAccess.Models.ArtistInfo
 @using ShowTime_BusinessLogic.Abstractions
 @using ShowTime_BusinessLogic.Dtos
@@ -6,6 +7,7 @@
 @inject IArtistService ArtistService
 @inject NavigationManager NavManager
 @rendermode InteractiveServer
+
 
 <div class="edit-page festival-edit-bg">
     <div class="festival-decoration">

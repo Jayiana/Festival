@@ -1,9 +1,12 @@
 ﻿@page "/addfestival"
 @inject IFestivalService FestivalService
 @inject NavigationManager NavManager
+@using Microsoft.AspNetCore.Authorization
 @using ShowTime_BusinessLogic.Abstractions
 @using ShowTime_BusinessLogic.Dtos.Festival
 @rendermode InteractiveServer
+@attribute [StreamRendering]
+@attribute [Authorize(Roles = "Administrator")]
 
 <div class="festival-background">
     <!-- Enhanced Animated Background Elements -->

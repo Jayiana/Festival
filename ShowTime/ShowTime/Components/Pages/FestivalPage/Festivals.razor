@@ -94,28 +94,38 @@
     }
 
     <div class="festivals-container">
-        <div class="add-festival-card" @onclick="@(() => NavManager.NavigateTo("/addfestival"))">
-            <div class="add-icon">+</div>
-            <h3>Create New Festival</h3>
-            <p>Bring music to life</p>
-            <div class="add-decoration">
-                <span>🎪</span> <span>✨</span> <span>🎆</span>
-            </div>
-        </div>
+        <AuthorizeView Roles="Administrator">
+                  <Authorized Context ="authContext"> 
+                      <div class="add-festival-card" @onclick="@(() => NavManager.NavigateTo("/addfestival"))">
+                            <div class="add-icon">+</div>
+                            <h3>Create New Festival</h3>
+                            <p>Bring music to life</p>
+                            <div class="add-decoration">
+                                <span>🎪</span> <span>✨</span> <span>🎆</span>
+                            </div>
+                       </div>
+                  </Authorized>
+        </AuthorizeView>
+                       
 
         @if (festivals.Count > 0)
         {
             @foreach (var fest in festivals)
             {
                 <div class="festival-card">
-                    <div class="festival-actions">
-                        <button class="action-btn edit-btn" @onclick="() => EditFestival(fest.Id)" title="Edit Festival">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                        <button class="action-btn delete-btn" @onclick="() => DeleteFestival(fest.Id)" title="Delete Festival">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </div>
+                    <AuthorizeView Roles="Administrator">
+                        <Authorized Context ="authContext"> 
+                          <div class="festival-actions">
+                            <button class="action-btn edit-btn" @onclick="() => EditFestival(fest.Id)" title="Edit Festival">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button class="action-btn delete-btn" @onclick="() => DeleteFestival(fest.Id)" title="Delete Festival">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                          </div>
+                          </Authorized>
+                    </AuthorizeView>
+
 
                     <div class="festival-image">
                         <img src="@fest.SplashArt" alt="@fest.Name" />

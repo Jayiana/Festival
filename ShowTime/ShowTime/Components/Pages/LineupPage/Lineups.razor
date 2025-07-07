@@ -47,25 +47,33 @@
     }
 
     <div class="lineups-container">
-        <div class="add-lineup-card" @onclick="NavigateToAddLineup">
-            <div class="add-icon">+</div>
-            <h3>Add New Lineup</h3>
-            <p>Schedule amazing performances</p>
-        </div>
+        <AuthorizeView Roles="Administrator">
+                  <Authorized Context ="authContext"> 
+                      <div class="add-lineup-card" @onclick="NavigateToAddLineup">
+                        <div class="add-icon">+</div>
+                        <h3>Add New Lineup</h3>
+                        <p>Schedule amazing performances</p>
+                      </div>
+                  </Authorized>
+        </AuthorizeView>
 
         @if (PagedLineups.Count > 0)
         {
             @foreach (var lineup in PagedLineups)
             {
                 <div class="lineup-card">
-                    <div class="lineup-actions">
-                        <button class="action-btn edit-btn" @onclick="() => EditLineup(lineup.ArtistId, lineup.FestivalId)" title="Edit Lineup">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                        <button class="action-btn delete-btn" @onclick="() => DeleteLineup(lineup.ArtistId, lineup.FestivalId)" title="Delete Lineup">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </div>
+                  <AuthorizeView Roles="Administrator">
+                        <Authorized Context ="authContext"> 
+                            <div class="lineup-actions">
+                                <button class="action-btn edit-btn" @onclick="() => EditLineup(lineup.ArtistId, lineup.FestivalId)" title="Edit Lineup">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                                <button class="action-btn delete-btn" @onclick="() => DeleteLineup(lineup.ArtistId, lineup.FestivalId)" title="Delete Lineup">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </Authorized>
+                   </AuthorizeView>
 
                     <div class="lineup-header">
                         <div class="artist-icon">🎤</div>

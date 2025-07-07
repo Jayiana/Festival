@@ -1,8 +1,11 @@
 ﻿@page "/addlineup"
 @inject ILineupService LineupService
 @inject NavigationManager NavManager
+@using Microsoft.AspNetCore.Authorization
 @using ShowTime_BusinessLogic.Abstractions
 @using ShowTime_BusinessLogic.Dtos
+@attribute [StreamRendering]
+@attribute [Authorize(Roles = "Administrator")]
 
 <div class="add-lineup-page">
     <!-- Enhanced Animated Background Elements -->

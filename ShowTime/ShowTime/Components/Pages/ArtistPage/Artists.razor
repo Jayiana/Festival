@@ -1,4 +1,5 @@
 ﻿@page "/artists"
+@using Microsoft.AspNetCore.Authorization
 @using ShowTime_BusinessLogic
 @using ShowTime_BusinessLogic.Abstractions
 @using ShowTime_BusinessLogic.Dtos
@@ -7,6 +8,7 @@
 @inject IArtistService ArtistService
 @inject NavigationManager NavManager
 @inject IJSRuntime JS
+
 
 <PageTitle>ShowTime - Artists</PageTitle>
 
@@ -96,26 +98,33 @@
     else
     {
         <div class="artists-container">
-            <div class="add-artist-card" @onclick="NavigateToAddArtist">
-                <div class="add-icon">+</div>
-                <h3>Add New Artist</h3>
-                <p>Share the stage with amazing talent</p>
-                <div class="add-decoration">
-                    <span>🎤</span> <span>✨</span> <span>🎵</span>
-                </div>
-            </div>
+           <AuthorizeView Roles="Administrator">
+                  <Authorized Context ="authContext"> 
+                      <div class="add-artist-card" @onclick="NavigateToAddArtist">
+                        <div class="add-icon">+</div>
+                        <h3>Add New Artist</h3>
+                        <p>Share the stage with amazing talent</p>
+                        <div class="add-decoration">
+                            <span>🎤</span> <span>✨</span> <span>🎵</span>
+                        </div>
+                      </div>
+                 </Authorized>
+            </AuthorizeView>
 
             @foreach (var artist in pagedArtists)
             {
                 <div class="artist-card">
-                    <div class="artist-actions">
+                    <AuthorizeView Roles="Administrator">
+                        <Authorized Context ="authContext">
+                        <div class="artist-actions">
                         <button class="action-btn edit-btn" @onclick="() => EditArtist(artist.Id)" title="Edit Artist">
                             <i class="fa-solid fa-pen"></i>
                         </button>
                         <button class="action-btn delete-btn" @onclick="() => DeleteArtist(artist.Id)" title="Delete Artist">
                             <i class="fa-solid fa-trash"></i>
                         </button>
-                    </div>
+                        </div></Authorized>
+                    </AuthorizeView>
 
                     <div class="artist-image">
                         <img src="@artist.Image" alt="@artist.Name" />

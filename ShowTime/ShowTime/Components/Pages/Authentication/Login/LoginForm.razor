@@ -10,9 +10,6 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @inject NavigationManager navigationManager
 @using Microsoft.AspNetCore.Authentication
-@using System.Net
-@rendermode InteractiveServer
-@inject HttpClient HttpClient
 
 
 <div class="auth-container">
@@ -120,8 +117,15 @@
 </div>
 
 @code {
+
+
+
     [SupplyParameterFromForm]
     private LoginDto loginModel { get; set; } = new();
+
+    [CascadingParameter]
+
+    private HttpContext httpContext { get; set; } = null!;
 
     private string? loginError;
 
@@ -131,41 +135,24 @@
         {
             loginError = null;
 
-            var uri = new Uri(navigationManager.BaseUri.TrimEnd('/') + "/login");
+            var response = await UserService.LoginAsync(loginModel);
 
-            var content = new FormUrlEncodedContent(new[]
+            var claims = new List<Claim>
             {
-                new KeyValuePair<string, string>("Email", loginModel.Email),
-                new KeyValuePair<string, string>("Password", loginModel.Password)
-            });
+                new(ClaimTypes.Email, loginModel.Email),
+                new(ClaimTypes.Role, Enum.GetName(typeof(Role), response.Role) ?? nameof(Role.User))
+            };
 
-            var response = await HttpClient.PostAsync(uri, content);
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-            if (response.StatusCode == HttpStatusCode.Redirect || response.RequestMessage?.RequestUri?.ToString().Contains("/") == true)
-            {
-                navigationManager.NavigateTo("/");
-            }
-            else
-            {
-                loginError = "Login failed. Please check your credentials.";
-            }
+            await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
+
+            httpContext.Response.Redirect("/");
         }
         catch (Exception ex)
         {
             loginError = $"Unexpected error: {ex.Message}";
-        }
-    }
-
-    private string GetRoleName(int roleValue)
-    {
-        try
-        {
-            var role = (Role)roleValue;
-            return Enum.GetName(typeof(Role), role) ?? nameof(Role.User);
-        }
-        catch
-        {
-            return nameof(Role.User);
         }
     }
 }
