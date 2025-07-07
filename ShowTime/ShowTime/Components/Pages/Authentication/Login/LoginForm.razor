@@ -7,12 +7,15 @@
 @using ShowTime_BusinessLogic.Dtos.Authentication.Login
 @using ShowTime_BusinessLogic.Services
 @inject IUserService UserService
+@inject IHttpContextAccessor HttpContextAccessor
 @inject NavigationManager navigationManager
 @using Microsoft.AspNetCore.Authentication
+@using System.Net
+@rendermode InteractiveServer
+@inject HttpClient HttpClient
 
 
 <div class="auth-container">
-    <!-- Removed floating decorative elements for a cleaner look -->
 
     <div class="auth-box text-center">
         <div class="titlu">
@@ -40,6 +43,13 @@
             <EditForm Model="loginModel" OnValidSubmit="Authenticate" FormName="LoginForm">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
+
+                @if (!string.IsNullOrEmpty(loginError))
+                {
+                    <div class="text-danger text-center mb-3">
+                        @loginError
+                    </div>
+                }
 
                 <div class="form-group">
                     <div class="inputBox">
@@ -88,18 +98,6 @@
                         <a href="#"><i class="fa fa-linkedin"></i></a>
                     </div>
                 </div>
-
-                <audio autoplay loop id="audio">
-                    <source src="/SiteMedia/BlackPantherLoginTheme.mp3" type="audio/mpeg">
-                </audio>
-
-                <div class="sound-toggle">
-                    <label for="mutesound">
-                        <span class="sound-icon">🔊</span>
-                        Enable Sound
-                    </label>
-                    <input type="checkbox" id="mutesound" checked onclick="EnableAudio()" />
-                </div>
             </EditForm>
         </div>
     </div>
@@ -125,29 +123,49 @@
     [SupplyParameterFromForm]
     private LoginDto loginModel { get; set; } = new();
 
-    [CascadingParameter]
-    private HttpContext httpContext { get; set; } = null;
+    private string? loginError;
 
     private async Task Authenticate()
     {
         try
         {
-            var response = await UserService.LoginAsync(loginModel);
-            var claims = new List<Claim>
-                {
-                    new (ClaimTypes.Email, loginModel.Email),
-                    new (ClaimTypes.Role, Enum.GetName(typeof(Role), response.Role)?? nameof(Role.User))
-                };
+            loginError = null;
 
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+            var uri = new Uri(navigationManager.BaseUri.TrimEnd('/') + "/login");
 
-            await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
-            navigationManager.NavigateTo("/");
+            var content = new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("Email", loginModel.Email),
+                new KeyValuePair<string, string>("Password", loginModel.Password)
+            });
+
+            var response = await HttpClient.PostAsync(uri, content);
+
+            if (response.StatusCode == HttpStatusCode.Redirect || response.RequestMessage?.RequestUri?.ToString().Contains("/") == true)
+            {
+                navigationManager.NavigateTo("/");
+            }
+            else
+            {
+                loginError = "Login failed. Please check your credentials.";
+            }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Login failed: {ex.Message}");
+            loginError = $"Unexpected error: {ex.Message}";
+        }
+    }
+
+    private string GetRoleName(int roleValue)
+    {
+        try
+        {
+            var role = (Role)roleValue;
+            return Enum.GetName(typeof(Role), role) ?? nameof(Role.User);
+        }
+        catch
+        {
+            return nameof(Role.User);
         }
     }
 }

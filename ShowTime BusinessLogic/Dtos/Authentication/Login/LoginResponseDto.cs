@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ShowTime_BusinessLogic.Dtos.Authentication.Login
+﻿namespace ShowTime_BusinessLogic.Dtos.Authentication.Login
 {
     public class LoginResponseDto
     {
-        public int Role { get; set; }
+        public bool Success { get; set; }
+        public string? Message { get; set; }
+        public int? Role { get; set; }
     }
 }

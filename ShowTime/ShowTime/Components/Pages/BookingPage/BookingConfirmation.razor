@@ -1,0 +1,125 @@
+@page "/booking-confirmation"
+@rendermode InteractiveServer
+@inject NavigationManager navigationManager
+
+<div class="confirmation-page">
+    <!-- Festival Decorations -->
+    <div class="festival-decoration">
+        @for (int i = 0; i < 20; i++)
+        {
+            <div class="sparkle" style="left: @(Random.Shared.Next(0, 100))%; top: @(Random.Shared.Next(0, 100))%; animation-delay: @(Random.Shared.Next(0, 4000))ms;"></div>
+        }
+        
+        @for (int i = 0; i < 8; i++)
+        {
+            <div class="floating-element star" style="left: @(Random.Shared.Next(5, 95))%; animation-delay: @(Random.Shared.Next(0, 15000))ms;">★</div>
+        }
+        
+        @for (int i = 0; i < 6; i++)
+        {
+            <div class="soft-glow" style="left: @(Random.Shared.Next(10, 90))%; top: @(Random.Shared.Next(20, 80))%; animation-delay: @(Random.Shared.Next(0, 8000))ms;"></div>
+        }
+    </div>
+
+    <div class="confirmation-container">
+        <div class="success-animation">
+            <div class="checkmark">
+                <div class="checkmark-stem"></div>
+                <div class="checkmark-kick"></div>
+            </div>
+        </div>
+
+        <div class="confirmation-content">
+            <h1 class="confirmation-title">
+                <span class="title-sparkle">✨</span>
+                <span class="title-icon">🎉</span>
+                Booking Confirmed!
+                <span class="title-icon">🎉</span>
+                <span class="title-sparkle">✨</span>
+            </h1>
+            
+            <div class="confirmation-message">
+                <p>Your festival tickets have been successfully booked! You'll receive a confirmation email shortly.</p>
+                <p>Get ready for an amazing festival experience! 🎪🎤🎵</p>
+            </div>
+
+            <div class="ticket-summary">
+                <h2>Ticket Summary</h2>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <i class="fas fa-ticket-alt"></i>
+                        <div class="summary-content">
+                            <span class="summary-label">Ticket Number</span>
+                            <span class="summary-value">ST-ABC12345</span>
+                        </div>
+                    </div>
+                    <div class="summary-item">
+                        <i class="fas fa-calendar"></i>
+                        <div class="summary-content">
+                            <span class="summary-label">Festival Date</span>
+                            <span class="summary-value">August 15, 2024</span>
+                        </div>
+                    </div>
+                    <div class="summary-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div class="summary-content">
+                            <span class="summary-label">Location</span>
+                            <span class="summary-value">Central Park, NYC</span>
+                        </div>
+                    </div>
+                    <div class="summary-item">
+                        <i class="fas fa-dollar-sign"></i>
+                        <div class="summary-content">
+                            <span class="summary-label">Total Paid</span>
+                            <span class="summary-value">$299.99</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="next-steps">
+                <h3>What's Next?</h3>
+                <div class="steps-grid">
+                    <div class="step-item">
+                        <div class="step-icon">📧</div>
+                        <h4>Confirmation Email</h4>
+                        <p>Check your email for detailed ticket information and festival updates.</p>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-icon">📱</div>
+                        <h4>Download Tickets</h4>
+                        <p>Access your tickets through the ShowTime mobile app or website.</p>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-icon">🎪</div>
+                        <h4>Festival Day</h4>
+                        <p>Arrive early and bring your tickets, ID, and festival spirit!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="confirmation-actions">
+                <button class="btn btn-primary" @onclick="GoHome">
+                    <i class="fas fa-home"></i>
+                    Back to Home
+                </button>
+                <button class="btn btn-secondary" @onclick="ViewBookings">
+                    <i class="fas fa-ticket-alt"></i>
+                    View My Bookings
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private void GoHome()
+    {
+        navigationManager.NavigateTo("/");
+    }
+
+    private void ViewBookings()
+    {
+        navigationManager.NavigateTo("/my-bookings");
+    }
+} 

@@ -1,11 +1,12 @@
-
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using ShowTime.Client.Pages;
 using ShowTime.Components;
 using ShowTime.DataAccess;
 using ShowTime.DataAccess.GenericRepository;
+using ShowTime.DataAccess.Models.AccommodationInfo;
 using ShowTime.DataAccess.Models.ArtistInfo;
+using ShowTime.DataAccess.Models.BookingInfo;
 using ShowTime.DataAccess.Models.FestivalInfo;
 using ShowTime.DataAccess.Models.LineupInfo;
 using ShowTime.DataAccess.Models.UserInfo;
@@ -16,6 +17,7 @@ using ShowTime_BusinessLogic.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddHttpClient();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
@@ -31,6 +33,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddAntiforgery();
+
 
 
 var connectionString = builder.Configuration.GetConnectionString("ShowTimeContext");
@@ -48,7 +52,28 @@ builder.Services.AddTransient<ILineupService, LineupService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IRepository<User>, GenericRepository<User>>();
 
+builder.Services.AddTransient<IRepository<Booking>, GenericRepository<Booking>>();
+builder.Services.AddTransient<IBookingService, BookingService>();
+
+builder.Services.AddTransient<IRepository<Accommodation>, GenericRepository<Accommodation>>();
+builder.Services.AddTransient<IAccommodationService, AccommodationService>();
+
 var app = builder.Build();
+
+// Ensure database is created
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ShowTimeDbContext>();
+    try
+    {
+        context.Database.EnsureCreated();
+        Console.WriteLine("Database connection successful");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Database connection failed: {ex.Message}");
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -65,9 +90,9 @@ else
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
-app.UseAntiforgery();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()

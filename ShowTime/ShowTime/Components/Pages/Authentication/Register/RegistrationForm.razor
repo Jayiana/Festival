@@ -3,7 +3,6 @@
 @using ShowTime_BusinessLogic.Services
 @inject IUserService UserService
 @inject NavigationManager Navigation
-@inject NavigationManager Navigation
 @rendermode InteractiveServer
 
 <div class="auth-container">
@@ -128,14 +127,10 @@
 
             <EditForm Model="registerDto" OnValidSubmit="HandleRegister" FormName="RegisterForm">
                 <DataAnnotationsValidator />
-                <ValidationSummary />
 
                 @if (registerFailed)
                 {
-                    <div class="error-message">
-                        <span class="error-icon">❌</span>
-                        Passwords don't match or fields are incomplete.
-                    </div>
+                    <div class="text-danger">@registerMessage</div>
                 }
 
                 <div class="form-group">
@@ -143,6 +138,7 @@
                         <InputText @bind-Value="registerDto.Email" id="emailField" required />
                         <i class="fa fa-envelope"></i>
                     </div>
+                    <ValidationMessage For="@(() => registerDto.Email)" />
                 </div>
 
                 <div class="form-group">
@@ -150,6 +146,7 @@
                         <InputText @bind-Value="registerDto.Password" type="password" id="passwordField" required />
                         <i class="fa fa-lock"></i>
                     </div>
+                    <ValidationMessage For="@(() => registerDto.Password)" />
                 </div>
 
                 <div class="form-group">
@@ -157,6 +154,7 @@
                         <InputText @bind-Value="registerDto.ConfirmPassword" type="password" id="confirmPasswordField" required />
                         <i class="fa fa-lock"></i>
                     </div>
+                    <ValidationMessage For="@(() => registerDto.ConfirmPassword)" />
                 </div>
 
                 <div class="links">
@@ -187,18 +185,6 @@
                     <div class="social-icon linkedin">
                         <a href="#"><i class="fa fa-linkedin"></i></a>
                     </div>
-                </div>
-
-                <audio autoplay loop id="audio">
-                    <source src="/SiteMedia/BlackPantherLoginTheme.mp3" type="audio/mpeg">
-                </audio>
-
-                <div class="sound-toggle">
-                    <label for="mutesound">
-                        <span class="sound-icon">🔊</span>
-                        Enable Sound
-                    </label>
-                    <input type="checkbox" id="mutesound" checked onclick="EnableAudio()" />
                 </div>
             </EditForm>
         </div>
@@ -231,14 +217,6 @@
         registerFailed = false;
         registerMessage = null;
 
-        if (registerDto.Password != registerDto.ConfirmPassword ||
-            string.IsNullOrWhiteSpace(registerDto.Email))
-        {
-            registerFailed = true;
-            registerMessage = "Passwords don't match or fields are incomplete.";
-            return;
-        }
-
         try
         {
             var response = await UserService.RegisterAsync(registerDto);
@@ -262,4 +240,5 @@
         }
     }
 }
+
 

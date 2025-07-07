@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using ShowTime.DataAccess.Configurations;
+using ShowTime.DataAccess.Models.AccommodationInfo;
 using ShowTime.DataAccess.Models.ArtistInfo;
 using ShowTime.DataAccess.Models.BookingInfo;
 using ShowTime.DataAccess.Models.FestivalInfo;
@@ -22,6 +23,7 @@ namespace ShowTime.DataAccess
         public DbSet<Artist> Artists { get; set; } = null!;
         public DbSet<Lineup> Lineups { get; set; } = null!;
         public DbSet<Booking> Bookings { get; set; } = null!;
+        public DbSet<Accommodation> Accommodations { get; set; } = null!;
         public DbSet<User> Users { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -30,6 +32,7 @@ namespace ShowTime.DataAccess
 
             new ArtistConfiguration().Configure(modelBuilder.Entity<Artist>());
             new BookingConfiguration().Configure(modelBuilder.Entity<Booking>());
+            new AccommodationConfiguration().Configure(modelBuilder.Entity<Accommodation>());
             new LineupConfigurations().Configure(modelBuilder.Entity<Lineup>());
             new UserConfiguration().Configure(modelBuilder.Entity<User>());
             new FestivalConfiguration().Configure(modelBuilder.Entity<Festival>());

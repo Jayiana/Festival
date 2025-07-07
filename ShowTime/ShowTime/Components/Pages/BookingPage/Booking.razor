@@ -1,30 +1,39 @@
 @page "/booking"
+@using ShowTime_BusinessLogic.Abstractions
+@using ShowTime_BusinessLogic.Dtos.Booking
+@using ShowTime_BusinessLogic.Dtos.Festival
+@inject IBookingService BookingService
+@inject IFestivalService FestivalService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
 
 <div class="booking-page">
-    <!-- Background Decorations -->
-    <div class="floating-elements">
-        <div class="floating-star">⭐</div>
-        <div class="floating-music">🎵</div>
-        <div class="floating-heart">💖</div>
-        <div class="floating-star">🌟</div>
-        <div class="floating-music">🎶</div>
-        <div class="floating-heart">💝</div>
-        <div class="floating-star">✨</div>
-        <div class="floating-music">🎤</div>
-    </div>
-
-    <div class="geometric-shapes">
-        <div class="shape circle"></div>
-        <div class="shape square"></div>
-        <div class="shape triangle"></div>
-        <div class="shape diamond"></div>
-        <div class="shape hexagon"></div>
-    </div>
-
-    <div class="animated-lines">
-        <div class="line line-1"></div>
-        <div class="line line-2"></div>
-        <div class="line line-3"></div>
+    <!-- Enhanced Festival Decorations -->
+    <div class="festival-decoration">
+        @for (int i = 0; i < 25; i++)
+        {
+            <div class="sparkle" style="left: @(Random.Shared.Next(0, 100))%; top: @(Random.Shared.Next(0, 100))%; animation-delay: @(Random.Shared.Next(0, 4000))ms;"></div>
+        }
+        
+        @for (int i = 0; i < 12; i++)
+        {
+            <div class="floating-element music-note" style="left: @(Random.Shared.Next(5, 95))%; animation-delay: @(Random.Shared.Next(0, 12000))ms;">♪</div>
+        }
+        
+        @for (int i = 0; i < 8; i++)
+        {
+            <div class="soft-glow" style="left: @(Random.Shared.Next(10, 90))%; top: @(Random.Shared.Next(20, 80))%; animation-delay: @(Random.Shared.Next(0, 8000))ms;"></div>
+        }
+        
+        @for (int i = 0; i < 6; i++)
+        {
+            <div class="geometric-shape triangle" style="left: @(Random.Shared.Next(5, 95))%; top: @(Random.Shared.Next(10, 90))%; animation-delay: @(Random.Shared.Next(0, 8000))ms;"></div>
+        }
+        
+        @for (int i = 0; i < 8; i++)
+        {
+            <div class="geometric-shape circle" style="left: @(Random.Shared.Next(5, 95))%; top: @(Random.Shared.Next(10, 90))%; animation-delay: @(Random.Shared.Next(0, 6000))ms;"></div>
+        }
     </div>
 
     <div class="booking-container">
@@ -32,7 +41,7 @@
             <h1 class="booking-title">
                 <span class="title-sparkle">✨</span>
                 <span class="title-icon">🎫</span>
-                Festival Bookings
+                Festival Ticket Booking
                 <span class="title-icon">🎫</span>
                 <span class="title-sparkle">✨</span>
             </h1>
@@ -45,30 +54,360 @@
             </div>
         </div>
 
-        <div class="booking-content">
-            <div class="booking-card">
-                <div class="card-header">
-                    <h2><i class="fas fa-calendar-check"></i> Book Your Festival Experience</h2>
-                </div>
-                <div class="card-content">
-                    <p>Welcome to the ShowTime Festival booking portal! Here you can:</p>
-                    <ul>
-                        <li><i class="fas fa-ticket-alt"></i> Purchase festival tickets</li>
-                        <li><i class="fas fa-campground"></i> Book camping spots</li>
-                        <li><i class="fas fa-utensils"></i> Reserve food & beverage packages</li>
-                        <li><i class="fas fa-shuttle-van"></i> Arrange transportation</li>
-                        <li><i class="fas fa-gift"></i> Buy merchandise</li>
-                    </ul>
-                    <div class="coming-soon">
-                        <div class="coming-soon-badge">
-                            <span class="badge-icon">🚀</span>
-                            Coming Soon
-                            <span class="badge-icon">🚀</span>
+        @if (showTicketPreview && bookingResponse != null)
+        {
+            <div class="ticket-preview-section">
+                <h2 class="section-title">🎫 Your Festival Ticket</h2>
+                <div class="ticket-container">
+                    <div class="festival-ticket">
+                        <div class="ticket-header">
+                            <div class="ticket-logo">
+                                <img src="/images/Showtime-logo.png" alt="ShowTime" />
+                            </div>
+                            <div class="ticket-type-badge">
+                                <span class="badge-text">@bookingResponse.TicketNumber</span>
+                            </div>
                         </div>
-                        <p>Our booking system is under development. Stay tuned for an amazing festival experience!</p>
+                        
+                        <div class="ticket-body">
+                            <div class="festival-info">
+                                <h3 class="festival-name">@bookingResponse.FestivalName</h3>
+                                <div class="festival-details">
+                                    <div class="detail-item">
+                                        <i class="fas fa-calendar"></i>
+                                        <span>@(bookingResponse.FestivalDate?.ToString("MMMM dd, yyyy"))</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>@bookingResponse.Location</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <i class="fas fa-ticket-alt"></i>
+                                        <span>@bookingForm.TicketType</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="customer-info">
+                                <div class="customer-name">@bookingForm.CustomerName</div>
+                                <div class="customer-email">@bookingForm.CustomerEmail</div>
+                            </div>
+                            
+                            <div class="ticket-features">
+                                @if (bookingForm.IncludeCamping)
+                                {
+                                    <div class="feature-badge camping">
+                                        <i class="fas fa-campground"></i>
+                                        <span>Camping</span>
+                                    </div>
+                                }
+                                @if (bookingForm.IncludeFoodPackage)
+                                {
+                                    <div class="feature-badge food">
+                                        <i class="fas fa-utensils"></i>
+                                        <span>Food Package</span>
+                                    </div>
+                                }
+                                @if (bookingForm.IncludeTransportation)
+                                {
+                                    <div class="feature-badge transport">
+                                        <i class="fas fa-shuttle-van"></i>
+                                        <span>Transportation</span>
+                                    </div>
+                                }
+                            </div>
+                            
+                            <div class="ticket-price">
+                                <div class="price-label">Total Price</div>
+                                <div class="price-amount">$@bookingResponse.TotalPrice.ToString("F2")</div>
+                            </div>
+                        </div>
+                        
+                        <div class="ticket-footer">
+                            <div class="ticket-barcode">
+                                <div class="barcode-lines">
+                                    @for (int i = 0; i < 20; i++)
+                                    {
+                                        <div class="barcode-line" style="height: @(Random.Shared.Next(20, 60))px;"></div>
+                                    }
+                                </div>
+                                <div class="barcode-number">@bookingResponse.TicketNumber</div>
+                            </div>
+                            <div class="ticket-terms">
+                                <small>Valid for one-time entry. Non-transferable. No refunds.</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                
+                <div class="ticket-actions">
+                    <button class="btn btn-primary" @onclick="ConfirmBooking">
+                        <i class="fas fa-check"></i>
+                        Confirm Booking
+                    </button>
+                    <button class="btn btn-secondary" @onclick="EditBooking">
+                        <i class="fas fa-edit"></i>
+                        Edit Booking
+                    </button>
+                </div>
             </div>
-        </div>
+        }
+        else
+        {
+            <div class="booking-content">
+                <div class="festival-selection">
+                    <h2 class="section-title">🎪 Select Your Festival</h2>
+                    <div class="festival-grid">
+                        @if (festivals != null)
+                        {
+                            @foreach (var festival in festivals)
+                            {
+                                <div class="festival-card @(selectedFestival?.Id == festival.Id ? "selected" : "")" @onclick="() => SelectFestival(festival)">
+                                    <div class="festival-image">
+                                        <img src="@festival.SplashArt" alt="@festival.Name" />
+                                    </div>
+                                    <div class="festival-info">
+                                        <h3>@festival.Name</h3>
+                                        <p class="festival-date">@festival.StartDate.ToString("MMMM dd, yyyy")</p>
+                                        <p class="festival-location">@festival.Location</p>
+                                        <div class="festival-features">
+                                            @if (festival.HasCamping)
+                                            {
+                                                <span class="feature-tag">🏕️ Camping</span>
+                                            }
+                                            @if (festival.HasFoodCourt)
+                                            {
+                                                <span class="feature-tag">🍔 Food Court</span>
+                                            }
+                                            @if (festival.HasAfterParty)
+                                            {
+                                                <span class="feature-tag">🎉 After Party</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+
+                @if (selectedFestival != null)
+                {
+                    <div class="booking-form-section">
+                        <h2 class="section-title">🎫 Book Your Tickets</h2>
+                        <EditForm Model="bookingForm" OnValidSubmit="CreateBooking">
+                            <DataAnnotationsValidator />
+                            
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="ticketType">Ticket Type</label>
+                                    <InputSelect id="ticketType" @bind-Value="bookingForm.TicketType" class="form-control">
+                                        <option value="">Select Ticket Type</option>
+                                        <option value="VIP">VIP - $299.99</option>
+                                        <option value="Premium">Premium - $199.99</option>
+                                        <option value="Standard">Standard - $99.99</option>
+                                        <option value="Early Bird">Early Bird - $79.99</option>
+                                    </InputSelect>
+                                    <ValidationMessage For="@(() => bookingForm.TicketType)" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="quantity">Quantity</label>
+                                    <InputNumber id="quantity" @bind-Value="bookingForm.Quantity" class="form-control" min="1" max="10" />
+                                    <ValidationMessage For="@(() => bookingForm.Quantity)" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="customerName">Full Name</label>
+                                    <InputText id="customerName" @bind-Value="bookingForm.CustomerName" class="form-control" />
+                                    <ValidationMessage For="@(() => bookingForm.CustomerName)" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="customerEmail">Email</label>
+                                    <InputText id="customerEmail" @bind-Value="bookingForm.CustomerEmail" class="form-control" type="email" />
+                                    <ValidationMessage For="@(() => bookingForm.CustomerEmail)" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="customerPhone">Phone</label>
+                                    <InputText id="customerPhone" @bind-Value="bookingForm.CustomerPhone" class="form-control" type="tel" />
+                                    <ValidationMessage For="@(() => bookingForm.CustomerPhone)" />
+                                </div>
+
+                                <div class="form-group full-width">
+                                    <label for="specialRequests">Special Requests</label>
+                                    <InputTextArea id="specialRequests" @bind-Value="bookingForm.SpecialRequests" class="form-control" rows="3" />
+                                </div>
+                            </div>
+
+                            <div class="additional-services">
+                                <h3>Additional Services</h3>
+                                <div class="services-grid">
+                                    <div class="service-option">
+                                        <InputCheckbox id="camping" @bind-Value="bookingForm.IncludeCamping" />
+                                        <label for="camping">
+                                            <i class="fas fa-campground"></i>
+                                            <span>Camping Package (+$50)</span>
+                                        </label>
+                                    </div>
+                                    <div class="service-option">
+                                        <InputCheckbox id="food" @bind-Value="bookingForm.IncludeFoodPackage" />
+                                        <label for="food">
+                                            <i class="fas fa-utensils"></i>
+                                            <span>Food Package (+$30)</span>
+                                        </label>
+                                    </div>
+                                    <div class="service-option">
+                                        <InputCheckbox id="transport" @bind-Value="bookingForm.IncludeTransportation" />
+                                        <label for="transport">
+                                            <i class="fas fa-shuttle-van"></i>
+                                            <span>Transportation (+$25)</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="price-summary">
+                                <h3>Price Summary</h3>
+                                <div class="price-breakdown">
+                                    <div class="price-item">
+                                        <span>Base Ticket:</span>
+                                        <span>$@GetBasePrice()</span>
+                                    </div>
+                                    @if (bookingForm.IncludeCamping)
+                                    {
+                                        <div class="price-item">
+                                            <span>Camping:</span>
+                                            <span>+$50</span>
+                                        </div>
+                                    }
+                                    @if (bookingForm.IncludeFoodPackage)
+                                    {
+                                        <div class="price-item">
+                                            <span>Food Package:</span>
+                                            <span>+$30</span>
+                                        </div>
+                                    }
+                                    @if (bookingForm.IncludeTransportation)
+                                    {
+                                        <div class="price-item">
+                                            <span>Transportation:</span>
+                                            <span>+$25</span>
+                                        </div>
+                                    }
+                                    <div class="price-total">
+                                        <span>Total:</span>
+                                        <span>$@GetTotalPrice()</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-ticket-alt"></i>
+                                    Preview Ticket
+                                </button>
+                                <button type="button" class="btn btn-secondary" @onclick="ResetForm">
+                                    <i class="fas fa-undo"></i>
+                                    Reset
+                                </button>
+                            </div>
+                        </EditForm>
+                    </div>
+                }
+            </div>
+        }
     </div>
 </div>
+
+@code {
+    private List<FestivalGetDto>? festivals;
+    private FestivalGetDto? selectedFestival;
+    private BookingCreateDto bookingForm = new();
+    private BookingResponseDto? bookingResponse;
+    private bool showTicketPreview = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFestivals();
+    }
+
+    private async Task LoadFestivals()
+    {
+        try
+        {
+            festivals = (await FestivalService.GetAllAsync()).ToList();
+        }
+        catch (Exception ex)
+        {
+            // Handle error
+        }
+    }
+
+    private void SelectFestival(FestivalGetDto festival)
+    {
+        selectedFestival = festival;
+        bookingForm.FestivalId = festival.Id;
+    }
+
+    private async Task CreateBooking()
+    {
+        if (selectedFestival == null) return;
+
+        try
+        {
+            bookingResponse = await BookingService.CreateBookingAsync(bookingForm);
+            if (bookingResponse.Success)
+            {
+                showTicketPreview = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle error
+        }
+    }
+
+    private async Task ConfirmBooking()
+    {
+        // Here you would typically process payment and confirm the booking
+        Navigation.NavigateTo("/booking-confirmation");
+    }
+
+    private void EditBooking()
+    {
+        showTicketPreview = false;
+    }
+
+    private void ResetForm()
+    {
+        bookingForm = new();
+        selectedFestival = null;
+        showTicketPreview = false;
+    }
+
+    private decimal GetBasePrice()
+    {
+        return bookingForm.TicketType?.ToLower() switch
+        {
+            "vip" => 299.99m,
+            "premium" => 199.99m,
+            "standard" => 99.99m,
+            "early bird" => 79.99m,
+            _ => 0m
+        };
+    }
+
+    private decimal GetTotalPrice()
+    {
+        decimal basePrice = GetBasePrice() * bookingForm.Quantity;
+        decimal additionalServices = 0;
+
+        if (bookingForm.IncludeCamping) additionalServices += 50 * bookingForm.Quantity;
+        if (bookingForm.IncludeFoodPackage) additionalServices += 30 * bookingForm.Quantity;
+        if (bookingForm.IncludeTransportation) additionalServices += 25 * bookingForm.Quantity;
+
+        return basePrice + additionalServices;
+    }
+}

@@ -1,74 +1,439 @@
 @page "/accommodation"
+@using Microsoft.JSInterop
+@using ShowTime_BusinessLogic.Dtos.Festival
+@using ShowTime_BusinessLogic.Dtos.Accommodation
+@using ShowTime_BusinessLogic.Abstractions
+@using System
+@inject IFestivalService FestivalService
+@inject IAccommodationService AccommodationService
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
 
-<div class="accommodation-page">
-    <!-- Background Decorations -->
-    <div class="floating-elements">
-        <div class="floating-star">⭐</div>
-        <div class="floating-music">🎵</div>
-        <div class="floating-heart">💖</div>
-        <div class="floating-star">🌟</div>
-        <div class="floating-music">🎶</div>
-        <div class="floating-heart">💝</div>
-        <div class="floating-star">✨</div>
-        <div class="floating-music">🎤</div>
+<PageTitle>Festival Accommodation - ShowTime</PageTitle>
+
+<div class="accommodation-container">
+    <div class="accommodation-header">
+        <h1 class="accommodation-title">
+            <i class="fas fa-bed"></i>
+            🎪 Festival Accommodation 🎵
+        </h1>
+        <p class="accommodation-subtitle">🎪 Find the perfect place to stay during your festival experience 🎵</p>
     </div>
 
-    <div class="geometric-shapes">
-        <div class="shape circle"></div>
-        <div class="shape square"></div>
-        <div class="shape triangle"></div>
-        <div class="shape diamond"></div>
-        <div class="shape hexagon"></div>
-    </div>
-
-    <div class="animated-lines">
-        <div class="line line-1"></div>
-        <div class="line line-2"></div>
-        <div class="line line-3"></div>
-    </div>
-
-    <div class="accommodation-container">
-        <div class="accommodation-header">
-            <h1 class="accommodation-title">
-                <span class="title-sparkle">✨</span>
-                <span class="title-icon">🏕️</span>
-                Festival Accommodation
-                <span class="title-icon">🏕️</span>
-                <span class="title-sparkle">✨</span>
-            </h1>
-            <div class="accommodation-decoration">
-                <span>🏨</span>
-                <span>🏕️</span>
-                <span>🚐</span>
-                <span>🏠</span>
-                <span>🏨</span>
-            </div>
+    @if (isLoading)
+    {
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p>Loading festivals...</p>
         </div>
-
+    }
+    else
+    {
         <div class="accommodation-content">
-            <div class="accommodation-card">
-                <div class="card-header">
-                    <h2><i class="fas fa-bed"></i> Find Your Perfect Stay</h2>
-                </div>
-                <div class="card-content">
-                    <p>Discover amazing accommodation options for your festival experience:</p>
-                    <ul>
-                        <li><i class="fas fa-hotel"></i> Luxury hotels near the festival grounds</li>
-                        <li><i class="fas fa-campground"></i> Festival camping with all amenities</li>
-                        <li><i class="fas fa-caravan"></i> RV and caravan parking</li>
-                        <li><i class="fas fa-home"></i> Local hostels and guesthouses</li>
-                        <li><i class="fas fa-shuttle-van"></i> Shuttle services to and from venues</li>
-                    </ul>
-                    <div class="coming-soon">
-                        <div class="coming-soon-badge">
-                            <span class="badge-icon">🚀</span>
-                            Coming Soon
-                            <span class="badge-icon">🚀</span>
+            <!-- Festival Selection -->
+            <div class="festival-selection">
+                <h2>🎪 Select Your Festival 🎵</h2>
+                <div class="festival-grid">
+                    @foreach (var festival in festivals)
+                    {
+                        <div class="festival-card @(selectedFestival?.Id == festival.Id ? "selected" : "")"
+                             @onclick="() => SelectFestival(festival)">
+                            <div class="festival-image">
+                                <img src="/images/@GetFestivalImage(festival.Name)" alt="@festival.Name" />
+                            </div>
+                            <div class="festival-info">
+                                <h3>@festival.Name</h3>
+                                <p class="festival-date">@festival.StartDate.ToString("MMMM dd, yyyy")</p>
+                                <p class="festival-location">@festival.Location</p>
+                                <p class="festival-description">@festival.Description</p>
+                            </div>
                         </div>
-                        <p>Our accommodation booking system is under development. Get ready for the ultimate festival stay experience!</p>
+                    }
+                </div>
+            </div>
+
+            @if (selectedFestival != null)
+            {
+                <!-- Accommodation Types -->
+                <div class="accommodation-types">
+                    <h2>🏕️ Choose Your Accommodation 🏨</h2>
+                    <div class="accommodation-grid">
+                        @foreach (var accommodationType in accommodationTypes)
+                        {
+                            <div class="accommodation-card @(selectedAccommodationType == accommodationType.Type ? "selected" : "")"
+                                 @onclick="() => SelectAccommodationType(accommodationType)">
+                                <div class="accommodation-icon">
+                                    <i class="@accommodationType.Icon"></i>
+                                </div>
+                                <div class="accommodation-info">
+                                    <h3>@accommodationType.Name</h3>
+                                    <p class="accommodation-description">@accommodationType.Description</p>
+                                    <div class="accommodation-features">
+                                        @foreach (var feature in accommodationType.Features)
+                                        {
+                                            <span class="feature-tag">@feature</span>
+                                        }
+                                    </div>
+                                    <p class="accommodation-price">From $@accommodationType.BasePrice/night</p>
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
-            </div>
+
+                @if (selectedAccommodationType != null)
+                {
+                    <!-- Booking Form -->
+                    <div class="booking-form">
+                        <h2>🎫 Book Your Festival Stay 🎪</h2>
+                        <EditForm Model="@bookingForm" OnValidSubmit="HandleBookingSubmit">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary />
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="roomType">Room Type</label>
+                                    <InputSelect id="roomType" @bind-Value="bookingForm.RoomType" class="form-control">
+                                        <option value="">Select Room Type</option>
+                                        <option value="Single">Single Room</option>
+                                        <option value="Double">Double Room</option>
+                                        <option value="Suite">Suite</option>
+                                        <option value="Family">Family Room</option>
+                                        <option value="Luxury">Luxury Suite</option>
+                                    </InputSelect>
+                                    <ValidationMessage For="@(() => bookingForm.RoomType)" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="capacity">Number of Guests</label>
+                                    <InputNumber id="capacity" @bind-Value="bookingForm.Capacity" class="form-control" min="1" max="10" />
+                                    <ValidationMessage For="@(() => bookingForm.Capacity)" />
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="checkInDate">Check-in Date</label>
+                                    <InputDate id="checkInDate" @bind-Value="bookingForm.CheckInDate" class="form-control" />
+                                    <ValidationMessage For="@(() => bookingForm.CheckInDate)" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="checkOutDate">Check-out Date</label>
+                                    <InputDate id="checkOutDate" @bind-Value="bookingForm.CheckOutDate" class="form-control" />
+                                    <ValidationMessage For="@(() => bookingForm.CheckOutDate)" />
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="customerName">Full Name</label>
+                                    <InputText id="customerName" @bind-Value="bookingForm.CustomerName" class="form-control" />
+                                    <ValidationMessage For="@(() => bookingForm.CustomerName)" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="customerEmail">Email</label>
+                                    <InputText id="customerEmail" @bind-Value="bookingForm.CustomerEmail" class="form-control" type="email" />
+                                    <ValidationMessage For="@(() => bookingForm.CustomerEmail)" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="customerPhone">Phone Number</label>
+                                <InputText id="customerPhone" @bind-Value="bookingForm.CustomerPhone" class="form-control" />
+                                <ValidationMessage For="@(() => bookingForm.CustomerPhone)" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="specialRequests">Special Requests</label>
+                                <InputTextArea id="specialRequests" @bind-Value="bookingForm.SpecialRequests" class="form-control" rows="3" />
+                            </div>
+
+                            <!-- Additional Services -->
+                            <div class="additional-services">
+                                <h3>🎪 Additional Festival Services 🎵</h3>
+                                <div class="services-grid">
+                                    <div class="service-item">
+                                        <InputCheckbox @bind-Value="bookingForm.IncludeBreakfast" id="breakfast" />
+                                        <label for="breakfast">Breakfast Included (+$25/night)</label>
+                                    </div>
+                                    <div class="service-item">
+                                        <InputCheckbox @bind-Value="bookingForm.IncludeDinner" id="dinner" />
+                                        <label for="dinner">Dinner Included (+$35/night)</label>
+                                    </div>
+                                    <div class="service-item">
+                                        <InputCheckbox @bind-Value="bookingForm.IncludeShuttleService" id="shuttle" />
+                                        <label for="shuttle">Shuttle Service (+$15/night)</label>
+                                    </div>
+                                    <div class="service-item">
+                                        <InputCheckbox @bind-Value="bookingForm.IncludeCleaningService" id="cleaning" />
+                                        <label for="cleaning">Daily Cleaning (+$20/night)</label>
+                                    </div>
+                                    <div class="service-item">
+                                        <InputCheckbox @bind-Value="bookingForm.IncludeEquipmentRental" id="equipment" />
+                                        <label for="equipment">Equipment Rental (+$50)</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Price Summary -->
+                            <div class="price-summary">
+                                <h3>💰 Festival Price Summary 🎫</h3>
+                                <div class="price-breakdown">
+                                    <div class="price-item">
+                                        <span>Base Price per Night:</span>
+                                        <span>$@GetBasePrice()</span>
+                                    </div>
+                                    <div class="price-item">
+                                        <span>Number of Nights:</span>
+                                        <span>@GetNumberOfNights()</span>
+                                    </div>
+                                    @if (bookingForm.IncludeBreakfast)
+                                    {
+                                        <div class="price-item">
+                                            <span>Breakfast:</span>
+                                            <span>+$@(25 * GetNumberOfNights())</span>
+                                        </div>
+                                    }
+                                    @if (bookingForm.IncludeDinner)
+                                    {
+                                        <div class="price-item">
+                                            <span>Dinner:</span>
+                                            <span>+$@(35 * GetNumberOfNights())</span>
+                                        </div>
+                                    }
+                                    @if (bookingForm.IncludeShuttleService)
+                                    {
+                                        <div class="price-item">
+                                            <span>Shuttle Service:</span>
+                                            <span>+$@(15 * GetNumberOfNights())</span>
+                                        </div>
+                                    }
+                                    @if (bookingForm.IncludeCleaningService)
+                                    {
+                                        <div class="price-item">
+                                            <span>Cleaning Service:</span>
+                                            <span>+$@(20 * GetNumberOfNights())</span>
+                                        </div>
+                                    }
+                                    @if (bookingForm.IncludeEquipmentRental)
+                                    {
+                                        <div class="price-item">
+                                            <span>Equipment Rental:</span>
+                                            <span>+$50</span>
+                                        </div>
+                                    }
+                                    <div class="price-total">
+                                        <span>Total:</span>
+                                        <span>$@GetTotalPrice()</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary btn-book" disabled="@isSubmitting">
+                                    @if (isSubmitting)
+                                    {
+                                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                        <span>Booking...</span>
+                                    }
+                                    else
+                                    {
+                                        <span>🎫 Book Festival Accommodation 🎪</span>
+                                    }
+                                </button>
+                            </div>
+                        </EditForm>
+                    </div>
+                }
+            }
         </div>
-    </div>
+    }
 </div>
+
+@code {
+    private bool isLoading = true;
+    private bool isSubmitting = false;
+    private List<FestivalGetDto> festivals = new();
+    private FestivalGetDto? selectedFestival;
+    private string? selectedAccommodationType;
+    private AccommodationCreateDto bookingForm = new()
+    {
+        CheckInDate = DateTime.Now.AddDays(1),
+        CheckOutDate = DateTime.Now.AddDays(4),
+        Capacity = 1
+    };
+
+    private List<AccommodationTypeInfo> accommodationTypes = new()
+    {
+        new AccommodationTypeInfo
+        {
+            Type = "Hotel",
+            Name = "Premium Hotel",
+            Description = "Luxury hotel accommodation with full amenities",
+            Icon = "fas fa-hotel",
+            BasePrice = 150,
+            Features = new[] { "Private Bathroom", "WiFi", "Room Service", "Security", "Shuttle" }
+        },
+        new AccommodationTypeInfo
+        {
+            Type = "Camping",
+            Name = "Festival Camping",
+            Description = "Authentic festival camping experience",
+            Icon = "fas fa-campground",
+            BasePrice = 30,
+            Features = new[] { "Shared Facilities", "Electricity", "Security", "Food Vendors" }
+        },
+        new AccommodationTypeInfo
+        {
+            Type = "RV",
+            Name = "RV Parking",
+            Description = "Bring your own RV or rent one",
+            Icon = "fas fa-rv",
+            BasePrice = 80,
+            Features = new[] { "Full Hookups", "Parking", "Security", "Shower Facilities" }
+        },
+        new AccommodationTypeInfo
+        {
+            Type = "Glamping",
+            Name = "Luxury Glamping",
+            Description = "Comfortable camping with luxury amenities",
+            Icon = "fas fa-tent",
+            BasePrice = 200,
+            Features = new[] { "Private Tent", "Bedding", "Electricity", "Private Bathroom" }
+        },
+        new AccommodationTypeInfo
+        {
+            Type = "Hostel",
+            Name = "Budget Hostel",
+            Description = "Affordable shared accommodation",
+            Icon = "fas fa-building",
+            BasePrice = 60,
+            Features = new[] { "Shared Rooms", "WiFi", "Kitchen", "Common Areas" }
+        },
+        new AccommodationTypeInfo
+        {
+            Type = "Apartment",
+            Name = "Off-site Apartments",
+            Description = "Private apartments near the festival",
+            Icon = "fas fa-home",
+            BasePrice = 120,
+            Features = new[] { "Private Space", "Kitchen", "WiFi", "Transportation" }
+        }
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFestivals();
+    }
+
+    private async Task LoadFestivals()
+    {
+        try
+        {
+            festivals = (await FestivalService.GetAllAsync()).ToList();
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("console.error", "Error loading festivals:", ex.Message);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void SelectFestival(FestivalGetDto festival)
+    {
+        selectedFestival = festival;
+        bookingForm.FestivalId = festival.Id;
+        selectedAccommodationType = null;
+        StateHasChanged();
+    }
+
+    private void SelectAccommodationType(AccommodationTypeInfo accommodationType)
+    {
+        selectedAccommodationType = accommodationType.Type;
+        bookingForm.AccommodationType = accommodationType.Type;
+        StateHasChanged();
+    }
+
+    private async Task HandleBookingSubmit()
+    {
+        if (selectedFestival == null || selectedAccommodationType == null)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Please select a festival and accommodation type");
+            return;
+        }
+
+        isSubmitting = true;
+        try
+        {
+            var response = await AccommodationService.CreateAccommodationAsync(bookingForm);
+            if (response.Success)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"Accommodation booked successfully! Confirmation: {response.ConfirmationNumber}");
+                Navigation.NavigateTo("/accommodation-confirmation");
+            }
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"Booking failed: {response.Message}");
+            }
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"Error: {ex.Message}");
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private string GetFestivalImage(string festivalName)
+    {
+        return festivalName.ToLower().Contains("untold") ? "Untold.jpg" :
+               festivalName.ToLower().Contains("neversea") ? "neversea.jpg" :
+               festivalName.ToLower().Contains("flight") ? "flight.jpg" : "showtime-logo.png";
+    }
+
+    private decimal GetBasePrice()
+    {
+        var accommodationType = accommodationTypes.FirstOrDefault(t => t.Type == selectedAccommodationType);
+        return accommodationType?.BasePrice ?? 0;
+    }
+
+    private int GetNumberOfNights()
+    {
+        if (bookingForm.CheckInDate == default || bookingForm.CheckOutDate == default)
+            return 0;
+        return (int)(bookingForm.CheckOutDate - bookingForm.CheckInDate).TotalDays;
+    }
+
+    private decimal GetTotalPrice()
+    {
+        var basePrice = GetBasePrice();
+        var nights = GetNumberOfNights();
+        var total = basePrice * nights;
+
+        if (bookingForm.IncludeBreakfast) total += 25 * nights;
+        if (bookingForm.IncludeDinner) total += 35 * nights;
+        if (bookingForm.IncludeShuttleService) total += 15 * nights;
+        if (bookingForm.IncludeCleaningService) total += 20 * nights;
+        if (bookingForm.IncludeEquipmentRental) total += 50;
+
+        return total;
+    }
+
+    private class AccommodationTypeInfo
+    {
+        public string Type { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string Icon { get; set; } = string.Empty;
+        public decimal BasePrice { get; set; }
+        public string[] Features { get; set; } = Array.Empty<string>();
+    }
+}

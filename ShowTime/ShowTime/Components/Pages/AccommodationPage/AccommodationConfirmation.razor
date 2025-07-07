@@ -1,0 +1,141 @@
+@page "/accommodation-confirmation"
+@using ShowTime_BusinessLogic.Dtos.Accommodation
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>Accommodation Confirmed - ShowTime</PageTitle>
+
+<div class="confirmation-container">
+    <div class="confirmation-card">
+        <div class="success-animation">
+            <div class="checkmark">
+                <i class="fas fa-check"></i>
+            </div>
+        </div>
+        
+        <h1 class="confirmation-title">Accommodation Booked Successfully!</h1>
+        <p class="confirmation-subtitle">Your festival stay has been confirmed</p>
+        
+        <div class="confirmation-details">
+            <div class="detail-item">
+                <i class="fas fa-calendar-check"></i>
+                <div class="detail-content">
+                    <h3>Booking Confirmed</h3>
+                    <p>Your accommodation has been reserved and confirmed</p>
+                </div>
+            </div>
+            
+            <div class="detail-item">
+                <i class="fas fa-envelope"></i>
+                <div class="detail-content">
+                    <h3>Confirmation Email</h3>
+                    <p>You will receive a confirmation email with all details</p>
+                </div>
+            </div>
+            
+            <div class="detail-item">
+                <i class="fas fa-phone"></i>
+                <div class="detail-content">
+                    <h3>24/7 Support</h3>
+                    <p>Contact us anytime for assistance with your booking</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="accommodation-preview">
+            <h2>Your Accommodation Details</h2>
+            <div class="preview-card">
+                <div class="preview-header">
+                    <i class="fas fa-bed"></i>
+                    <h3>Festival Accommodation</h3>
+                </div>
+                <div class="preview-content">
+                    <div class="preview-item">
+                        <span class="label">Festival:</span>
+                        <span class="value">@(confirmationDetails?.FestivalName ?? "Selected Festival")</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="label">Accommodation Type:</span>
+                        <span class="value">@(confirmationDetails?.AccommodationType ?? "Selected Type")</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="label">Room Type:</span>
+                        <span class="value">@(confirmationDetails?.RoomType ?? "Selected Room")</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="label">Check-in:</span>
+                        <span class="value">@(confirmationDetails?.CheckInDate?.ToString("MMMM dd, yyyy") ?? "Selected Date")</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="label">Check-out:</span>
+                        <span class="value">@(confirmationDetails?.CheckOutDate?.ToString("MMMM dd, yyyy") ?? "Selected Date")</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="label">Total Price:</span>
+                        <span class="value price">$@(confirmationDetails?.TotalPrice ?? 0)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="next-steps">
+            <h2>What's Next?</h2>
+            <div class="steps-grid">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <h3>Check Your Email</h3>
+                    <p>Look for your confirmation email with booking details</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <h3>Prepare for Your Stay</h3>
+                    <p>Pack your essentials and plan your festival experience</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <h3>Arrive at Check-in</h3>
+                    <p>Present your confirmation at the accommodation desk</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn btn-primary" @onclick="GoToHome">
+                <i class="fas fa-home"></i>
+                Back to Home
+            </button>
+            <button class="btn btn-secondary" @onclick="GoToAccommodation">
+                <i class="fas fa-bed"></i>
+                Book Another Stay
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private AccommodationResponseDto? confirmationDetails;
+
+    protected override void OnInitialized()
+    {
+        confirmationDetails = new AccommodationResponseDto
+        {
+            Success = true,
+            FestivalName = "Untold Festival",
+            AccommodationType = "Premium Hotel",
+            RoomType = "Double Room",
+            CheckInDate = DateTime.Now.AddDays(30),
+            CheckOutDate = DateTime.Now.AddDays(33),
+            TotalPrice = 450.00m
+        };
+    }
+
+    private void GoToHome()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    private void GoToAccommodation()
+    {
+        Navigation.NavigateTo("/accommodation");
+    }
+} 
