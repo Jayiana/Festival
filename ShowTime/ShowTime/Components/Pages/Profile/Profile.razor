@@ -1,0 +1,106 @@
+@page "/profile"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Forms
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavManager
+@inject IHttpContextAccessor HttpContextAccessor
+@rendermode InteractiveServer
+
+<div class="profile-page festivals-page">
+    <div class="festival-decoration">
+        @for (int i = 0; i < 20; i++)
+        {
+            <div class="sparkle" style="left: @(Random.Shared.Next(0, 100))%; top: @(Random.Shared.Next(0, 100))%; animation-delay: @(Random.Shared.Next(0, 4000))ms;"></div>
+        }
+        @for (int i = 0; i < 8; i++)
+        {
+            <div class="floating-element star" style="left: @(Random.Shared.Next(5, 95))%; animation-delay: @(Random.Shared.Next(0, 15000))ms;">★</div>
+        }
+        @for (int i = 0; i < 6; i++)
+        {
+            <div class="soft-glow" style="left: @(Random.Shared.Next(10, 90))%; top: @(Random.Shared.Next(20, 80))%; animation-delay: @(Random.Shared.Next(0, 8000))ms;"></div>
+        }
+    </div>
+    <div class="profile-container">
+        <div class="profile-sidebar">
+            <button class="sidebar-btn" @onclick="GoToBookings">
+                <i class="fas fa-ticket-alt"></i> My Bookings
+            </button>
+            <button class="sidebar-btn" @onclick="GoToAccommodations">
+                <i class="fas fa-bed"></i> My Accommodations
+            </button>
+            <button class="sidebar-btn logout" @onclick="Logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+        <div class="profile-main">
+            <div class="profile-card festival-card" style="display:@(activeTab == "profile" ? "flex" : "none")">
+                <div class="profile-photo-section">
+                    <img src="@profilePhotoUrl" alt="Profile Photo" class="profile-photo" />
+                    <InputFile OnChange="OnPhotoChange" accept="image/*" />
+                </div>
+                <div class="profile-info">
+                    <h2 class="profile-email">@userEmail</h2>
+                    <div class="profile-label">Festival Account</div>
+                </div>
+            </div>
+            <div style="width:100%;" hidden="@(activeTab != "bookings")">
+                <MyBookings />
+            </div>
+            <div style="width:100%;" hidden="@(activeTab != "accommodations")">
+                <Pages.AccommodationPage.MyAccommodations />
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string? userEmail;
+    private bool isAuthenticated = false;
+    private string profilePhotoUrl = "/images/default-profile.png";
+    private string activeTab = "profile";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        isAuthenticated = user.Identity?.IsAuthenticated == true;
+        if (!isAuthenticated)
+        {
+            NavManager.NavigateTo("/login");
+            return;
+        }
+        userEmail = user.FindFirst(ClaimTypes.Email)?.Value;
+    }
+
+    private async Task OnPhotoChange(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file != null)
+        {
+            // For demo: just show the uploaded image in-memory (not persisted)
+            var buffer = new byte[file.Size];
+            await file.OpenReadStream().ReadAsync(buffer);
+            profilePhotoUrl = $"data:{file.ContentType};base64,{Convert.ToBase64String(buffer)}";
+        }
+    }
+
+    private void GoToBookings()
+    {
+        NavManager.NavigateTo("/my-bookings");
+    }
+    private void GoToAccommodations()
+    {
+        NavManager.NavigateTo("/my-accommodations");
+    }
+
+    private void Logout()
+    {
+        NavManager.NavigateTo("/logout", forceLoad: true);
+    }
+
+    private void SetTab(string tab)
+    {
+        activeTab = tab;
+    }
+} 

@@ -16,7 +16,7 @@
 
     <div class="auth-box text-center">
         <div class="titlu">
-            <img src="/SiteImages/OtherPages/titlu.png" alt="ShowTime">
+            <img src="/images/Showtime-logo.png" alt="ShowTime">
         </div>
 
         <div class="box">
@@ -140,7 +140,8 @@
             var claims = new List<Claim>
             {
                 new(ClaimTypes.Email, loginModel.Email),
-                new(ClaimTypes.Role, Enum.GetName(typeof(Role), response.Role) ?? nameof(Role.User))
+                new(ClaimTypes.Role, Enum.GetName(typeof(Role), response.Role) ?? nameof(Role.User)),
+                new(ClaimTypes.NameIdentifier, response.UserId.ToString()) // Add user ID as a claim
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

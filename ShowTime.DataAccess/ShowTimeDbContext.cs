@@ -25,6 +25,7 @@ namespace ShowTime.DataAccess
         public DbSet<Booking> Bookings { get; set; } = null!;
         public DbSet<Accommodation> Accommodations { get; set; } = null!;
         public DbSet<User> Users { get; set; } = null!;
+        public DbSet<AccommodationTypeInfo> AccommodationTypeInfo { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

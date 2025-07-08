@@ -52,7 +52,7 @@ namespace ShowTime_BusinessLogic.Services
                 var booking = new Booking
                 {
                     FestivalId = bookingDto.FestivalId,
-                    UserId = 1, // Default user ID - should be replaced with actual user ID
+                    UserId = bookingDto.UserId, // Use the actual user ID from the DTO
                     TicketType = bookingDto.TicketType,
                     Quantity = bookingDto.Quantity,
                     TicketNumber = ticketNumber,
@@ -66,7 +66,9 @@ namespace ShowTime_BusinessLogic.Services
                     IncludeTransportation = bookingDto.IncludeTransportation,
                     Status = "Pending",
                     PaymentStatus = "Pending",
-                    BookingDate = DateTime.Now
+                    BookingDate = DateTime.Now,
+                    ValidFrom = festival.StartDate,
+                    ValidTo = festival.EndDate
                 };
 
                 await _bookingRepository.AddAsync(booking);
@@ -179,8 +181,10 @@ namespace ShowTime_BusinessLogic.Services
                         return new BookingGetDto
                         {
                             Id = b.Id,
+                            FestivalId = b.FestivalId,
                             FestivalName = festival?.Name ?? "Unknown Festival",
                             FestivalDate = festival?.StartDate ?? DateTime.MinValue,
+                            FestivalEndDate = festival?.EndDate ?? DateTime.MinValue,
                             Location = festival?.Location ?? "Unknown Location",
                             TicketType = b.TicketType,
                             Quantity = b.Quantity,
@@ -192,7 +196,10 @@ namespace ShowTime_BusinessLogic.Services
                             IncludeCamping = b.IncludeCamping,
                             IncludeFoodPackage = b.IncludeFoodPackage,
                             IncludeTransportation = b.IncludeTransportation,
-                            Status = b.Status
+                            Status = b.Status,
+                            TotalPrice = b.Price,
+                            ValidFrom = b.ValidFrom,
+                            ValidTo = b.ValidTo
                         };
                     });
 
@@ -218,8 +225,10 @@ namespace ShowTime_BusinessLogic.Services
                 return new BookingGetDto
                 {
                     Id = booking.Id,
+                    FestivalId = booking.FestivalId,
                     FestivalName = festival?.Name ?? "Unknown Festival",
                     FestivalDate = festival?.StartDate ?? DateTime.MinValue,
+                    FestivalEndDate = festival?.EndDate ?? DateTime.MinValue,
                     Location = festival?.Location ?? "Unknown Location",
                     TicketType = booking.TicketType,
                     Quantity = booking.Quantity,
@@ -231,7 +240,10 @@ namespace ShowTime_BusinessLogic.Services
                     IncludeCamping = booking.IncludeCamping,
                     IncludeFoodPackage = booking.IncludeFoodPackage,
                     IncludeTransportation = booking.IncludeTransportation,
-                    Status = booking.Status
+                    Status = booking.Status,
+                    TotalPrice = booking.Price,
+                    ValidFrom = booking.ValidFrom,
+                    ValidTo = booking.ValidTo
                 };
             }
             catch
@@ -259,6 +271,23 @@ namespace ShowTime_BusinessLogic.Services
             {
                 return false;
             }
+        }
+
+        public async Task<IEnumerable<BookingResponseDto>> GetBookingsByEmailAsync(string email)
+        {
+            var allBookings = await _bookingRepository.GetAllAsync();
+            var userBookings = allBookings.Where(b => b.CustomerEmail == email);
+            var festivalDict = (await _festivalRepository.GetAllAsync()).ToDictionary(f => f.Id);
+            return userBookings.Select(b => new BookingResponseDto
+            {
+                Success = true,
+                BookingId = b.Id.ToString(),
+                TicketNumber = b.TicketNumber,
+                TotalPrice = b.Price, // Assuming Price is the total price
+                FestivalName = festivalDict.TryGetValue(b.FestivalId, out var fest) ? fest.Name : null,
+                FestivalDate = festivalDict.TryGetValue(b.FestivalId, out var fest2) ? fest2.StartDate : null,
+                Location = festivalDict.TryGetValue(b.FestivalId, out var fest3) ? fest3.Location : null
+            });
         }
 
         private decimal GetTicketPrice(string ticketType)

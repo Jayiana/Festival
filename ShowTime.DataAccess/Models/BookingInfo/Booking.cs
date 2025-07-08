@@ -38,5 +38,7 @@ namespace ShowTime.DataAccess.Models.BookingInfo
         public string PaymentMethod { get; set; } = string.Empty;
         public string PaymentStatus { get; set; } = "Pending"; 
         public string TransactionId { get; set; } = string.Empty;
+        public DateTime ValidFrom { get; set; }
+        public DateTime ValidTo { get; set; }
     }
 }

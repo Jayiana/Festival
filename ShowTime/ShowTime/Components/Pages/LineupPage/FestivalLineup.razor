@@ -1,0 +1,267 @@
+@page "/festival/{id:int}"
+@using ShowTime_BusinessLogic.Abstractions
+@using ShowTime_BusinessLogic.Dtos.Festival
+@using ShowTime_BusinessLogic.Dtos
+@inject IFestivalService FestivalService
+@inject ILineupService LineupService
+@inject NavigationManager NavManager
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<PageTitle>ShowTime - Festival Preview & Lineup</PageTitle>
+
+<!-- Festival Decorations -->
+<div class="festival-decoration">
+    @for (int i = 0; i < 30; i++)
+    {
+        <div class="sparkle" style="left: @(Random.Shared.Next(0, 100))%; top: @(Random.Shared.Next(0, 100))%; animation-delay: @(Random.Shared.Next(0, 4000))ms;"></div>
+    }
+    @for (int i = 0; i < 15; i++)
+    {
+        <div class="floating-element star" style="left: @(Random.Shared.Next(5, 95))%; animation-delay: @(Random.Shared.Next(0, 15000))ms;">★</div>
+    }
+    @for (int i = 0; i < 10; i++)
+    {
+        <div class="soft-glow" style="left: @(Random.Shared.Next(10, 90))%; top: @(Random.Shared.Next(20, 80))%; animation-delay: @(Random.Shared.Next(0, 8000))ms;"></div>
+    }
+    @for (int i = 0; i < 8; i++)
+    {
+        <div class="geometric-shape triangle" style="left: @(Random.Shared.Next(5, 95))%; top: @(Random.Shared.Next(10, 90))%; animation-delay: @(Random.Shared.Next(0, 8000))ms;"></div>
+    }
+    @for (int i = 0; i < 12; i++)
+    {
+        <div class="geometric-shape circle" style="left: @(Random.Shared.Next(5, 95))%; top: @(Random.Shared.Next(10, 90))%; animation-delay: @(Random.Shared.Next(0, 6000))ms;"></div>
+    }
+    @for (int i = 0; i < 6; i++)
+    {
+        <div class="floating-element heart" style="left: @(Random.Shared.Next(5, 95))%; animation-delay: @(Random.Shared.Next(0, 18000))ms;">♥</div>
+    }
+    @for (int i = 0; i < 4; i++)
+    {
+        <div class="animated-line" style="top: @(Random.Shared.Next(20, 80))%; width: @(Random.Shared.Next(100, 300))px; animation-delay: @(Random.Shared.Next(0, 6000))ms;"></div>
+    }
+    @for (int i = 0; i < 7; i++)
+    {
+        <div class="floating-element music-note" style="left: @(Random.Shared.Next(5, 95))%; animation-delay: @(Random.Shared.Next(0, 12000))ms;">♪</div>
+    }
+</div>
+<!-- Animated Background Elements -->
+<div class="background-elements">
+    <div class="bg-circle bg-circle-1"></div>
+    <div class="bg-circle bg-circle-2"></div>
+    <div class="bg-circle bg-circle-3"></div>
+    <div class="bg-square bg-square-1"></div>
+    <div class="bg-square bg-square-2"></div>
+    <div class="bg-triangle bg-triangle-1"></div>
+</div>
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="title-decoration">
+        <div class="title-sparkle">✨</div>
+        <h1 class="page-title neon-text">🎪 Festival Experience 🎪</h1>
+        <div class="title-sparkle">✨</div>
+    </div>
+    <p class="page-subtitle">Lineup, Info & Tickets – All in One Place</p>
+    <div class="animated-icons">
+        <span>🎆</span> <span>🎇</span> <span>🎉</span> <span>🎊</span> <span>🎋</span> <span>🎍</span> <span>🎎</span>
+    </div>
+    <div class="header-decoration">
+        <div class="decoration-line"></div>
+        <div class="decoration-dot"></div>
+        <div class="decoration-line"></div>
+    </div>
+</div>
+
+<div class="festival-lineup-content">
+    @if (festival == null)
+    {
+        <div>Loading festival...</div>
+    }
+    else
+    {
+        <!-- Festival Preview Section (copied from /festivals card) -->
+        <div class="festival-card festival-preview-large">
+            <div class="festival-image">
+                <img src="@festival.SplashArt" alt="@festival.Name" />
+                <div class="image-overlay"></div>
+                <div class="festival-badge">🎪</div>
+                <div class="image-decoration">
+                    <span>✨</span> <span>🎆</span>
+                </div>
+            </div>
+            <div class="festival-info">
+                <h2 class="festival-name">@festival.Name</h2>
+                <p class="festival-location">📍 @festival.Location</p>
+                <div class="festival-dates">
+                    <span class="date-badge">📅 @festival.StartDate.ToShortDateString() - @festival.EndDate.ToShortDateString()</span>
+                </div>
+                <div class="festival-stats">
+                    <span class="stat capacity-stat">
+                        <i class="fas fa-users"></i> @festival.Capacity.ToString("N0") people
+                    </span>
+                    @if (festival.Rating > 0)
+                    {
+                        <span class="stat rating-stat">
+                            <i class="fas fa-star"></i> @festival.Rating/100
+                        </span>
+                    }
+                    <span class="stat theme-stat">
+                        <i class="fas fa-palette"></i> @festival.Theme
+                    </span>
+                </div>
+                <div class="festival-features">
+                    @if (festival.IsIndoor)
+                    {
+                        <span class="feature-badge indoor">
+                            <i class="fas fa-home"></i> Indoor
+                        </span>
+                    }
+                    @if (festival.HasCamping)
+                    {
+                        <span class="feature-badge camping">
+                            <i class="fas fa-campground"></i> Camping
+                        </span>
+                    }
+                    @if (festival.HasFoodCourt)
+                    {
+                        <span class="feature-badge food">
+                            <i class="fas fa-utensils"></i> Food Court
+                        </span>
+                    }
+                    @if (festival.HasAfterParty)
+                    {
+                        <span class="feature-badge party">
+                            <i class="fas fa-glass-cheers"></i> After Party
+                        </span>
+                    }
+                </div>
+                @if (!string.IsNullOrEmpty(festival.Description))
+                {
+                    <div class="festival-description">
+                        <div class="description-header">
+                            <i class="fas fa-info-circle"></i>
+                            <span>About this Festival</span>
+                        </div>
+                        <p class="description-text">@festival.Description</p>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Lineup Section -->
+    <div class="lineup-section">
+        <h2 class="lineup-title">Lineup</h2>
+        @if (lineups == null)
+        {
+            <div>Loading lineup...</div>
+        }
+        else if (lineups.Count == 0)
+        {
+            <div>No lineup available for this festival yet.</div>
+        }
+        else
+        {
+            <div class="lineups-container">
+                @foreach (var lineup in lineups)
+                {
+                    <div class="lineup-card">
+                        <div class="lineup-header">
+                            <div class="artist-icon">🎤</div>
+                            <h3 class="artist-name">@lineup.ArtistName</h3>
+                        </div>
+                        <div class="lineup-details">
+                            <div class="detail-item">
+                                <span class="detail-icon">🎭</span>
+                                <span class="detail-label">Stage:</span>
+                                <span class="detail-value">@lineup.Stage</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-icon">⏰</span>
+                                <span class="detail-label">Start Time:</span>
+                                <span class="detail-value">@lineup.StartTime.ToString("g")</span>
+                            </div>
+                            <div class="performance-features">
+                                @if (lineup.IsMainStage)
+                                {
+                                    <span class="feature-badge main-stage">
+                                        <i class="fas fa-fire"></i> Main Stage
+                                    </span>
+                                }
+                                @if (lineup.IsLivePerformance)
+                                {
+                                    <span class="feature-badge live-performance">
+                                        <i class="fas fa-music"></i> Live Performance
+                                    </span>
+                                }
+                            </div>
+                            @if (!string.IsNullOrWhiteSpace(lineup.Description))
+                            {
+                                <div class="lineup-description">
+                                    <div class="description-header">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>Performance Notes</span>
+                                    </div>
+                                    <p class="description-text">@lineup.Description</p>
+                                </div>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(lineup.StageTheme))
+                            {
+                                <div class="stage-theme">
+                                    <div class="theme-header">
+                                        <i class="fas fa-palette"></i>
+                                        <span>Stage Theme</span>
+                                    </div>
+                                    <div class="theme-badge">@lineup.StageTheme</div>
+                                </div>
+                            }
+                        </div>
+                        <div class="lineup-footer">
+                            @if (lineup.IsMainStage)
+                            {
+                                <span class="performance-badge">🌟 Main Stage</span>
+                            }
+                            @if (lineup.IsLivePerformance)
+                            {
+                                <span class="performance-badge">🎸 Live Show</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(lineup.StageTheme))
+                            {
+                                <span class="performance-badge">🎨 Theme: @lineup.StageTheme</span>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- Buy Tickets Button -->
+    @if (festival != null)
+    {
+        <div class="buy-tickets-section">
+            <button class="btn btn-success buy-tickets-btn" @onclick="BuyTickets">
+                <i class="fas fa-ticket-alt"></i> Buy Tickets for @festival.Name
+            </button>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public int id { get; set; }
+    private FestivalGetDto? festival;
+    private List<LineupGetDto>? lineups;
+
+    protected override async Task OnInitializedAsync()
+    {
+        festival = await FestivalService.GetByIdAsync(id);
+        var allLineups = await LineupService.GetAllAsync();
+        lineups = allLineups.Where(l => l.FestivalId == id).ToList();
+    }
+
+    private void BuyTickets()
+    {
+        NavManager.NavigateTo($"/booking?festivalId={id}");
+    }
+} 

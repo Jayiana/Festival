@@ -1,6 +1,7 @@
 using ShowTime_BusinessLogic.Dtos.Accommodation;
+using ShowTime.DataAccess.Models.AccommodationInfo;
 
-namespace ShowTime_BusinessLogic.Abstractions
+namespace ShowTime_BusinessLogic.Abstractions.Accommodation
 {
     public interface IAccommodationService
     {
@@ -10,5 +11,6 @@ namespace ShowTime_BusinessLogic.Abstractions
         Task<AccommodationGetDto?> GetAccommodationByIdAsync(int accommodationId);
         Task<bool> CancelAccommodationAsync(int accommodationId);
         Task<IEnumerable<AccommodationGetDto>> GetAvailableAccommodationsAsync(int festivalId);
+        Task<List<AccommodationTypeInfoDto>> GetAccommodationTypesAsync();
     }
 } 

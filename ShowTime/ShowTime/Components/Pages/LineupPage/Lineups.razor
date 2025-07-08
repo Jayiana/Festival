@@ -1,4 +1,5 @@
 ﻿@page "/lineups"
+<!-- NOTE: For a combined festival preview and lineup, visit /festival/{id} -->
 @rendermode InteractiveServer
 @inject ILineupService LineupService
 @inject NavigationManager NavManager
@@ -6,6 +7,7 @@
 @using Microsoft.AspNetCore.Authorization
 @using ShowTime_BusinessLogic.Abstractions
 @using ShowTime_BusinessLogic.Dtos
+@using Microsoft.AspNetCore.WebUtilities
 
 <PageTitle>ShowTime - Lineups</PageTitle>
 
@@ -178,15 +180,33 @@
 
 @code {
     private List<LineupGetDto> AllLineups = new();
-    private List<LineupGetDto> PagedLineups => AllLineups.Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
-
+    private List<LineupGetDto> PagedLineups =>
+        FilteredLineups.Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
+    private List<LineupGetDto> FilteredLineups =>
+        selectedFestivalId.HasValue ?
+            AllLineups.Where(l => l.FestivalId == selectedFestivalId.Value).ToList() :
+            AllLineups;
+    private int? selectedFestivalId;
     private int CurrentPage = 1;
     private int PageSize = 8;
-    private int TotalPages => (int)Math.Ceiling((double)AllLineups.Count / PageSize);
+    private int TotalPages => (int)Math.Ceiling((double)FilteredLineups.Count / PageSize);
 
     protected override async Task OnInitializedAsync()
     {
         AllLineups = (await LineupService.GetAllAsync()).ToList();
+        SetFestivalIdFromQuery();
+    }
+
+    private void SetFestivalIdFromQuery()
+    {
+        var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("festivalId", out var festivalIdStr))
+        {
+            if (int.TryParse(festivalIdStr, out int festivalId))
+            {
+                selectedFestivalId = festivalId;
+            }
+        }
     }
 
     private void ChangePage(int page) => CurrentPage = page;

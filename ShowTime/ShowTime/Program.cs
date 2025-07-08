@@ -11,8 +11,10 @@ using ShowTime.DataAccess.Models.FestivalInfo;
 using ShowTime.DataAccess.Models.LineupInfo;
 using ShowTime.DataAccess.Models.UserInfo;
 using ShowTime_BusinessLogic.Abstractions;
+using ShowTime_BusinessLogic.Abstractions.Accommodation;
 using ShowTime_BusinessLogic.Dtos;
 using ShowTime_BusinessLogic.Services;
+using ShowTime_BusinessLogic.Services.Accommodations;
 
 var builder = WebApplication.CreateBuilder(args);
 

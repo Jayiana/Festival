@@ -1,0 +1,218 @@
+@page "/my-accommodations"
+@using ShowTime_BusinessLogic.Abstractions
+@using ShowTime_BusinessLogic.Abstractions.Accommodation
+@using ShowTime_BusinessLogic.Dtos.Accommodation
+@inject IAccommodationService AccommodationService
+@inject IHttpContextAccessor HttpContextAccessor
+@inject NavigationManager NavManager
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Web
+
+<div class="my-accommodations-page festivals-page">
+    <div class="festival-decoration">
+        @for (int i = 0; i < 20; i++)
+        {
+            <div class="sparkle" style="left: @(Random.Shared.Next(0, 100))%; top: @(Random.Shared.Next(0, 100))%; animation-delay: @(Random.Shared.Next(0, 4000))ms;"></div>
+        }
+        @for (int i = 0; i < 8; i++)
+        {
+            <div class="floating-element star" style="left: @(Random.Shared.Next(5, 95))%; animation-delay: @(Random.Shared.Next(0, 15000))ms;">★</div>
+        }
+        @for (int i = 0; i < 6; i++)
+        {
+            <div class="soft-glow" style="left: @(Random.Shared.Next(10, 90))%; top: @(Random.Shared.Next(20, 80))%; animation-delay: @(Random.Shared.Next(0, 8000))ms;"></div>
+        }
+    </div>
+    <div class="page-header">
+        <div class="title-decoration">
+            <div class="title-sparkle">✨</div>
+            <h1 class="page-title neon-text">🏨 My Festival Accommodations</h1>
+            <div class="title-sparkle">✨</div>
+        </div>
+        <p class="page-subtitle">All your festival stays in one place</p>
+    </div>
+    @if (accommodations == null)
+    {
+        <div>Loading your accommodations...</div>
+    }
+    else if (accommodations.Count == 0)
+    {
+        <div class="empty-state">
+            <div class="empty-icon">🏨</div>
+            <h3>No Accommodations Yet</h3>
+            <p>Book your first festival stay and it will appear here!</p>
+        </div>
+    }
+    else
+    {
+        <div class="festivals-container">
+            @foreach (var acc in accommodations)
+            {
+                <div class="festival-card">
+                    <div class="festival-info">
+                        <h3 class="festival-name">@acc.FestivalName</h3>
+                        <div class="festival-dates">
+                            <span class="date-badge">📅 @acc.FestivalStartDate.ToString("MMMM dd, yyyy") - @acc.FestivalEndDate.ToString("MMMM dd, yyyy")</span>
+                        </div>
+                        <div class="festival-stats">
+                            <span class="stat">
+                                <i class="fas fa-bed"></i> @acc.AccommodationType - @acc.RoomType
+                            </span>
+                            <span class="stat">
+                                <i class="fas fa-dollar-sign"></i> $@acc.TotalPrice.ToString("F2")
+                            </span>
+                        </div>
+                        <div class="festival-location">
+                            <i class="fas fa-map-marker-alt"></i> @acc.FestivalLocation
+                        </div>
+                        <button class="view-ticket-btn" @onclick="() => ShowDetails(acc)">View Details</button>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+@if (showDetailsModal && selectedAccommodation != null)
+{
+    <div class="ticket-modal-backdrop" @onclick="CloseDetailsModal">
+        <div class="ticket-modal" @onclick:stopPropagation="true">
+            <div class="ticket-preview-section">
+                <h2 class="section-title">🏨 Accommodation Details</h2>
+                <div class="ticket-container">
+                    <div class="festival-ticket">
+                        <div class="ticket-header">
+                            <div class="ticket-logo">
+                                <img src="/images/Showtime-logo.png" alt="ShowTime" />
+                            </div>
+                            <div class="ticket-type-badge">
+                                <span class="badge-text">@selectedAccommodation.AccommodationType</span>
+                            </div>
+                        </div>
+                        <div class="ticket-body">
+                            <div class="festival-info">
+                                <h3 class="festival-name">@selectedAccommodation.FestivalName</h3>
+                                <div class="festival-details">
+                                    <div class="detail-item">
+                                        <i class="fas fa-calendar"></i>
+                                        <span>@selectedAccommodation.FestivalStartDate.ToString("MMMM dd, yyyy") - @selectedAccommodation.FestivalEndDate.ToString("MMMM dd, yyyy")</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>@selectedAccommodation.FestivalLocation</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <i class="fas fa-bed"></i>
+                                        <span>@selectedAccommodation.RoomType</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="customer-info">
+                                <div class="customer-name">@selectedAccommodation.CustomerName</div>
+                                <div class="customer-email">@selectedAccommodation.CustomerEmail</div>
+                            </div>
+                            <div class="ticket-features">
+                                @if (selectedAccommodation.IncludeBreakfast)
+                                {
+                                    <div class="feature-badge food">
+                                        <i class="fas fa-coffee"></i>
+                                        <span>Breakfast</span>
+                                    </div>
+                                }
+                                @if (selectedAccommodation.IncludeDinner)
+                                {
+                                    <div class="feature-badge food">
+                                        <i class="fas fa-utensils"></i>
+                                        <span>Dinner</span>
+                                    </div>
+                                }
+                                @if (selectedAccommodation.IncludeShuttleService)
+                                {
+                                    <div class="feature-badge transport">
+                                        <i class="fas fa-shuttle-van"></i>
+                                        <span>Shuttle</span>
+                                    </div>
+                                }
+                                @if (selectedAccommodation.IncludeCleaningService)
+                                {
+                                    <div class="feature-badge cleaning">
+                                        <i class="fas fa-broom"></i>
+                                        <span>Cleaning</span>
+                                    </div>
+                                }
+                                @if (selectedAccommodation.IncludeEquipmentRental)
+                                {
+                                    <div class="feature-badge equipment">
+                                        <i class="fas fa-toolbox"></i>
+                                        <span>Equipment</span>
+                                    </div>
+                                }
+                            </div>
+                            <div class="ticket-price">
+                                <div class="price-label">Total Price</div>
+                                <div class="price-amount">$@selectedAccommodation.TotalPrice.ToString("F2")</div>
+                            </div>
+                        </div>
+                        <div class="ticket-footer">
+                            <div class="ticket-barcode">
+                                <div class="barcode-lines">
+                                    @for (int i = 0; i < 20; i++)
+                                    {
+                                        <div class="barcode-line" style="height: @(Random.Shared.Next(20, 60))px;"></div>
+                                    }
+                                </div>
+                                <div class="barcode-number">@selectedAccommodation.Id</div>
+                            </div>
+                            <div class="ticket-terms">
+                                <small>Valid for your festival stay. Non-transferable. No refunds.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ticket-actions">
+                    <button class="btn btn-secondary" @onclick="CloseDetailsModal">
+                        <i class="fas fa-times"></i>
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<AccommodationGetDto>? accommodations;
+    private int? currentUserId;
+    private bool showDetailsModal = false;
+    private AccommodationGetDto? selectedAccommodation;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = HttpContextAccessor?.HttpContext?.User;
+        if (user != null && user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            var idClaim = user.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (int.TryParse(idClaim, out var userId))
+            {
+                currentUserId = userId;
+            }
+        }
+        if (currentUserId.HasValue)
+        {
+            accommodations = (await AccommodationService.GetUserAccommodationsAsync(currentUserId.Value)).ToList();
+        }
+        else
+        {
+            accommodations = new List<AccommodationGetDto>();
+        }
+    }
+    private void ShowDetails(AccommodationGetDto acc)
+    {
+        selectedAccommodation = acc;
+        showDetailsModal = true;
+    }
+    private void CloseDetailsModal()
+    {
+        showDetailsModal = false;
+        selectedAccommodation = null;
+    }
+} 

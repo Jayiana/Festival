@@ -32,5 +32,7 @@ namespace ShowTime_BusinessLogic.Dtos.Booking
         public bool IncludeFoodPackage { get; set; }
         
         public bool IncludeTransportation { get; set; }
+
+        public int UserId { get; set; }
     }
 }

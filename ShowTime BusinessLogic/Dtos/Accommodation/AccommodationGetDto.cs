@@ -8,6 +8,8 @@ namespace ShowTime_BusinessLogic.Dtos.Accommodation
         public string FestivalName { get; set; } = string.Empty;
         public DateTime FestivalDate { get; set; }
         public string FestivalLocation { get; set; } = string.Empty;
+        public DateTime FestivalStartDate { get; set; }
+        public DateTime FestivalEndDate { get; set; }
         
         // Accommodation Details
         public string AccommodationType { get; set; } = string.Empty;

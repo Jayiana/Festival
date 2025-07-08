@@ -1,13 +1,19 @@
 @page "/accommodation"
-@using Microsoft.JSInterop
-@using ShowTime_BusinessLogic.Dtos.Festival
-@using ShowTime_BusinessLogic.Dtos.Accommodation
-@using ShowTime_BusinessLogic.Abstractions
 @using System
+@using Microsoft.JSInterop
+@using ShowTime.DataAccess.Models
+@using ShowTime.DataAccess.Models.AccommodationInfo
+@using ShowTime_BusinessLogic.Abstractions
+@using ShowTime_BusinessLogic.Abstractions.Accommodation
+@using ShowTime_BusinessLogic.Dtos.Accommodation
+@using ShowTime_BusinessLogic.Dtos.Festival
+tival
 @inject IFestivalService FestivalService
 @inject IAccommodationService AccommodationService
 @inject NavigationManager Navigation
 @inject IJSRuntime JSRuntime
+@inject IBookingService BookingService
+@inject IHttpContextAccessor HttpContextAccessor
 @rendermode InteractiveServer
 
 <PageTitle>Festival Accommodation - ShowTime</PageTitle>
@@ -68,7 +74,7 @@
                                 </div>
                                 <div class="accommodation-info">
                                     <h3>@accommodationType.Name</h3>
-                                    <p class="accommodation-description">@accommodationType.Description</p>
+                                    <p class="festival-description">@accommodationType.Description</p>
                                     <div class="accommodation-features">
                                         @foreach (var feature in accommodationType.Features)
                                         {
@@ -84,8 +90,13 @@
 
                 @if (selectedAccommodationType != null)
                 {
-                    <!-- Booking Form -->
-                    <div class="booking-form">
+                    if (!hasTicketForSelectedFestival)
+                    {
+                        <div class="no-ticket-warning">
+                            <i class="fas fa-exclamation-triangle"></i> You must have a ticket for this festival before booking accommodation.
+                        </div>
+                    }
+                    <div class="booking-form" style="@(hasTicketForSelectedFestival ? "" : "pointer-events:none;opacity:0.5;")">
                         <h2>🎫 Book Your Festival Stay 🎪</h2>
                         <EditForm Model="@bookingForm" OnValidSubmit="HandleBookingSubmit">
                             <DataAnnotationsValidator />
@@ -259,6 +270,11 @@
     private List<FestivalGetDto> festivals = new();
     private FestivalGetDto? selectedFestival;
     private string? selectedAccommodationType;
+    private List<AccommodationTypeInfoDto> accommodationTypes = new();
+    private List<ShowTime_BusinessLogic.Dtos.Booking.BookingGetDto> userBookings = new();
+    private bool hasTicketForSelectedFestival = false;
+
+    // Use the base class directly
     private AccommodationCreateDto bookingForm = new()
     {
         CheckInDate = DateTime.Now.AddDays(1),
@@ -266,67 +282,44 @@
         Capacity = 1
     };
 
-    private List<AccommodationTypeInfo> accommodationTypes = new()
-    {
-        new AccommodationTypeInfo
-        {
-            Type = "Hotel",
-            Name = "Premium Hotel",
-            Description = "Luxury hotel accommodation with full amenities",
-            Icon = "fas fa-hotel",
-            BasePrice = 150,
-            Features = new[] { "Private Bathroom", "WiFi", "Room Service", "Security", "Shuttle" }
-        },
-        new AccommodationTypeInfo
-        {
-            Type = "Camping",
-            Name = "Festival Camping",
-            Description = "Authentic festival camping experience",
-            Icon = "fas fa-campground",
-            BasePrice = 30,
-            Features = new[] { "Shared Facilities", "Electricity", "Security", "Food Vendors" }
-        },
-        new AccommodationTypeInfo
-        {
-            Type = "RV",
-            Name = "RV Parking",
-            Description = "Bring your own RV or rent one",
-            Icon = "fas fa-rv",
-            BasePrice = 80,
-            Features = new[] { "Full Hookups", "Parking", "Security", "Shower Facilities" }
-        },
-        new AccommodationTypeInfo
-        {
-            Type = "Glamping",
-            Name = "Luxury Glamping",
-            Description = "Comfortable camping with luxury amenities",
-            Icon = "fas fa-tent",
-            BasePrice = 200,
-            Features = new[] { "Private Tent", "Bedding", "Electricity", "Private Bathroom" }
-        },
-        new AccommodationTypeInfo
-        {
-            Type = "Hostel",
-            Name = "Budget Hostel",
-            Description = "Affordable shared accommodation",
-            Icon = "fas fa-building",
-            BasePrice = 60,
-            Features = new[] { "Shared Rooms", "WiFi", "Kitchen", "Common Areas" }
-        },
-        new AccommodationTypeInfo
-        {
-            Type = "Apartment",
-            Name = "Off-site Apartments",
-            Description = "Private apartments near the festival",
-            Icon = "fas fa-home",
-            BasePrice = 120,
-            Features = new[] { "Private Space", "Kitchen", "WiFi", "Transportation" }
-        }
-    };
-
     protected override async Task OnInitializedAsync()
     {
         await LoadFestivals();
+       
+        try
+        {
+            var types = await AccommodationService.GetAccommodationTypesAsync();
+            if (types != null)
+                accommodationTypes = types.ToList();
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("console.error", "Error loading accommodation types:", ex.Message);
+        }
+ 
+        var user = HttpContextAccessor?.HttpContext?.User;
+        int? currentUserId = null;
+        if (user != null && user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            var idClaim = user.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (int.TryParse(idClaim, out var userId))
+            {
+                currentUserId = userId;
+            }
+        }
+        if (currentUserId.HasValue)
+        {
+            userBookings = (await BookingService.GetUserBookingsAsync(currentUserId.Value)).ToList();
+        }
+
+        if (user != null && user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            var idClaim = user.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (int.TryParse(idClaim, out var userId))
+            {
+                bookingForm.UserId = userId;
+            }
+        }
     }
 
     private async Task LoadFestivals()
@@ -349,11 +342,13 @@
     {
         selectedFestival = festival;
         bookingForm.FestivalId = festival.Id;
+        
+        hasTicketForSelectedFestival = userBookings.Any(b => b.FestivalId == festival.Id);
         selectedAccommodationType = null;
         StateHasChanged();
     }
 
-    private void SelectAccommodationType(AccommodationTypeInfo accommodationType)
+    private void SelectAccommodationType(AccommodationTypeInfoDto accommodationType)
     {
         selectedAccommodationType = accommodationType.Type;
         bookingForm.AccommodationType = accommodationType.Type;
@@ -374,7 +369,7 @@
             var response = await AccommodationService.CreateAccommodationAsync(bookingForm);
             if (response.Success)
             {
-                await JSRuntime.InvokeVoidAsync("alert", $"Accommodation booked successfully! Confirmation: {response.ConfirmationNumber}");
+             
                 Navigation.NavigateTo("/accommodation-confirmation");
             }
             else
@@ -407,9 +402,7 @@
 
     private int GetNumberOfNights()
     {
-        if (bookingForm.CheckInDate == default || bookingForm.CheckOutDate == default)
-            return 0;
-        return (int)(bookingForm.CheckOutDate - bookingForm.CheckInDate).TotalDays;
+        return bookingForm.NumberOfNights;
     }
 
     private decimal GetTotalPrice()
@@ -425,15 +418,5 @@
         if (bookingForm.IncludeEquipmentRental) total += 50;
 
         return total;
-    }
-
-    private class AccommodationTypeInfo
-    {
-        public string Type { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public string Icon { get; set; } = string.Empty;
-        public decimal BasePrice { get; set; }
-        public string[] Features { get; set; } = Array.Empty<string>();
     }
 }

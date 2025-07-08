@@ -112,10 +112,10 @@
         {
             @foreach (var fest in festivals)
             {
-                <div class="festival-card">
+                <div class="festival-card" @onclick="() => OpenFestivalLineup(fest.Id)" style="cursor:pointer;">
                     <AuthorizeView Roles="Administrator">
                         <Authorized Context ="authContext"> 
-                          <div class="festival-actions">
+                          <div class="festival-actions" @onclick:stopPropagation="true">
                             <button class="action-btn edit-btn" @onclick="() => EditFestival(fest.Id)" title="Edit Festival">
                                 <i class="fa-solid fa-pen"></i>
                             </button>
@@ -198,8 +198,7 @@
                                 <p class="description-text">@fest.Description</p>
                             </div>
                         }
-
-                        <div class="festival-decoration">
+                        <div class="festival-decoration festival-card-emojis">
                             <span>🎭</span> <span>🎪</span> <span>🎆</span> <span>🎇</span>
                         </div>
                     </div>
@@ -230,6 +229,11 @@
             await FestivalService.DeleteAsync(id);
             festivals = await FestivalService.GetAllAsync();
         }
+    }
+
+    private void OpenFestivalLineup(int festivalId)
+    {
+        NavManager.NavigateTo($"/festival/{festivalId}");
     }
 }
 

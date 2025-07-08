@@ -1,0 +1,62 @@
+.access-denied-festival {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #ff6a00 0%, #ee0979 100%);
+    padding: 0;
+}
+.access-denied-card {
+    background: rgba(255,255,255,0.95);
+    border-radius: 2rem;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+    padding: 3rem 2.5rem;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+    animation: pop-in 0.7s cubic-bezier(.68,-0.55,.27,1.55);
+}
+.access-denied-icon {
+    font-size: 3.5rem;
+    color: #ee0979;
+    margin-bottom: 1.2rem;
+    animation: shake 0.7s cubic-bezier(.36,.07,.19,.97) both;
+}
+.access-denied-card h1 {
+    color: #ff6a00;
+    margin-bottom: 1rem;
+    font-family: 'Luckiest Guy', cursive, sans-serif;
+    letter-spacing: 1px;
+    font-size: 2.2rem;
+}
+.access-denied-card p {
+    color: #333;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+.access-denied-card a {
+    display: inline-block;
+    background: linear-gradient(90deg, #ff6a00 0%, #ee0979 100%);
+    color: #fff;
+    padding: 0.7rem 2rem;
+    border-radius: 2rem;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 8px rgba(238,9,121,0.15);
+    transition: background 0.2s, transform 0.2s;
+}
+.access-denied-card a:hover {
+    background: linear-gradient(90deg, #ee0979 0%, #ff6a00 100%);
+    transform: translateY(-2px) scale(1.04);
+}
+@keyframes pop-in {
+    0% { transform: scale(0.7); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+@keyframes shake {
+    10%, 90% { transform: translateX(-1px); }
+    20%, 80% { transform: translateX(2px); }
+    30%, 50%, 70% { transform: translateX(-4px); }
+    40%, 60% { transform: translateX(4px); }
+} 

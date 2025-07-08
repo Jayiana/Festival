@@ -37,7 +37,8 @@ namespace ShowTime_BusinessLogic.Dtos
             return new LoginResponseDto
             {
                 Success = true,
-                Role = user.Role
+                Role = user.Role,
+                UserId = user.Id // Set the user ID for claims
             };
         }
 

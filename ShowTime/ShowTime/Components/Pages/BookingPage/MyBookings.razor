@@ -1,0 +1,205 @@
+@page "/my-bookings"
+@using ShowTime_BusinessLogic.Dtos.Booking
+@using ShowTime_BusinessLogic.Abstractions
+@inject IBookingService BookingService
+@inject IHttpContextAccessor HttpContextAccessor
+@inject NavigationManager NavManager
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Web
+
+<div class="my-bookings-page festivals-page">
+    <div class="festival-decoration">
+        @for (int i = 0; i < 20; i++)
+        {
+            <div class="sparkle" style="left: @(Random.Shared.Next(0, 100))%; top: @(Random.Shared.Next(0, 100))%; animation-delay: @(Random.Shared.Next(0, 4000))ms;"></div>
+        }
+        @for (int i = 0; i < 8; i++)
+        {
+            <div class="floating-element star" style="left: @(Random.Shared.Next(5, 95))%; animation-delay: @(Random.Shared.Next(0, 15000))ms;">★</div>
+        }
+        @for (int i = 0; i < 6; i++)
+        {
+            <div class="soft-glow" style="left: @(Random.Shared.Next(10, 90))%; top: @(Random.Shared.Next(20, 80))%; animation-delay: @(Random.Shared.Next(0, 8000))ms;"></div>
+        }
+    </div>
+    <div class="page-header">
+        <div class="title-decoration">
+            <div class="title-sparkle">✨</div>
+            <h1 class="page-title neon-text">🎫 My Festival Bookings</h1>
+            <div class="title-sparkle">✨</div>
+        </div>
+        <p class="page-subtitle">All your festival tickets in one place</p>
+    </div>
+    @if (bookings == null)
+    {
+        <div>Loading your bookings...</div>
+    }
+    else if (bookings.Count == 0)
+    {
+        <div class="empty-state">
+            <div class="empty-icon">🎟️</div>
+            <h3>No Bookings Yet</h3>
+            <p>Book your first festival ticket and it will appear here!</p>
+        </div>
+    }
+    else
+    {
+        <div class="festivals-container">
+            @foreach (var booking in bookings)
+            {
+                <div class="festival-card">
+                    <div class="festival-info">
+                        <h3 class="festival-name">@booking.FestivalName</h3>
+                        <div class="festival-dates">
+                            <span class="date-badge">📅 @booking.FestivalStartDate.ToString("MMMM dd, yyyy") - @booking.FestivalEndDate.ToString("MMMM dd, yyyy")</span>
+                        </div>
+                        <div class="festival-stats">
+                            <span class="stat">
+                                <i class="fas fa-ticket-alt"></i> Ticket #: @booking.TicketNumber
+                            </span>
+                            <span class="stat">
+                                <i class="fas fa-dollar-sign"></i> $@booking.TotalPrice.ToString("F2")
+                            </span>
+                        </div>
+                        <div class="festival-location">
+                            <i class="fas fa-map-marker-alt"></i> @booking.Location
+                        </div>
+                        <button class="view-ticket-btn" @onclick="() => ShowTicket(booking)">View Ticket</button>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@if (showTicketModal && selectedBooking != null)
+{
+    <div class="ticket-modal-backdrop" @onclick="CloseTicketModal">
+        <div class="ticket-modal" @onclick:stopPropagation="true">
+            <div class="ticket-preview-section">
+                <h2 class="section-title">🎫 Your Festival Ticket</h2>
+                <div class="ticket-container">
+                    <div class="festival-ticket">
+                        <div class="ticket-header">
+                            <div class="ticket-logo">
+                                <img src="/images/Showtime-logo.png" alt="ShowTime" />
+                            </div>
+                            <div class="ticket-type-badge">
+                                <span class="badge-text">@selectedBooking.TicketNumber</span>
+                            </div>
+                        </div>
+                        <div class="ticket-body">
+                            <div class="festival-info">
+                                <h3 class="festival-name">@selectedBooking.FestivalName</h3>
+                                <div class="festival-details">
+                                    <div class="detail-item">
+                                        <i class="fas fa-calendar"></i>
+                                        <span>@selectedBooking.FestivalStartDate.ToString("MMMM dd, yyyy") - @selectedBooking.FestivalEndDate.ToString("MMMM dd, yyyy")</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>@selectedBooking.Location</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <i class="fas fa-ticket-alt"></i>
+                                        <span>@selectedBooking.TicketType</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="customer-info">
+                                <div class="customer-name">@selectedBooking.CustomerName</div>
+                                <div class="customer-email">@selectedBooking.CustomerEmail</div>
+                            </div>
+                            <div class="ticket-features">
+                                @if (selectedBooking.IncludeCamping)
+                                {
+                                    <div class="feature-badge camping">
+                                        <i class="fas fa-campground"></i>
+                                        <span>Camping</span>
+                                    </div>
+                                }
+                                @if (selectedBooking.IncludeFoodPackage)
+                                {
+                                    <div class="feature-badge food">
+                                        <i class="fas fa-utensils"></i>
+                                        <span>Food Package</span>
+                                    </div>
+                                }
+                                @if (selectedBooking.IncludeTransportation)
+                                {
+                                    <div class="feature-badge transport">
+                                        <i class="fas fa-shuttle-van"></i>
+                                        <span>Transportation</span>
+                                    </div>
+                                }
+                            </div>
+                            <div class="ticket-price">
+                                <div class="price-label">Total Price</div>
+                                <div class="price-amount">$@selectedBooking.TotalPrice.ToString("F2")</div>
+                            </div>
+                        </div>
+                        <div class="ticket-footer">
+                            <div class="ticket-barcode">
+                                <div class="barcode-lines">
+                                    @for (int i = 0; i < 20; i++)
+                                    {
+                                        <div class="barcode-line" style="height: @(Random.Shared.Next(20, 60))px;"></div>
+                                    }
+                                </div>
+                                <div class="barcode-number">@selectedBooking.TicketNumber</div>
+                            </div>
+                            <div class="ticket-terms">
+                                <small>Valid for one-time entry. Non-transferable. No refunds.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ticket-actions">
+                    <button class="btn btn-secondary" @onclick="CloseTicketModal">
+                        <i class="fas fa-times"></i>
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<BookingGetDto>? bookings;
+    private int? currentUserId;
+    private bool showTicketModal = false;
+    private BookingGetDto? selectedBooking;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = HttpContextAccessor?.HttpContext?.User;
+        if (user != null && user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            var idClaim = user.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (int.TryParse(idClaim, out var userId))
+            {
+                currentUserId = userId;
+            }
+        }
+        if (currentUserId.HasValue)
+        {
+            bookings = (await BookingService.GetUserBookingsAsync(currentUserId.Value)).ToList();
+        } 
+        else
+        {
+            bookings = new List<BookingGetDto>();
+        }
+    }
+
+    private void ShowTicket(BookingGetDto booking)
+    {
+        selectedBooking = booking;
+        showTicketModal = true;
+    }
+    private void CloseTicketModal()
+    {
+        showTicketModal = false;
+        selectedBooking = null;
+    }
+} 

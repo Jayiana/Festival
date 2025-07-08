@@ -1,33 +1,62 @@
-using ShowTime_BusinessLogic.Abstractions;
-using ShowTime_BusinessLogic.Dtos.Accommodation;
+using Microsoft.EntityFrameworkCore;
+using ShowTime.DataAccess;
 using ShowTime.DataAccess.GenericRepository;
 using ShowTime.DataAccess.Models.AccommodationInfo;
 using ShowTime.DataAccess.Models.FestivalInfo;
+using ShowTime.DataAccess.Models.BookingInfo;
+using ShowTime_BusinessLogic.Abstractions.Accommodation;
+using ShowTime_BusinessLogic.Dtos.Accommodation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ShowTime_BusinessLogic.Services
+namespace ShowTime_BusinessLogic.Services.Accommodations
 {
     public class AccommodationService : IAccommodationService
     {
         private readonly IRepository<Accommodation> _accommodationRepository;
         private readonly IRepository<Festival> _festivalRepository;
+        private readonly IRepository<Booking> _bookingRepository;
+        private readonly ShowTimeDbContext _dbContext;
 
-        public AccommodationService(IRepository<Accommodation> accommodationRepository, IRepository<Festival> festivalRepository)
+        public AccommodationService(IRepository<Accommodation> accommodationRepository, IRepository<Festival> festivalRepository, IRepository<Booking> bookingRepository, ShowTimeDbContext dbContext)
         {
             _accommodationRepository = accommodationRepository;
             _festivalRepository = festivalRepository;
+            _bookingRepository = bookingRepository;
+            _dbContext = dbContext;
+
         }
 
         public async Task<AccommodationResponseDto> CreateAccommodationAsync(AccommodationCreateDto accommodationDto)
         {
             try
             {
-                // Validate festival exists
+                var bookings = await _bookingRepository.GetAllAsync();
+                var userHasBooking = bookings.Any(b => b.UserId == accommodationDto.UserId && b.FestivalId == accommodationDto.FestivalId);
+                if (!userHasBooking)
+                {
+                    return new AccommodationResponseDto
+                    {
+                        Success = false,
+                        Message = "You must have a ticket for this festival before booking accommodation."
+                    };
+                }
+      
                 var festival = await _festivalRepository.GetByIdAsync(accommodationDto.FestivalId);
-                if (festival == null)
+                if (festival != null)
+                {
+                    
+                    if (accommodationDto.CheckInDate == default)
+                        accommodationDto.CheckInDate = festival.StartDate;
+                    if (accommodationDto.CheckOutDate == default)
+                        accommodationDto.CheckOutDate = festival.EndDate;
+                }
+
+                
+                var festivalExists = await _festivalRepository.GetByIdAsync(accommodationDto.FestivalId);
+                if (festivalExists == null)
                 {
                     return new AccommodationResponseDto
                     {
@@ -36,26 +65,26 @@ namespace ShowTime_BusinessLogic.Services
                     };
                 }
 
-                // Calculate pricing based on accommodation type
+               
                 var (pricePerNight, amenities) = CalculateAccommodationPricing(accommodationDto.AccommodationType, accommodationDto.RoomType);
                 
-                // Calculate total price
+          
                 var totalPrice = pricePerNight * accommodationDto.NumberOfNights;
                 
-                // Add additional services
+             
                 if (accommodationDto.IncludeBreakfast) totalPrice += 25 * accommodationDto.NumberOfNights;
                 if (accommodationDto.IncludeDinner) totalPrice += 35 * accommodationDto.NumberOfNights;
                 if (accommodationDto.IncludeShuttleService) totalPrice += 15 * accommodationDto.NumberOfNights;
                 if (accommodationDto.IncludeCleaningService) totalPrice += 20 * accommodationDto.NumberOfNights;
                 if (accommodationDto.IncludeEquipmentRental) totalPrice += 50;
 
-                // Generate confirmation number
+              
                 var confirmationNumber = GenerateConfirmationNumber();
 
                 var accommodation = new Accommodation
                 {
                     FestivalId = accommodationDto.FestivalId,
-                    UserId = null, // Will be set when user authentication is implemented
+                    UserId = accommodationDto.UserId,
                     AccommodationType = accommodationDto.AccommodationType,
                     RoomType = accommodationDto.RoomType,
                     Capacity = accommodationDto.Capacity,
@@ -96,8 +125,8 @@ namespace ShowTime_BusinessLogic.Services
                     BookingId = accommodation.Id.ToString(),
                     ConfirmationNumber = confirmationNumber,
                     TotalPrice = totalPrice,
-                    FestivalName = festival.Name,
-                    FestivalDate = festival.StartDate,
+                    FestivalName = festivalExists.Name,
+                    FestivalDate = festivalExists.StartDate,
                     Location = accommodation.Location,
                     CheckInDate = accommodation.CheckInDate,
                     CheckOutDate = accommodation.CheckOutDate,
@@ -129,7 +158,7 @@ namespace ShowTime_BusinessLogic.Services
                     };
                 }
 
-                // Recalculate pricing
+                
                 var (pricePerNight, amenities) = CalculateAccommodationPricing(accommodationDto.AccommodationType, accommodationDto.RoomType);
                 var totalPrice = pricePerNight * accommodationDto.NumberOfNights;
                 
@@ -139,7 +168,7 @@ namespace ShowTime_BusinessLogic.Services
                 if (accommodationDto.IncludeCleaningService) totalPrice += 20 * accommodationDto.NumberOfNights;
                 if (accommodationDto.IncludeEquipmentRental) totalPrice += 50;
 
-                // Update accommodation
+              
                 existingAccommodation.AccommodationType = accommodationDto.AccommodationType;
                 existingAccommodation.RoomType = accommodationDto.RoomType;
                 existingAccommodation.Capacity = accommodationDto.Capacity;
@@ -191,6 +220,7 @@ namespace ShowTime_BusinessLogic.Services
                 Id = a.Id,
                 FestivalName = a.Festival?.Name ?? "",
                 FestivalDate = a.Festival?.StartDate ?? DateTime.MinValue,
+                FestivalEndDate = a.Festival?.EndDate ?? DateTime.MinValue,
                 FestivalLocation = a.Festival?.Location ?? "",
                 AccommodationType = a.AccommodationType,
                 RoomType = a.RoomType,
@@ -236,6 +266,7 @@ namespace ShowTime_BusinessLogic.Services
                 Id = accommodation.Id,
                 FestivalName = accommodation.Festival?.Name ?? "",
                 FestivalDate = accommodation.Festival?.StartDate ?? DateTime.MinValue,
+                FestivalEndDate = accommodation.Festival?.EndDate ?? DateTime.MinValue,
                 FestivalLocation = accommodation.Festival?.Location ?? "",
                 AccommodationType = accommodation.AccommodationType,
                 RoomType = accommodation.RoomType,
@@ -294,6 +325,7 @@ namespace ShowTime_BusinessLogic.Services
                 Id = a.Id,
                 FestivalName = a.Festival?.Name ?? "",
                 FestivalDate = a.Festival?.StartDate ?? DateTime.MinValue,
+                FestivalEndDate = a.Festival?.EndDate ?? DateTime.MinValue,
                 FestivalLocation = a.Festival?.Location ?? "",
                 AccommodationType = a.AccommodationType,
                 RoomType = a.RoomType,
@@ -327,6 +359,21 @@ namespace ShowTime_BusinessLogic.Services
                 PaymentStatus = a.PaymentStatus,
                 TransactionId = a.TransactionId
             });
+        }
+
+        public async Task<List<AccommodationTypeInfoDto>> GetAccommodationTypesAsync()
+        {
+            var entities = await Task.FromResult(_dbContext.AccommodationTypeInfo.ToList());
+            return entities.Select(e => new AccommodationTypeInfoDto
+            {
+                Id = e.Id,
+                Type = e.Type,
+                Name = e.Name,
+                Description = e.Description,
+                Icon = e.Icon,
+                BasePrice = e.BasePrice,
+                Features = e.FeaturesSerialized?.Split(',', System.StringSplitOptions.RemoveEmptyEntries | System.StringSplitOptions.TrimEntries) ?? new string[0]
+            }).ToList();
         }
 
         private (decimal pricePerNight, Amenities amenities) CalculateAccommodationPricing(string accommodationType, string roomType)

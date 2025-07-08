@@ -1,11 +1,16 @@
 @page "/booking"
+@using Microsoft.AspNetCore.Authorization
 @using ShowTime_BusinessLogic.Abstractions
 @using ShowTime_BusinessLogic.Dtos.Booking
 @using ShowTime_BusinessLogic.Dtos.Festival
 @inject IBookingService BookingService
 @inject IFestivalService FestivalService
 @inject NavigationManager Navigation
+@inject Microsoft.AspNetCore.Components.NavigationManager NavManager
+@inject IHttpContextAccessor HttpContextAccessor
 @rendermode InteractiveServer
+@attribute [StreamRendering]
+@attribute [Authorize(Roles = "Administrator")]
 
 <div class="booking-page">
     <!-- Enhanced Festival Decorations -->
@@ -155,43 +160,20 @@
         else
         {
             <div class="booking-content">
-                <div class="festival-selection">
-                    <h2 class="section-title">🎪 Select Your Festival</h2>
-                    <div class="festival-grid">
-                        @if (festivals != null)
-                        {
-                            @foreach (var festival in festivals)
-                            {
-                                <div class="festival-card @(selectedFestival?.Id == festival.Id ? "selected" : "")" @onclick="() => SelectFestival(festival)">
-                                    <div class="festival-image">
-                                        <img src="@festival.SplashArt" alt="@festival.Name" />
-                                    </div>
-                                    <div class="festival-info">
-                                        <h3>@festival.Name</h3>
-                                        <p class="festival-date">@festival.StartDate.ToString("MMMM dd, yyyy")</p>
-                                        <p class="festival-location">@festival.Location</p>
-                                        <div class="festival-features">
-                                            @if (festival.HasCamping)
-                                            {
-                                                <span class="feature-tag">🏕️ Camping</span>
-                                            }
-                                            @if (festival.HasFoodCourt)
-                                            {
-                                                <span class="feature-tag">🍔 Food Court</span>
-                                            }
-                                            @if (festival.HasAfterParty)
-                                            {
-                                                <span class="feature-tag">🎉 After Party</span>
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        }
+                @if (festivalIdFromQuery.HasValue && selectedFestival != null)
+                {
+                    <div class="booking-festival-preview" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 2rem;">
+                        <div class="festival-image" style="margin-bottom: 1rem; display: flex; justify-content: center;">
+                            <img src="@selectedFestival.SplashArt" alt="@selectedFestival.Name" style="max-width: 220px; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.18); display: block; margin: 0 auto;" />
+                        </div>
+                        <div class="festival-info" style="text-align: center;">
+                            <h2 class="festival-name" style="margin-bottom: 0.5rem;">@selectedFestival.Name</h2>
+                            <div class="festival-date" style="margin-bottom: 0.2rem;">📅 @selectedFestival.StartDate.ToString("MMMM dd, yyyy")</div>
+                            <div class="festival-location">📍 @selectedFestival.Location</div>
+                        </div>
                     </div>
-                </div>
-
-                @if (selectedFestival != null)
+                }
+                @if (festivalIdFromQuery.HasValue)
                 {
                     <div class="booking-form-section">
                         <h2 class="section-title">🎫 Book Your Tickets</h2>
@@ -316,6 +298,44 @@
                         </EditForm>
                     </div>
                 }
+                else
+                {
+                    <div class="festival-selection">
+                        <h2 class="section-title">🎪 Select Your Festival</h2>
+                        <div class="festival-grid">
+                            @if (festivals != null)
+                            {
+                                @foreach (var festival in festivals)
+                                {
+                                    <div class="festival-card @(selectedFestival?.Id == festival.Id ? "selected" : "")" @onclick="() => SelectFestival(festival)">
+                                        <div class="festival-image">
+                                            <img src="@festival.SplashArt" alt="@festival.Name" />
+                                        </div>
+                                        <div class="festival-info">
+                                            <h3>@festival.Name</h3>
+                                            <p class="festival-date">@festival.StartDate.ToString("MMMM dd, yyyy")</p>
+                                            <p class="festival-location">@festival.Location</p>
+                                            <div class="festival-features">
+                                                @if (festival.HasCamping)
+                                                {
+                                                    <span class="feature-tag">🏕️ Camping</span>
+                                                }
+                                                @if (festival.HasFoodCourt)
+                                                {
+                                                    <span class="feature-tag">🍔 Food Court</span>
+                                                }
+                                                @if (festival.HasAfterParty)
+                                                {
+                                                    <span class="feature-tag">🎉 After Party</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                }
             </div>
         }
     </div>
@@ -327,10 +347,25 @@
     private BookingCreateDto bookingForm = new();
     private BookingResponseDto? bookingResponse;
     private bool showTicketPreview = false;
+    private int? festivalIdFromQuery = null;
+    private string? currentUserEmail;
+    private int? currentUserId;
 
     protected override async Task OnInitializedAsync()
     {
         await LoadFestivals();
+        await PreselectFestivalFromQuery();
+        // Get current user email and user ID from claims
+        var user = HttpContextAccessor?.HttpContext?.User;
+        if (user != null && user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            currentUserEmail = user.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Email)?.Value;
+            var idClaim = user.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (int.TryParse(idClaim, out var userId))
+            {
+                currentUserId = userId;
+            }
+        }
     }
 
     private async Task LoadFestivals()
@@ -345,6 +380,23 @@
         }
     }
 
+    private async Task PreselectFestivalFromQuery()
+    {
+        var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
+        if (Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query).TryGetValue("festivalId", out var festivalIdStr))
+        {
+            if (int.TryParse(festivalIdStr, out int festivalId) && festivals != null)
+            {
+                festivalIdFromQuery = festivalId;
+                var fest = festivals.FirstOrDefault(f => f.Id == festivalId);
+                if (fest != null)
+                {
+                    SelectFestival(fest);
+                }
+            }
+        }
+    }
+
     private void SelectFestival(FestivalGetDto festival)
     {
         selectedFestival = festival;
@@ -354,12 +406,21 @@
     private async Task CreateBooking()
     {
         if (selectedFestival == null) return;
-
         try
         {
+            // Associate booking with current user if logged in
+            if (!string.IsNullOrEmpty(currentUserEmail))
+            {
+                bookingForm.CustomerEmail = currentUserEmail;
+            }
+            if (currentUserId.HasValue)
+            {
+                bookingForm.UserId = currentUserId.Value;
+            }
             bookingResponse = await BookingService.CreateBookingAsync(bookingForm);
             if (bookingResponse.Success)
             {
+                ShowTime_BusinessLogic.Dtos.Booking.BookingConfirmationState.LastBooking = bookingResponse;
                 showTicketPreview = true;
             }
         }
