@@ -361,6 +361,23 @@ body, html {
     background: linear-gradient(90deg, #ff00cc, #00eaff);
     transform: scale(1.04);
 }
+.ticket-features-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0 0.5rem 0;
+    padding: 0.2rem 0.5rem;
+    box-sizing: border-box;
+}
+.ticket-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
 @media (max-width: 900px) {
     .festivals-container {
         gap: 1.2rem;
@@ -381,5 +398,10 @@ body, html {
         padding: 1rem 0.2rem 0.7rem 0.2rem;
         min-width: unset;
         max-width: 98vw;
+    }
+    .ticket-features {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: stretch;
     }
 } 

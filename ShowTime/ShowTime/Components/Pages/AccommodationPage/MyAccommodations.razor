@@ -110,42 +110,44 @@
                                 <div class="customer-name">@selectedAccommodation.CustomerName</div>
                                 <div class="customer-email">@selectedAccommodation.CustomerEmail</div>
                             </div>
-                            <div class="ticket-features">
-                                @if (selectedAccommodation.IncludeBreakfast)
-                                {
-                                    <div class="feature-badge food">
-                                        <i class="fas fa-coffee"></i>
-                                        <span>Breakfast</span>
-                                    </div>
-                                }
-                                @if (selectedAccommodation.IncludeDinner)
-                                {
-                                    <div class="feature-badge food">
-                                        <i class="fas fa-utensils"></i>
-                                        <span>Dinner</span>
-                                    </div>
-                                }
-                                @if (selectedAccommodation.IncludeShuttleService)
-                                {
-                                    <div class="feature-badge transport">
-                                        <i class="fas fa-shuttle-van"></i>
-                                        <span>Shuttle</span>
-                                    </div>
-                                }
-                                @if (selectedAccommodation.IncludeCleaningService)
-                                {
-                                    <div class="feature-badge cleaning">
-                                        <i class="fas fa-broom"></i>
-                                        <span>Cleaning</span>
-                                    </div>
-                                }
-                                @if (selectedAccommodation.IncludeEquipmentRental)
-                                {
-                                    <div class="feature-badge equipment">
-                                        <i class="fas fa-toolbox"></i>
-                                        <span>Equipment</span>
-                                    </div>
-                                }
+                            <div class="ticket-features-container">
+                                <div class="ticket-features">
+                                    @if (selectedAccommodation.IncludeBreakfast)
+                                    {
+                                        <div class="feature-badge food">
+                                            <i class="fas fa-coffee"></i>
+                                            <span>Breakfast</span>
+                                        </div>
+                                    }
+                                    @if (selectedAccommodation.IncludeDinner)
+                                    {
+                                        <div class="feature-badge food">
+                                            <i class="fas fa-utensils"></i>
+                                            <span>Dinner</span>
+                                        </div>
+                                    }
+                                    @if (selectedAccommodation.IncludeShuttleService)
+                                    {
+                                        <div class="feature-badge transport">
+                                            <i class="fas fa-shuttle-van"></i>
+                                            <span>Shuttle</span>
+                                        </div>
+                                    }
+                                    @if (selectedAccommodation.IncludeCleaningService)
+                                    {
+                                        <div class="feature-badge cleaning">
+                                            <i class="fas fa-broom"></i>
+                                            <span>Cleaning</span>
+                                        </div>
+                                    }
+                                    @if (selectedAccommodation.IncludeEquipmentRental)
+                                    {
+                                        <div class="feature-badge equipment">
+                                            <i class="fas fa-toolbox"></i>
+                                            <span>Equipment</span>
+                                        </div>
+                                    }
+                                </div>
                             </div>
                             <div class="ticket-price">
                                 <div class="price-label">Total Price</div>

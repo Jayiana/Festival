@@ -9,8 +9,6 @@
 @inject Microsoft.AspNetCore.Components.NavigationManager NavManager
 @inject IHttpContextAccessor HttpContextAccessor
 @rendermode InteractiveServer
-@attribute [StreamRendering]
-@attribute [Authorize(Roles = "Administrator")]
 
 <div class="booking-page">
     <!-- Enhanced Festival Decorations -->
@@ -376,7 +374,7 @@
         }
         catch (Exception ex)
         {
-            // Handle error
+            
         }
     }
 
@@ -408,7 +406,7 @@
         if (selectedFestival == null) return;
         try
         {
-            // Associate booking with current user if logged in
+        
             if (!string.IsNullOrEmpty(currentUserEmail))
             {
                 bookingForm.CustomerEmail = currentUserEmail;
@@ -426,13 +424,13 @@
         }
         catch (Exception ex)
         {
-            // Handle error
+            
         }
     }
 
     private async Task ConfirmBooking()
     {
-        // Here you would typically process payment and confirm the booking
+        
         Navigation.NavigateTo("/booking-confirmation");
     }
 
