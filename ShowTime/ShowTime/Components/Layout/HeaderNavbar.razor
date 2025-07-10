@@ -2,9 +2,12 @@
 @using Microsoft.AspNetCore.Authentication.Cookies
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
+@using System.Text.Json
+@using System.Text.Json.Serialization
 @inject NavigationManager NavManager
 @inject AuthenticationStateProvider AuthStateProvider
 @inject IHttpContextAccessor HttpContextAccessor
+@inject HttpClient Http
 @rendermode InteractiveServer
 
 <nav class="festival-navbar">
@@ -19,7 +22,23 @@
         <AuthorizeView Roles="Administrator"><Authorized> <a href="/lineups" class="nav-link"><i class="fas fa-users"></i> Lineups</a></Authorized></AuthorizeView>
         <a href="/accommodation" class="nav-link"><i class="fas fa-bed"></i> Accommodation</a>
 
-        <input type="text" placeholder="Search artists/festivals..." class="search-bar" />
+        <div class="search-container">
+            <input type="text" placeholder="Search artists/festivals..." class="search-bar" @bind="searchQuery" @oninput="OnSearchInput" @onblur="OnSearchBlur" @onfocus="OnSearchFocus" />
+            @if (showSuggestions && searchResults.Any())
+            {
+                <div class="search-suggestions">
+                    @foreach (var result in searchResults)
+                    {
+                        <div class="suggestion-item" @onclick="() => OnSuggestionClick(result)">
+                            <div class="suggestion-content">
+                                <span class="suggestion-type">@result.Type</span>
+                                <span class="suggestion-name">@result.Name</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
     </div>
 
     <div class="user-profile">
@@ -48,6 +67,22 @@
 @code {
     private bool isAuthenticated = false;
     private string? userEmail;
+    private string searchQuery = "";
+    private List<SearchResult> searchResults = new();
+    private bool showSuggestions = false;
+    private Timer? searchTimer;
+
+    public class SearchResult
+    {
+        [JsonPropertyName("Type")]
+        public string Type { get; set; } = "";
+        [JsonPropertyName("Id")]
+        public string Id { get; set; } = "";
+        [JsonPropertyName("Name")]
+        public string Name { get; set; } = "";
+        [JsonPropertyName("Image")]
+        public string? Image { get; set; }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -78,8 +113,157 @@
             NavManager.NavigateTo("/profile");
         }
     }
+
+    private async Task OnSearchInput(ChangeEventArgs e)
+    {
+        searchQuery = e.Value?.ToString() ?? "";
+        
+        // Cancel previous timer
+        searchTimer?.Dispose();
+        
+        if (string.IsNullOrWhiteSpace(searchQuery) || searchQuery.Length < 2)
+        {
+            searchResults.Clear();
+            showSuggestions = false;
+            return;
+        }
+
+        // Debounce the search
+        searchTimer = new Timer(async _ =>
+        {
+            await InvokeAsync(async () =>
+            {
+                await PerformSearch();
+                StateHasChanged();
+            });
+        }, null, 300, Timeout.Infinite);
+    }
+
+    private async Task PerformSearch()
+    {
+        try
+        {
+            var baseUri = NavManager.BaseUri.TrimEnd('/');
+            var response = await Http.GetAsync($"{baseUri}/api/search?q={Uri.EscapeDataString(searchQuery)}");
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonString = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                searchResults = JsonSerializer.Deserialize<List<SearchResult>>(jsonString, options) ?? new List<SearchResult>();
+                showSuggestions = searchResults.Any();
+            }
+            else
+            {
+                searchResults.Clear();
+                showSuggestions = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Search error: {ex.Message}");
+            searchResults.Clear();
+            showSuggestions = false;
+        }
+    }
+
+    private void OnSearchFocus()
+    {
+        if (searchResults.Any())
+        {
+            showSuggestions = true;
+        }
+    }
+
+    private void OnSearchBlur()
+    {
+        // Delay hiding suggestions to allow clicking on them
+        Task.Delay(200).ContinueWith(_ =>
+        {
+            InvokeAsync(() =>
+            {
+                showSuggestions = false;
+                StateHasChanged();
+            });
+        });
+    }
+
+    private void OnSuggestionClick(SearchResult result)
+    {
+        showSuggestions = false;
+        searchQuery = "";
+        searchResults.Clear();
+
+        switch (result.Type)
+        {
+            case "Artist":
+                NavManager.NavigateTo($"/artist/{result.Id}");
+                break;
+            case "Festival":
+                NavManager.NavigateTo($"/festival/{result.Id}");
+                break;
+            case "Lineup":
+                var ids = result.Id.Split('-');
+                if (ids.Length == 2)
+                {
+                    NavManager.NavigateTo($"/lineup/{ids[0]}/{ids[1]}");
+                }
+                break;
+        }
+    }
 }
 
 <style>
+.search-container {
+    position: relative;
+    display: inline-block;
+}
+
+.search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.suggestion-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s;
+}
+
+.suggestion-item:hover {
+    background-color: #f5f5f5;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.suggestion-type {
+    font-size: 0.8em;
+    color: #666;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.suggestion-name {
+    font-size: 0.9em;
+    color: #333;
+    font-weight: 500;
+}
 </style>
 

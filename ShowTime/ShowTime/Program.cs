@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using ShowTime.Client.Pages;
 using ShowTime.Components;
@@ -22,6 +24,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpClient();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options => {
@@ -97,5 +100,32 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddAdditionalAssemblies(typeof(ShowTime.Client._Imports).Assembly);
+
+app.MapGet("/api/search", async (string q, IArtistService artistService, IFestivalService festivalService) =>
+{
+    if (string.IsNullOrWhiteSpace(q) || q.Length < 2)
+        return Results.Ok(Array.Empty<object>());
+
+    var artists = (await artistService.GetAllAsync())
+        .Where(a => a.Name.Contains(q, StringComparison.OrdinalIgnoreCase))
+        .Select(a => new {
+            Type = "Artist",
+            Id = a.Id.ToString(),
+            Name = a.Name,
+            Image = a.Image
+        });
+
+    var festivals = (await festivalService.GetAllAsync())
+        .Where(f => f.Name.Contains(q, StringComparison.OrdinalIgnoreCase))
+        .Select(f => new {
+            Type = "Festival",
+            Id = f.Id.ToString(),
+            Name = f.Name,
+            Image = f.SplashArt
+        });
+
+    var results = artists.Concat(festivals).Take(10).ToList();
+    return Results.Ok(results);
+});
 
 app.Run();

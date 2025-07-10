@@ -133,19 +133,26 @@
 
             var response = await UserService.LoginAsync(loginModel);
 
-            var claims = new List<Claim>
+            if (response.Success)
             {
-                new(ClaimTypes.Email, loginModel.Email),
-                new(ClaimTypes.Role, Enum.GetName(typeof(Role), response.Role) ?? nameof(Role.User)),
-                new(ClaimTypes.NameIdentifier, response.UserId.ToString()) // Add user ID as a claim
-            };
+                var claims = new List<Claim>
+                {
+                    new(ClaimTypes.Email, loginModel.Email),
+                    new(ClaimTypes.Role, Enum.GetName(typeof(Role), response.Role) ?? nameof(Role.User)),
+                    new(ClaimTypes.NameIdentifier, response.UserId.ToString()) // Add user ID as a claim
+                };
 
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-            await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
+                await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
 
-            httpContext.Response.Redirect("/");
+                httpContext.Response.Redirect("/");
+            }
+            else
+            {
+                loginError = response.Message;
+            }
         }
         catch (Exception ex)
         {

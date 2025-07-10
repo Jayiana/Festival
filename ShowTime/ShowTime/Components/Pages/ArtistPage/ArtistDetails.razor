@@ -121,7 +121,7 @@
                         @foreach (var lineup in artistLineups)
                         {
                             <li>
-                                <b>@lineup.FestivalName</b> - @lineup.Stage, @lineup.StartTime.ToString("g")
+                                <b>@lineup.FestivalName</b> - @lineup.Stage, @lineup.StartTime.ToString("g") - @lineup.EndTime.ToString("g")
                                 @if (!string.IsNullOrWhiteSpace(lineup.StageTheme))
                                 {
                                     <span> | Theme: @lineup.StageTheme</span>

@@ -15,6 +15,13 @@ namespace ShowTime.DataAccess.Models.UserInfo
         public string Password { get; set; } = string.Empty;
         public int Role { get; set; }
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+        public byte[]? ProfilePictureData { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? Address { get; set; }
+        public DateTime? DateOfBirth { get; set; }
+        public string? Bio { get; set; }
+        public string? Instagram { get; set; }
+        public string? Facebook { get; set; }
     }
 
 }
