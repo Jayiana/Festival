@@ -113,7 +113,8 @@
 
             @foreach (var artist in pagedArtists)
             {
-                <div class="artist-card">
+                <div class="artist-card" @onclick="() => NavigateToArtist(artist.Id)" style="cursor:pointer;">
+
                     <AuthorizeView Roles="Administrator">
                         <Authorized Context ="authContext">
                         <div class="artist-actions">
@@ -295,5 +296,10 @@
     private void NavigateToAddArtist()
     {
         NavManager.NavigateTo("/addartist");
+    }
+
+    private void NavigateToArtist(int id)
+    {
+        NavManager.NavigateTo($"/artist/{id}");
     }
 }

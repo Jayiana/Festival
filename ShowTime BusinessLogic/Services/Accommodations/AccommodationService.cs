@@ -47,10 +47,7 @@ namespace ShowTime_BusinessLogic.Services.Accommodations
                 var festival = await _festivalRepository.GetByIdAsync(accommodationDto.FestivalId);
                 if (festival != null)
                 {
-                    
-                    if (accommodationDto.CheckInDate == default)
                         accommodationDto.CheckInDate = festival.StartDate;
-                    if (accommodationDto.CheckOutDate == default)
                         accommodationDto.CheckOutDate = festival.EndDate;
                 }
 

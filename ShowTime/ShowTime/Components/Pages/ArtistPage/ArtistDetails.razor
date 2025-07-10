@@ -1,0 +1,136 @@
+@page "/artist/{id:int}"
+@using ShowTime_BusinessLogic.Abstractions
+@using ShowTime_BusinessLogic.Dtos.Artist
+@using ShowTime_BusinessLogic.Dtos
+@inject IArtistService ArtistService
+@inject ILineupService LineupService
+@inject NavigationManager NavManager
+@code {
+    [Parameter] public int id { get; set; }
+    private ArtistGetDto? artist;
+    private List<LineupGetDto> artistLineups = new();
+    protected override async Task OnInitializedAsync()
+    {
+        artist = await ArtistService.GetByIdAsync(id);
+        var allLineups = await LineupService.GetAllAsync();
+        artistLineups = allLineups.Where(l => l.ArtistId == id).ToList();
+    }
+}
+<div class="artist-details-page">
+    @if (artist == null)
+    {
+        <div>Loading artist...</div>
+    }
+    else
+    {
+        <div class="artist-details-centered">
+            <div class="artist-card artist-details-card">
+                <div class="artist-image">
+                    <img src="@artist.Image" alt="@artist.Name" />
+                    <div class="image-overlay"></div>
+                    <div class="artist-badge">🎤</div>
+                    <div class="image-decoration">
+                        <span>✨</span> <span>🎵</span>
+                    </div>
+                </div>
+                <div class="artist-info">
+                    <h3 class="artist-name">@artist.Name</h3>
+                    <p class="artist-genre">@artist.Genre</p>
+                    <div class="artist-stats">
+                        @if (artist.IsTrending)
+                        {
+                            <span class="stat trending-stat">
+                                <i class="fas fa-fire"></i> Trending
+                            </span>
+                        }
+                        <span class="stat rating-stat">
+                            <i class="fas fa-star"></i> @artist.Rating.ToString("F1")/5.0
+                        </span>
+                        <span class="stat fans-stat">
+                            <i class="fas fa-heart"></i> @artist.FansCount.ToString("N0") fans
+                        </span>
+                        @if (artist.DebutYear > 0)
+                        {
+                            <span class="stat debut-stat">
+                                <i class="fas fa-calendar"></i> @artist.DebutYear
+                            </span>
+                        }
+                    </div>
+                    <div class="category-badge">
+                        <i class="fas fa-music"></i> @artist.Category
+                    </div>
+                    <div class="artist-details">
+                        @if (!string.IsNullOrEmpty(artist.Origin))
+                        {
+                            <div class="detail-item">
+                                <i class="detail-icon fas fa-map-marker-alt"></i>
+                                <span class="detail-label">Origin:</span>
+                                <span class="detail-value">@artist.Origin</span>
+                            </div>
+                        }
+                        @if (artist.IsTrending && !string.IsNullOrEmpty(artist.TrendingReason))
+                        {
+                            <div class="detail-item">
+                                <i class="detail-icon fas fa-fire"></i>
+                                <span class="detail-label">Trending:</span>
+                                <span class="detail-value">@artist.TrendingReason</span>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(artist.Description))
+                        {
+                            <div class="detail-item">
+                                <i class="detail-icon fas fa-info-circle"></i>
+                                <span class="detail-label">About:</span>
+                                <span class="detail-value">@artist.Description</span>
+                            </div>
+                        }
+                    </div>
+                    @if (!string.IsNullOrEmpty(artist.Instagram) || !string.IsNullOrEmpty(artist.YouTube))
+                    {
+                        <div class="social-links">
+                            @if (!string.IsNullOrEmpty(artist.Instagram))
+                            {
+                                <a href="@artist.Instagram" target="_blank" class="social-link">
+                                    <i class="social-icon fab fa-instagram"></i>
+                                    <span>Instagram</span>
+                                </a>
+                            }
+                            @if (!string.IsNullOrEmpty(artist.YouTube))
+                            {
+                                <a href="@artist.YouTube" target="_blank" class="social-link">
+                                    <i class="social-icon fab fa-youtube"></i>
+                                    <span>YouTube</span>
+                                </a>
+                            }
+                        </div>
+                    }
+                    <div class="artist-decoration">
+                        <span>🎭</span> <span>🎪</span> <span>🎆</span>
+                    </div>
+                </div>
+            </div>
+            <div class="artist-lineups-section">
+                <h2>Lineups</h2>
+                @if (artistLineups.Count == 0)
+                {
+                    <div>This artist is not in any festival lineups yet.</div>
+                }
+                else
+                {
+                    <ul>
+                        @foreach (var lineup in artistLineups)
+                        {
+                            <li>
+                                <b>@lineup.FestivalName</b> - @lineup.Stage, @lineup.StartTime.ToString("g")
+                                @if (!string.IsNullOrWhiteSpace(lineup.StageTheme))
+                                {
+                                    <span> | Theme: @lineup.StageTheme</span>
+                                }
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    }
+</div> 

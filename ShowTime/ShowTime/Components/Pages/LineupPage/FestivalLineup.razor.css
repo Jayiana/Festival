@@ -379,6 +379,9 @@
     background: linear-gradient(90deg, #00eaff, #ff00cc);
     transform: scale(1.05);
 }
+.lineup-section, .lineup-section *, .lineups-container, .lineup-card, .lineup-card *, .lineup-title, .artist-name, .lineup-details, .lineup-details *, .performance-badge, .feature-badge, .detail-label, .detail-value, .lineup-description, .theme-badge {
+    color: #fff !important;
+}
 @media (max-width: 768px) {
     .page-title { font-size: 2.5rem; }
     .festival-preview-large, .festival-card { min-height: 400px; }

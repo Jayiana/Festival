@@ -7,13 +7,14 @@
 @using ShowTime_BusinessLogic.Abstractions.Accommodation
 @using ShowTime_BusinessLogic.Dtos.Accommodation
 @using ShowTime_BusinessLogic.Dtos.Festival
-tival
+@using Microsoft.AspNetCore.Components.Authorization
 @inject IFestivalService FestivalService
 @inject IAccommodationService AccommodationService
 @inject NavigationManager Navigation
 @inject IJSRuntime JSRuntime
 @inject IBookingService BookingService
 @inject IHttpContextAccessor HttpContextAccessor
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @rendermode InteractiveServer
 
 <PageTitle>Festival Accommodation - ShowTime</PageTitle>
@@ -46,7 +47,7 @@ tival
                         <div class="festival-card @(selectedFestival?.Id == festival.Id ? "selected" : "")"
                              @onclick="() => SelectFestival(festival)">
                             <div class="festival-image">
-                                <img src="/images/@GetFestivalImage(festival.Name)" alt="@festival.Name" />
+                                <img src="@festival.SplashArt" alt="@festival.Name" />
                             </div>
                             <div class="festival-info">
                                 <h3>@festival.Name</h3>
@@ -90,10 +91,20 @@ tival
 
                 @if (selectedAccommodationType != null)
                 {
+                    bool isAuthenticated = false;
+                    var authStateTask = AuthenticationStateProvider.GetAuthenticationStateAsync();
+                    if (authStateTask.IsCompletedSuccessfully)
+                    {
+                        var user = authStateTask.Result.User;
+                        isAuthenticated = user.Identity != null && user.Identity.IsAuthenticated;
+                    }
                     if (!hasTicketForSelectedFestival)
                     {
                         <div class="no-ticket-warning">
-                            <i class="fas fa-exclamation-triangle"></i> You must have a ticket for this festival before booking accommodation.
+                            <i class="fas fa-exclamation-triangle"></i>
+                            @(isAuthenticated
+                                ? "You must have a ticket for this festival before booking accommodation."
+                                : "You must be logged in and buy a ticket for this festival before booking accommodation.")
                         </div>
                     }
                     <div class="booking-form" style="@(hasTicketForSelectedFestival ? "" : "pointer-events:none;opacity:0.5;")">
@@ -126,13 +137,13 @@ tival
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="checkInDate">Check-in Date</label>
-                                    <InputDate id="checkInDate" @bind-Value="bookingForm.CheckInDate" class="form-control" />
+                                    <input id="checkInDate" class="form-control" value="@bookingForm.CheckInDate.ToString("yyyy-MM-dd")" readonly />
                                     <ValidationMessage For="@(() => bookingForm.CheckInDate)" />
                                 </div>
 
                                 <div class="form-group">
                                     <label for="checkOutDate">Check-out Date</label>
-                                    <InputDate id="checkOutDate" @bind-Value="bookingForm.CheckOutDate" class="form-control" />
+                                    <input id="checkOutDate" class="form-control" value="@bookingForm.CheckOutDate.ToString("yyyy-MM-dd")" readonly />
                                     <ValidationMessage For="@(() => bookingForm.CheckOutDate)" />
                                 </div>
                             </div>
@@ -342,7 +353,8 @@ tival
     {
         selectedFestival = festival;
         bookingForm.FestivalId = festival.Id;
-        
+        bookingForm.CheckInDate = festival.StartDate;
+        bookingForm.CheckOutDate = festival.EndDate;
         hasTicketForSelectedFestival = userBookings.Any(b => b.FestivalId == festival.Id);
         selectedAccommodationType = null;
         StateHasChanged();
@@ -385,13 +397,6 @@ tival
         {
             isSubmitting = false;
         }
-    }
-
-    private string GetFestivalImage(string festivalName)
-    {
-        return festivalName.ToLower().Contains("untold") ? "Untold.jpg" :
-               festivalName.ToLower().Contains("neversea") ? "neversea.jpg" :
-               festivalName.ToLower().Contains("flight") ? "flight.jpg" : "showtime-logo.png";
     }
 
     private decimal GetBasePrice()

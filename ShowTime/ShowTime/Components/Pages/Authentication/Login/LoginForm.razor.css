@@ -85,35 +85,32 @@ body {
     position: relative;
     width: 100%;
     margin: 25px 0;
-    background: rgba(40, 0, 30, 0.7);
-    border-radius: 16px;
+    background: none;
+    border-radius: 10px;
     padding: 0;
-    box-shadow: 0 2px 16px 0 rgba(255,0,64,0.10), 0 1.5px 8px 0 rgba(0,0,0,0.18);
-    border: 1.5px solid rgba(255,0,64,0.18);
+    box-shadow: none;
+    border: none;
     transition: box-shadow 0.3s, border 0.3s;
     overflow: visible;
 }
-
 .inputBox input {
     width: 100%;
-    padding: 16px 18px 16px 48px;
-    background: linear-gradient(120deg, rgba(255,0,64,0.10) 0%, rgba(30,0,40,0.18) 100%);
-    border: none;
-    border-radius: 14px;
+    padding: 12px 10px;
+    background: transparent;
+    border: 2px solid #ff0040;
+    border-radius: 10px;
     color: #fff;
-    font-size: 1.08em;
+    font-size: 1.1em;
     outline: none;
-    box-shadow: 0 0 0 2px rgba(255,0,64,0.10) inset, 0 1.5px 8px 0 rgba(0,0,0,0.10) inset;
+    box-shadow: none;
     transition: box-shadow 0.3s, background 0.3s;
     position: relative;
     z-index: 2;
 }
-
 .inputBox input:focus {
-    background: linear-gradient(120deg, rgba(255,0,64,0.18) 0%, rgba(30,0,40,0.28) 100%);
-    box-shadow: 0 0 12px 2px #ff0040, 0 0 0 2px #ff3366 inset;
+    background: transparent;
+    box-shadow: 0 0 12px 2px #ff0040;
 }
-
 .inputBox input::placeholder {
     color: rgba(255,255,255,0.55);
     font-style: italic;

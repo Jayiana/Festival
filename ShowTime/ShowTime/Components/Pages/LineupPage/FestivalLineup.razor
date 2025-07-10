@@ -2,10 +2,12 @@
 @using ShowTime_BusinessLogic.Abstractions
 @using ShowTime_BusinessLogic.Dtos.Festival
 @using ShowTime_BusinessLogic.Dtos
+@using Microsoft.AspNetCore.Components.Authorization
 @inject IFestivalService FestivalService
 @inject ILineupService LineupService
 @inject NavigationManager NavManager
 @inject IJSRuntime JS
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @rendermode InteractiveServer
 
 <PageTitle>ShowTime - Festival Preview & Lineup</PageTitle>
@@ -260,8 +262,15 @@
         lineups = allLineups.Where(l => l.FestivalId == id).ToList();
     }
 
-    private void BuyTickets()
+    private async void BuyTickets()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user == null || !user.Identity.IsAuthenticated)
+        {
+            NavManager.NavigateTo("/login");
+            return;
+        }
         NavManager.NavigateTo($"/booking?festivalId={id}");
     }
 } 
