@@ -118,10 +118,10 @@
                     <AuthorizeView Roles="Administrator">
                         <Authorized Context ="authContext">
                         <div class="artist-actions">
-                        <button class="action-btn edit-btn" @onclick="() => EditArtist(artist.Id)" title="Edit Artist">
+                        <button class="action-btn edit-btn" @onclick:stopPropagation="true" @onclick="() => EditArtist(artist.Id)" title="Edit Artist">
                             <i class="fa-solid fa-pen"></i>
                         </button>
-                        <button class="action-btn delete-btn" @onclick="() => DeleteArtist(artist.Id)" title="Delete Artist">
+                        <button class="action-btn delete-btn" @onclick:stopPropagation="true" @onclick="() => DeleteArtist(artist.Id)" title="Delete Artist">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                         </div></Authorized>

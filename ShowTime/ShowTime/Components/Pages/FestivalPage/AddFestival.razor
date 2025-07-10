@@ -200,19 +200,13 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">
-                            <span class="label-icon">🚀</span>
-                            Start Date:
-                        </label>
-                        <InputDate @bind-Value="festival.StartDate" class="form-control" />
+                        <label><span class="label-icon">📅</span> Start Date & Time:</label>
+                        <input type="datetime-local" @bind="festival.StartDate" class="form-control" />
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">
-                            <span class="label-icon">🎯</span>
-                            End Date:
-                        </label>
-                        <InputDate @bind-Value="festival.EndDate" class="form-control" />
+                        <label><span class="label-icon">📅</span> End Date & Time:</label>
+                        <input type="datetime-local" @bind="festival.EndDate" class="form-control" />
                     </div>
                 </div>
 

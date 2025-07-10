@@ -69,7 +69,9 @@
                 <label><span class="label-icon">🎤</span> Stage:</label>
                 <InputText @bind-Value="lineup.Stage" class="form-control" />
                 <label><span class="label-icon">⏰</span> Start Time:</label>
-                <InputDate @bind-Value="lineup.StartTime" class="form-control" />
+                <input type="datetime-local" @bind="lineup.StartTime" class="form-control" />
+                <label><span class="label-icon">⏰</span> End Time:</label>
+                <input type="datetime-local" @bind="lineup.EndTime" class="form-control" />
                 <label><span class="label-icon">🔥</span> Is Main Stage:</label>
                 <InputCheckbox @bind-Value="lineup.IsMainStage" />
                 <label><span class="label-icon">🎸</span> Is Live Performance:</label>
@@ -119,6 +121,7 @@
 
             lineup.Stage = existing.Stage;
             lineup.StartTime = existing.StartTime;
+            lineup.EndTime = existing.EndTime;
             lineup.IsMainStage = existing.IsMainStage;
             lineup.IsLivePerformance = existing.IsLivePerformance;
             lineup.Description = existing.Description;

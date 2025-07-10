@@ -31,6 +31,7 @@ namespace ShowTime_BusinessLogic.Services
                 ArtistId = l.ArtistId,
                 Stage = l.Stage,
                 StartTime = l.StartTime,
+                EndTime = l.EndTime,
                 FestivalName = l.Festival.Name,
                 ArtistName = l.Artist.Name,
                 IsMainStage = l.IsMainStage,
@@ -51,6 +52,7 @@ namespace ShowTime_BusinessLogic.Services
                 ArtistId = lineup.ArtistId,
                 Stage = lineup.Stage,
                 StartTime = lineup.StartTime,
+                EndTime = lineup.EndTime,
                 FestivalName = lineup.Festival.Name,
                 ArtistName = lineup.Artist.Name,
                 IsMainStage = lineup.IsMainStage,
@@ -92,6 +94,7 @@ namespace ShowTime_BusinessLogic.Services
                 ArtistId = dto.ArtistId,
                 Stage = dto.Stage,
                 StartTime = dto.StartTime,
+                EndTime = dto.EndTime,
                 IsMainStage = dto.IsMainStage,
                 IsLivePerformance = dto.IsLivePerformance,
                 Description = dto.Description,
@@ -104,13 +107,14 @@ namespace ShowTime_BusinessLogic.Services
 
         public async Task UpdateAsync(int festivalId, int artistId, LineupUpdateDto dto)
         {
-            var entity = await _lineupRepository.GetByIdsAsync(artistId, festivalId);
+            var entity = await _lineupRepository.GetByIdsAsync(festivalId, artistId);
 
             if (entity == null)
                 throw new InvalidOperationException("The lineup to update was not found.");
 
             entity.Stage = dto.Stage;
             entity.StartTime = dto.StartTime;
+            entity.EndTime = dto.EndTime;
             entity.IsMainStage = dto.IsMainStage;
             entity.IsLivePerformance = dto.IsLivePerformance;
             entity.Description = dto.Description;

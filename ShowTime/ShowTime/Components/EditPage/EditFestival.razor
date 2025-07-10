@@ -36,10 +36,10 @@
                 <InputText @bind-Value="festival.Name" class="form-control" />
                 <label><span class="label-icon">📍</span> Location:</label>
                 <InputText @bind-Value="festival.Location" class="form-control" />
-                <label><span class="label-icon">📅</span> Start Date:</label>
-                <InputDate @bind-Value="festival.StartDate" class="form-control" />
-                <label><span class="label-icon">📅</span> End Date:</label>
-                <InputDate @bind-Value="festival.EndDate" class="form-control" />
+                <label><span class="label-icon">📅</span> Start Date & Time:</label>
+                <input type="datetime-local" @bind="festival.StartDate" class="form-control" />
+                <label><span class="label-icon">📅</span> End Date & Time:</label>
+                <input type="datetime-local" @bind="festival.EndDate" class="form-control" />
                 <label><span class="label-icon">👥</span> Capacity:</label>
                 <InputNumber @bind-Value="festival.Capacity" class="form-control" />
                 <label><span class="label-icon">🎨</span> Theme:</label>

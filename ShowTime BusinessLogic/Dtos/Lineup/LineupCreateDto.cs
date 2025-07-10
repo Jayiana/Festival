@@ -33,6 +33,8 @@ namespace ShowTime_BusinessLogic.Dtos
         [StringLength(100, ErrorMessage = "Stage theme can't exceed 100 characters.")]
         public string? StageTheme { get; set; }
 
+        public DateTime EndTime { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var now = DateTime.Now;

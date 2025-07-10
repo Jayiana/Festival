@@ -6,6 +6,7 @@
         public int ArtistId { get; set; }
         public string Stage { get; set; } = string.Empty;
         public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
         public string ArtistName { get; set; } = string.Empty;
         public string FestivalName { get; set; } = string.Empty;
         public bool IsMainStage { get; set; }

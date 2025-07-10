@@ -16,7 +16,7 @@ namespace ShowTime.DataAccess.Configurations
             builder.ToTable("Lineups");
             builder.HasKey(l => new { l.FestivalId, l.ArtistId });
             builder.Property(l => l.Stage).IsRequired().HasMaxLength(100);
-
+            builder.Property(l => l.EndTime).IsRequired();
         }
     }
 }

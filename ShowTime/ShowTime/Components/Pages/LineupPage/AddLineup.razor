@@ -193,11 +193,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">
-                        <span class="label-icon">⏰</span>
-                        Start Time:
-                    </label>
-                    <InputDate @bind-Value="lineup.StartTime" class="form-control" />
+                    <label><span class="label-icon">⏰</span> Start Time:</label>
+                    <input type="datetime-local" @bind="lineup.StartTime" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label><span class="label-icon">⏰</span> End Time:</label>
+                    <input type="datetime-local" @bind="lineup.EndTime" class="form-control" />
                 </div>
 
                 <div class="form-group">

@@ -67,10 +67,10 @@
                   <AuthorizeView Roles="Administrator">
                         <Authorized Context ="authContext"> 
                             <div class="lineup-actions">
-                                <button class="action-btn edit-btn" @onclick="() => EditLineup(lineup.ArtistId, lineup.FestivalId)" title="Edit Lineup">
+                                <button class="action-btn edit-btn" @onclick="() => EditLineup(lineup.FestivalId, lineup.ArtistId)" title="Edit Lineup">
                                     <i class="fa-solid fa-pen"></i>
                                 </button>
-                                <button class="action-btn delete-btn" @onclick="() => DeleteLineup(lineup.ArtistId, lineup.FestivalId)" title="Delete Lineup">
+                                <button class="action-btn delete-btn" @onclick="() => DeleteLineup(lineup.FestivalId, lineup.ArtistId)" title="Delete Lineup">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </div>
